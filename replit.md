@@ -31,30 +31,45 @@ Color scheme: Dark theme with neon accent colors (green, pink, blue, orange)
 - **Functionality**: HTML5 audio elements with Archive.org source URLs
 - **Fallback**: Direct download links for unsupported browsers
 
-### 2. Responsive Layout System
+### 2. Interactive Navigation System
+- **Three-Level Navigation**: Main page → Genre pages → Individual session player
+- **Visual Effects**: Scroll-triggered animations, parallax particles, and progress indicators
+- **Genre Sections**: House, Techno, Progressive, and Remember with unique visual styles
+- **Session Integration**: Real sessions from Archive.org with complete metadata
+
+### 3. Responsive Layout System
 - **Container**: Centered layout with maximum width constraints
 - **Grid System**: Flexible session card arrangement
 - **Spacing**: Consistent spacing using CSS custom properties
 
-### 3. Visual Design Elements
-- **Background Pattern**: Subtle dot pattern overlay for texture
-- **Gradient Header**: Linear gradient background for visual appeal
-- **Card Shadows**: Layered shadows with hover effects for depth
+### 4. Visual Design Elements
+- **Lusion.co Inspired**: Anti-minimalist design with interactive technological elements
+- **Background Effects**: Floating particles, scroll progress bars, and dynamic gradients
+- **Card Interactions**: Hover effects with overlay transitions
+- **SVG Graphics**: Custom session artwork with thematic visual representations
 - **Typography**: System font stack for optimal performance
 
 ## Data Flow
 
 ### Content Management
-1. **Static Content**: Audio sessions are hardcoded in HTML
+1. **Static Content**: Audio sessions are configured in JavaScript data structures
 2. **External Hosting**: Audio files hosted on Archive.org
 3. **Direct Linking**: Direct MP3 links from Archive.org servers
-4. **No Backend**: Pure client-side rendering
+4. **No Backend**: Pure client-side rendering with URL parameters for session routing
+
+### Current Sessions
+- **First Date Vol. II**: Progressive house session with 20-track tracklist (64:59 duration)
+  - Location: House section as Progressive House
+  - Archive.org URL: https://archive.org/details/first-date-vol.-ii
+  - Custom sunset road trip themed SVG artwork
+  - Complete metadata and tracklist integration
 
 ### Adding New Sessions
-1. Copy the session card HTML template
-2. Update the title and audio source URL
-3. Ensure Archive.org URL is accessible
-4. Test audio playback functionality
+1. Add session data to the sessionData object in player.html
+2. Create session card in appropriate genre page (house.html, progressive.html, etc.)
+3. Design custom SVG artwork for session visual identity
+4. Ensure Archive.org URL is accessible and properly formatted
+5. Test navigation flow and audio playback functionality
 
 ## External Dependencies
 

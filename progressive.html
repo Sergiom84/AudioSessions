@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>House Sessions Archive</title>
-    <meta name="description" content="House music sessions collection">
+    <title>Progressive Sessions Archive</title>
+    <meta name="description" content="Progressive music sessions collection">
     <link rel="stylesheet" href="style.css">
 </head>
-<body data-genre="house">
+<body data-genre="progressive">
     <!-- Scroll Progress Indicator -->
     <div class="scroll-progress"></div>
     
     <!-- Navigation -->
     <nav class="genre-nav">
         <a href="index.html" class="nav-back">← Volver</a>
-        <h1 class="nav-title">HOUSE</h1>
+        <h1 class="nav-title">PROGRESSIVE</h1>
     </nav>
     
     <!-- Parallax Background Elements -->
@@ -28,67 +28,7 @@
     
     <div class="viewport">
         <main class="container sessions-container">
-            <!-- 💡 Copia este bloque para nuevas sesiones de House -->
-            <article class="session-preview-card" data-session="deep-house-01">
-                <div class="session-image-container">
-                    <svg class="session-image" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
-                        <defs>
-                            <linearGradient id="deepHouseGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" style="stop-color:#00ff88;stop-opacity:0.9" />
-                                <stop offset="50%" style="stop-color:#00cc66;stop-opacity:0.8" />
-                                <stop offset="100%" style="stop-color:#009944;stop-opacity:0.9" />
-                            </linearGradient>
-                            <filter id="glow">
-                                <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
-                                <feMerge> 
-                                    <feMergeNode in="coloredBlur"/>
-                                    <feMergeNode in="SourceGraphic"/>
-                                </feMerge>
-                            </filter>
-                        </defs>
-                        <rect width="300" height="300" fill="url(#deepHouseGradient)"/>
-                        <circle cx="150" cy="150" r="80" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
-                        <circle cx="150" cy="150" r="60" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
-                        <circle cx="150" cy="150" r="40" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
-                        <circle cx="150" cy="150" r="8" fill="rgba(255,255,255,0.8)" filter="url(#glow)"/>
-                        <text x="150" y="250" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="16" font-weight="bold">DEEP HOUSE SESSION</text>
-                    </svg>
-                    <div class="session-overlay">
-                        <span class="session-cta">Reproducir →</span>
-                    </div>
-                </div>
-                <div class="session-meta">
-                    <h2>Deep House Journey</h2>
-                    <p class="session-description">Una sesión profunda y melódica que explora los sonidos del deep house contemporáneo</p>
-                </div>
-            </article>
-
-            <article class="session-preview-card" data-session="tech-house-01">
-                <div class="session-image-container">
-                    <svg class="session-image" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
-                        <defs>
-                            <linearGradient id="techHouseGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" style="stop-color:#00ff88;stop-opacity:0.7" />
-                                <stop offset="50%" style="stop-color:#00aa55;stop-opacity:0.8" />
-                                <stop offset="100%" style="stop-color:#007733;stop-opacity:0.9" />
-                            </linearGradient>
-                        </defs>
-                        <rect width="300" height="300" fill="url(#techHouseGradient)"/>
-                        <polygon points="75,75 225,75 275,150 225,225 75,225 25,150" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
-                        <polygon points="100,100 200,100 240,150 200,200 100,200 60,150" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
-                        <rect x="140" y="140" width="20" height="20" fill="rgba(255,255,255,0.8)"/>
-                        <text x="150" y="250" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="16" font-weight="bold">TECH HOUSE VIBES</text>
-                    </svg>
-                    <div class="session-overlay">
-                        <span class="session-cta">Reproducir →</span>
-                    </div>
-                </div>
-                <div class="session-meta">
-                    <h2>Tech House Vibes</h2>
-                    <p class="session-description">Ritmos techno fusionados con groove house para la pista de baile</p>
-                </div>
-            </article>
-
+            <!-- First Date Vol. II Session -->
             <article class="session-preview-card" data-session="first-date-vol-ii">
                 <div class="session-image-container">
                     <svg class="session-image" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
@@ -154,7 +94,7 @@
                         <circle cx="280" cy="155" r="1.2" fill="rgba(255, 255, 255, 0.3)" opacity="0.7"/>
                         
                         <!-- Title overlay -->
-                        <text x="200" y="350" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="14" font-weight="bold" font-family="Arial, sans-serif">FIRST DATE VOL. II</text>
+                        <text x="200" y="350" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="16" font-weight="bold" font-family="Arial, sans-serif">FIRST DATE VOL. II</text>
                     </svg>
                     <div class="session-overlay">
                         <span class="session-cta">Reproducir →</span>
@@ -162,7 +102,61 @@
                 </div>
                 <div class="session-meta">
                     <h2>First Date Vol. II</h2>
-                    <p class="session-description">Una selección progresiva house que combina melodías envolventes con ritmos hipnóticos</p>
+                    <p class="session-description">Una selección progresiva que combina melodías envolventes con ritmos hipnóticos para un viaje musical único</p>
+                </div>
+            </article>
+
+            <!-- Additional Progressive Sessions -->
+            <article class="session-preview-card" data-session="progressive-journey-01">
+                <div class="session-image-container">
+                    <svg class="session-image" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="progJourneyGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#0099ff;stop-opacity:0.6" />
+                                <stop offset="100%" style="stop-color:#004422;stop-opacity:0.9" />
+                            </linearGradient>
+                        </defs>
+                        <rect width="300" height="300" fill="url(#progJourneyGradient)"/>
+                        <path d="M50,250 Q150,50 250,250" stroke="rgba(255,255,255,0.3)" stroke-width="4" fill="none"/>
+                        <path d="M70,230 Q150,80 230,230" stroke="rgba(255,255,255,0.2)" stroke-width="3" fill="none"/>
+                        <path d="M90,210 Q150,110 210,210" stroke="rgba(255,255,255,0.1)" stroke-width="2" fill="none"/>
+                        <circle cx="150" cy="150" r="8" fill="rgba(255,255,255,0.8)"/>
+                        <text x="150" y="280" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="16" font-weight="bold">PROGRESSIVE JOURNEY</text>
+                    </svg>
+                    <div class="session-overlay">
+                        <span class="session-cta">Reproducir →</span>
+                    </div>
+                </div>
+                <div class="session-meta">
+                    <h2>Progressive Journey</h2>
+                    <p class="session-description">Construcciones épicas y melodías envolventes en una experiencia progresiva</p>
+                </div>
+            </article>
+
+            <article class="session-preview-card" data-session="melodic-progressive-01">
+                <div class="session-image-container">
+                    <svg class="session-image" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="melodicProgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#0099ff;stop-opacity:0.7" />
+                                <stop offset="50%" style="stop-color:#6600cc;stop-opacity:0.8" />
+                                <stop offset="100%" style="stop-color:#003366;stop-opacity:0.9" />
+                            </linearGradient>
+                        </defs>
+                        <rect width="300" height="300" fill="url(#melodicProgGradient)"/>
+                        <circle cx="150" cy="150" r="80" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+                        <circle cx="150" cy="150" r="60" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+                        <path d="M100,150 Q150,100 200,150 Q150,200 100,150" fill="rgba(255,255,255,0.2)"/>
+                        <circle cx="150" cy="150" r="6" fill="rgba(255,255,255,0.8)"/>
+                        <text x="150" y="250" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="16" font-weight="bold">MELODIC PROGRESSIVE</text>
+                    </svg>
+                    <div class="session-overlay">
+                        <span class="session-cta">Reproducir →</span>
+                    </div>
+                </div>
+                <div class="session-meta">
+                    <h2>Melodic Progressive</h2>
+                    <p class="session-description">Fusión perfecta entre melodías emotivas y estructuras progresivas profundas</p>
                 </div>
             </article>
         </main>
