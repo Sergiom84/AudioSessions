@@ -2,11 +2,13 @@
 
 ## Overview
 
-This repository contains "Mis Sesiones - Archivo de Audio", a static audio archive website that displays audio sessions stored on Archive.org. It's a simple, elegant, and responsive web application built with pure HTML and CSS, designed to showcase audio collections in a modern interface.
+This repository contains an interactive audio sessions archive website inspired by Lusion.co's design aesthetic. The site features four distinct music genre sections (House, Techno, Progressive, Remember) with a dark, technological interface and interactive elements. Built with pure HTML and CSS, it showcases audio collections from Archive.org in a modern, dynamic interface.
 
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
+Design inspiration: Lusion.co (anti-minimalist, interactive, technological aesthetic)
+Color scheme: Dark theme with neon accent colors (green, pink, blue, orange)
 
 ## System Architecture
 
