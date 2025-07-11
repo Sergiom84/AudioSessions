@@ -14,9 +14,6 @@
     <!-- Navigation -->
     <nav class="player-nav">
         <a href="javascript:history.back()" class="nav-back">← Volver</a>
-        <div class="player-info">
-            <span class="player-session-title" id="sessionTitle">Cargando...</span>
-        </div>
     </nav>
     
     <!-- Parallax Background Elements -->
@@ -37,11 +34,12 @@
                 </div>
                 
                 <div class="player-controls">
-                    <h1 class="session-title" id="mainSessionTitle">First Date Vol. II</h1>
+                    <h1 class="session-title" id="mainSessionTitle">Progressive House</h1>
+                    <p class="session-subtitle" id="sessionSubtitle">First Date Vol. II</p>
                     
                     <div class="audio-player-container">
                         <audio controls preload="none" id="mainAudioPlayer" aria-label="Reproductor principal de audio" crossorigin="anonymous">
-                            <source id="audioSource" src="https://archive.org/download/first-date-vol.-ii/First%20Date%20Vol.%20II.mp3" type="audio/mpeg">
+                            <source id="audioSource" src="https://archive.org/download/first-date-vol.-ii/First%20Date%20Vol.II.mp3" type="audio/mpeg">
                             Tu navegador no soporta el elemento de audio.
                         </audio>
                     </div>
@@ -82,7 +80,7 @@
             'first-date-vol-ii': {
                 title: 'First Date Vol. II',
                 subtitle: 'Una selección progresiva house que combina melodías envolventes con ritmos hipnóticos',
-                audioUrl: 'https://archive.org/download/first-date-vol.-ii/First%20Date%20Vol.%20II.mp3',
+                audioUrl: 'https://archive.org/download/first-date-vol.-ii/First%20Date%20Vol.II.mp3',
                 downloadUrl: 'https://archive.org/details/first-date-vol.-ii',
                 duration: '01:04:59',
                 cover: `
@@ -275,9 +273,9 @@
 
         // Initialize player with session data
         function initializePlayer() {
-            // Always show First Date Vol. II as the fixed title
-            document.getElementById('sessionTitle').textContent = 'First Date Vol. II';
-            document.getElementById('mainSessionTitle').textContent = 'First Date Vol. II';
+            // Set the correct titles
+            document.getElementById('mainSessionTitle').textContent = 'Progressive House';
+            document.getElementById('sessionSubtitle').textContent = 'First Date Vol. II';
             document.getElementById('duration').textContent = session.duration;
             document.getElementById('sessionCover').innerHTML = session.cover;
             document.getElementById('audioSource').src = session.audioUrl;
