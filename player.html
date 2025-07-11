@@ -71,13 +71,8 @@
                 </div>
             </div>
             
-            <!-- Tracklist Section -->
-            <div class="tracklist-section">
-                <h2 class="tracklist-title">Tracklist</h2>
-                <div class="tracklist" id="tracklist">
-                    <!-- Tracks will be dynamically inserted here -->
-                </div>
-            </div>
+            <!-- Spacer for better layout -->
+            <div class="content-spacer" style="height: 50px;"></div>
         </main>
     </div>
     
@@ -280,7 +275,8 @@
 
         // Initialize player with session data
         function initializePlayer() {
-            document.getElementById('sessionTitle').textContent = session.title;
+            // Always show First Date Vol. II as the fixed title
+            document.getElementById('sessionTitle').textContent = 'First Date Vol. II';
             document.getElementById('mainSessionTitle').textContent = 'First Date Vol. II';
             document.getElementById('duration').textContent = session.duration;
             document.getElementById('sessionCover').innerHTML = session.cover;
@@ -290,31 +286,8 @@
             const audio = document.getElementById('mainAudioPlayer');
             audio.load();
             
-            // Generate tracklist
-            generateTracklist();
-            
             // Setup download button
             setupDownload();
-        }
-
-        function generateTracklist() {
-            const tracklistContainer = document.getElementById('tracklist');
-            tracklistContainer.innerHTML = '';
-            
-            session.tracklist.forEach((track, index) => {
-                const trackElement = document.createElement('div');
-                trackElement.className = 'track-item';
-                trackElement.innerHTML = `
-                    <div class="track-number">${String(index + 1).padStart(2, '0')}</div>
-                    <div class="track-time">${track.time}</div>
-                    <div class="track-info">
-                        <div class="track-artist">${track.artist}</div>
-                        <div class="track-title">${track.title}</div>
-                        <div class="track-label">${track.label}</div>
-                    </div>
-                `;
-                tracklistContainer.appendChild(trackElement);
-            });
         }
 
         function setupDownload() {
