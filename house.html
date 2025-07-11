@@ -93,65 +93,74 @@
                 <div class="session-image-container">
                     <svg class="session-image" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
                         <defs>
-                            <linearGradient id="firstDateGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" style="stop-color:#f4a261;stop-opacity:0.9" />
-                                <stop offset="30%" style="stop-color:#e76f51;stop-opacity:0.8" />
-                                <stop offset="70%" style="stop-color:#2a9d8f;stop-opacity:0.7" />
-                                <stop offset="100%" style="stop-color:#264653;stop-opacity:0.9" />
+                            <linearGradient id="realSunsetGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#FFD700;stop-opacity:0.9" />
+                                <stop offset="20%" style="stop-color:#FFA500;stop-opacity:0.9" />
+                                <stop offset="40%" style="stop-color:#FF8C00;stop-opacity:0.8" />
+                                <stop offset="60%" style="stop-color:#FF7F50;stop-opacity:0.8" />
+                                <stop offset="80%" style="stop-color:#CD853F;stop-opacity:0.7" />
+                                <stop offset="100%" style="stop-color:#8B4513;stop-opacity:0.9" />
                             </linearGradient>
-                            <filter id="sunset-glow">
-                                <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                            <linearGradient id="desertGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#DEB887;stop-opacity:0.8" />
+                                <stop offset="50%" style="stop-color:#CD853F;stop-opacity:0.7" />
+                                <stop offset="100%" style="stop-color:#8B4513;stop-opacity:0.6" />
+                            </linearGradient>
+                            <radialGradient id="sunRadial" cx="70%" cy="25%" r="50%">
+                                <stop offset="0%" style="stop-color:#FFFACD;stop-opacity:0.9" />
+                                <stop offset="30%" style="stop-color:#FFE4B5;stop-opacity:0.6" />
+                                <stop offset="70%" style="stop-color:#FFA500;stop-opacity:0.3" />
+                                <stop offset="100%" style="stop-color:#FF8C00;stop-opacity:0.1" />
+                            </radialGradient>
+                            <filter id="desert-glow">
+                                <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
                                 <feMerge> 
                                     <feMergeNode in="coloredBlur"/>
                                     <feMergeNode in="SourceGraphic"/>
                                 </feMerge>
                             </filter>
-                            <radialGradient id="sunGlow" cx="50%" cy="30%" r="40%">
-                                <stop offset="0%" style="stop-color:#ffd60a;stop-opacity:0.8" />
-                                <stop offset="50%" style="stop-color:#ff8500;stop-opacity:0.4" />
-                                <stop offset="100%" style="stop-color:#003566;stop-opacity:0.1" />
-                            </radialGradient>
                         </defs>
                         
-                        <!-- Sky background -->
-                        <rect width="400" height="400" fill="url(#firstDateGradient)"/>
+                        <!-- Sky background with real sunset colors -->
+                        <rect width="400" height="400" fill="url(#realSunsetGradient)"/>
                         
                         <!-- Sun glow -->
-                        <ellipse cx="200" cy="120" rx="60" ry="30" fill="url(#sunGlow)" filter="url(#sunset-glow)"/>
+                        <ellipse cx="280" cy="100" rx="100" ry="40" fill="url(#sunRadial)" filter="url(#desert-glow)"/>
                         
-                        <!-- Mountains silhouette -->
-                        <path d="M0,200 Q100,180 150,190 T250,185 T350,190 T400,200 L400,400 L0,400 Z" fill="rgba(38, 70, 83, 0.6)"/>
-                        <path d="M0,220 Q80,200 120,205 T200,200 T280,205 T400,220 L400,400 L0,400 Z" fill="rgba(38, 70, 83, 0.4)"/>
+                        <!-- Layered mountains like in the original -->
+                        <path d="M0,160 Q50,140 100,150 T200,145 T300,150 T400,160 L400,400 L0,400 Z" fill="rgba(139, 69, 19, 0.6)"/>
+                        <path d="M0,180 Q80,160 150,170 T250,165 T350,170 T400,180 L400,400 L0,400 Z" fill="rgba(160, 82, 45, 0.5)"/>
+                        <path d="M0,200 Q100,180 180,190 T280,185 T400,200 L400,400 L0,400 Z" fill="rgba(205, 133, 63, 0.4)"/>
                         
-                        <!-- Desert/road -->
-                        <ellipse cx="200" cy="280" rx="180" ry="60" fill="rgba(244, 162, 97, 0.3)"/>
-                        <ellipse cx="200" cy="290" rx="160" ry="40" fill="rgba(231, 111, 81, 0.2)"/>
+                        <!-- Desert floor more realistic -->
+                        <rect x="0" y="250" width="400" height="150" fill="url(#desertGradient)"/>
                         
-                        <!-- Van silhouette -->
-                        <g transform="translate(120, 240)">
-                            <!-- Van body -->
-                            <rect x="0" y="20" width="60" height="25" rx="3" fill="rgba(42, 157, 143, 0.8)"/>
+                        <!-- Van positioned like in original (left side) -->
+                        <g transform="translate(80, 260)">
+                            <!-- Van body - more realistic proportions -->
+                            <rect x="0" y="15" width="70" height="30" rx="4" fill="rgba(245, 245, 220, 0.9)" stroke="rgba(139, 69, 19, 0.8)" stroke-width="1"/>
                             <!-- Van front -->
-                            <rect x="60" y="15" width="25" height="30" rx="2" fill="rgba(42, 157, 143, 0.9)"/>
-                            <!-- Windows -->
-                            <rect x="65" y="18" width="15" height="8" rx="1" fill="rgba(255, 255, 255, 0.3)"/>
-                            <rect x="5" y="23" width="8" height="6" rx="1" fill="rgba(255, 255, 255, 0.3)"/>
-                            <rect x="18" y="23" width="8" height="6" rx="1" fill="rgba(255, 255, 255, 0.3)"/>
-                            <rect x="31" y="23" width="8" height="6" rx="1" fill="rgba(255, 255, 255, 0.3)"/>
-                            <rect x="44" y="23" width="8" height="6" rx="1" fill="rgba(255, 255, 255, 0.3)"/>
+                            <rect x="70" y="10" width="30" height="35" rx="3" fill="rgba(245, 245, 220, 0.9)" stroke="rgba(139, 69, 19, 0.8)" stroke-width="1"/>
+                            <!-- Windows with realistic tint -->
+                            <rect x="75" y="13" width="20" height="10" rx="1" fill="rgba(70, 130, 180, 0.6)"/>
+                            <rect x="5" y="18" width="10" height="8" rx="1" fill="rgba(70, 130, 180, 0.6)"/>
+                            <rect x="20" y="18" width="10" height="8" rx="1" fill="rgba(70, 130, 180, 0.6)"/>
+                            <rect x="35" y="18" width="10" height="8" rx="1" fill="rgba(70, 130, 180, 0.6)"/>
+                            <rect x="50" y="18" width="10" height="8" rx="1" fill="rgba(70, 130, 180, 0.6)"/>
                             <!-- Wheels -->
-                            <circle cx="15" cy="50" r="6" fill="rgba(38, 70, 83, 0.8)"/>
-                            <circle cx="70" cy="50" r="6" fill="rgba(38, 70, 83, 0.8)"/>
-                            <!-- Dust trail -->
-                            <ellipse cx="-10" cy="55" rx="15" ry="3" fill="rgba(244, 162, 97, 0.4)" opacity="0.6"/>
-                            <ellipse cx="-25" cy="57" rx="20" ry="2" fill="rgba(244, 162, 97, 0.3)" opacity="0.4"/>
+                            <circle cx="20" cy="50" r="8" fill="rgba(64, 64, 64, 0.9)"/>
+                            <circle cx="80" cy="50" r="8" fill="rgba(64, 64, 64, 0.9)"/>
+                            <!-- Dust trail more prominent -->
+                            <ellipse cx="-15" cy="55" rx="25" ry="5" fill="rgba(222, 184, 135, 0.5)" opacity="0.8"/>
+                            <ellipse cx="-35" cy="57" rx="30" ry="3" fill="rgba(222, 184, 135, 0.4)" opacity="0.6"/>
+                            <ellipse cx="-55" cy="58" rx="35" ry="2" fill="rgba(222, 184, 135, 0.3)" opacity="0.4"/>
                         </g>
                         
-                        <!-- Atmospheric particles -->
-                        <circle cx="80" cy="150" r="1" fill="rgba(255, 255, 255, 0.3)" opacity="0.6"/>
-                        <circle cx="320" cy="140" r="1.5" fill="rgba(255, 255, 255, 0.4)" opacity="0.8"/>
-                        <circle cx="150" cy="160" r="0.8" fill="rgba(255, 255, 255, 0.2)" opacity="0.5"/>
-                        <circle cx="280" cy="155" r="1.2" fill="rgba(255, 255, 255, 0.3)" opacity="0.7"/>
+                        <!-- Atmospheric dust particles -->
+                        <circle cx="150" cy="180" r="1" fill="rgba(255, 255, 255, 0.4)" opacity="0.6"/>
+                        <circle cx="250" cy="160" r="1.5" fill="rgba(255, 255, 255, 0.5)" opacity="0.7"/>
+                        <circle cx="320" cy="170" r="1" fill="rgba(255, 255, 255, 0.3)" opacity="0.5"/>
+                        <circle cx="180" cy="190" r="0.8" fill="rgba(255, 255, 255, 0.3)" opacity="0.4"/>
                         
                         <!-- Title overlay -->
                         <text x="200" y="350" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="14" font-weight="bold" font-family="Arial, sans-serif">FIRST DATE VOL. II</text>
@@ -161,8 +170,8 @@
                     </div>
                 </div>
                 <div class="session-meta">
-                    <h2>First Date Vol. II</h2>
-                    <p class="session-description">Una selección progresiva house que combina melodías envolventes con ritmos hipnóticos</p>
+                    <h2>Progressive House Journey</h2>
+                    <p class="session-description">First Date Vol. II</p>
                 </div>
             </article>
         </main>
