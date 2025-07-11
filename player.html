@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Player - Sessions Archive</title>
+    <meta name="description" content="Audio player with tracklist and download">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body data-page="player">
+    <!-- Scroll Progress Indicator -->
+    <div class="scroll-progress"></div>
+    
+    <!-- Navigation -->
+    <nav class="player-nav">
+        <a href="javascript:history.back()" class="nav-back">← Volver</a>
+        <div class="player-info">
+            <span class="player-session-title" id="sessionTitle">Cargando...</span>
+        </div>
+    </nav>
+    
+    <!-- Parallax Background Elements -->
+    <div class="bg-particles">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+    
+    <div class="viewport">
+        <main class="container player-container">
+            <!-- Session Cover & Player -->
+            <div class="player-section">
+                <div class="session-cover" id="sessionCover">
+                    <!-- SVG will be dynamically inserted here -->
+                </div>
+                
+                <div class="player-controls">
+                    <h1 class="session-title" id="mainSessionTitle">Deep House Journey</h1>
+                    <p class="session-subtitle" id="sessionSubtitle">Una sesión profunda y melódica</p>
+                    
+                    <div class="audio-player-container">
+                        <audio controls preload="none" id="mainAudioPlayer" aria-label="Reproductor principal de audio">
+                            <source id="audioSource" src="https://archive.org/download/deep-house-session/deep-house-session.mp3" type="audio/mpeg">
+                            Tu navegador no soporta el elemento de audio.
+                        </audio>
+                    </div>
+                    
+                    <div class="player-actions">
+                        <button class="download-btn" id="downloadBtn">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+                            </svg>
+                            Descargar
+                        </button>
+                        <div class="session-stats">
+                            <span class="stat">
+                                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                                </svg>
+                                <span id="duration">--:--</span>
+                            </span>
+                            <span class="stat">
+                                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                </svg>
+                                <span id="quality">320kbps</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tracklist Section -->
+            <div class="tracklist-section">
+                <h2 class="tracklist-title">Tracklist</h2>
+                <div class="tracklist" id="tracklist">
+                    <!-- Tracks will be dynamically inserted here -->
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        // Session data structure
+        const sessionData = {
+            'deep-house-01': {
+                title: 'Deep House Journey',
+                subtitle: 'Una sesión profunda y melódica que explora los sonidos del deep house contemporáneo',
+                audioUrl: 'https://archive.org/download/deep-house-session/deep-house-session.mp3',
+                downloadUrl: 'https://archive.org/download/deep-house-session/deep-house-session.mp3',
+                duration: '01:23:45',
+                cover: `
+                    <svg class="session-cover-svg" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="deepHouseLargeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#00ff88;stop-opacity:0.9" />
+                                <stop offset="50%" style="stop-color:#00cc66;stop-opacity:0.8" />
+                                <stop offset="100%" style="stop-color:#009944;stop-opacity:0.9" />
+                            </linearGradient>
+                            <filter id="glowLarge">
+                                <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+                                <feMerge> 
+                                    <feMergeNode in="coloredBlur"/>
+                                    <feMergeNode in="SourceGraphic"/>
+                                </feMerge>
+                            </filter>
+                        </defs>
+                        <rect width="400" height="400" fill="url(#deepHouseLargeGradient)"/>
+                        <circle cx="200" cy="200" r="120" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.3)" stroke-width="3"/>
+                        <circle cx="200" cy="200" r="90" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+                        <circle cx="200" cy="200" r="60" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+                        <circle cx="200" cy="200" r="12" fill="rgba(255,255,255,0.8)" filter="url(#glowLarge)"/>
+                    </svg>
+                `,
+                tracklist: [
+                    { time: '00:00', artist: 'Lane 8', title: 'Run', label: 'This Never Happened' },
+                    { time: '06:42', artist: 'Ben Böhmer', title: 'Beyond Beliefs', label: 'Anjunadeep' },
+                    { time: '12:15', artist: 'Yotto', title: 'The One You Left Behind', label: 'Odd One Out' },
+                    { time: '18:30', artist: 'Marsh', title: 'Lailonie', label: 'Anjunadeep' },
+                    { time: '24:45', artist: 'Spencer Brown', title: 'Windows 95 on Acid', label: 'Anjunabeats' },
+                    { time: '31:12', artist: 'Tinlicker', title: 'Need You', label: 'Anjunadeep' },
+                    { time: '37:28', artist: 'Nora En Pure', title: 'Come With Me', label: 'Enormous Tunes' },
+                    { time: '43:55', artist: 'Joris Voorn', title: 'Ryo', label: 'Spectrum' },
+                    { time: '50:20', artist: 'Dusky', title: 'Ingrid Is A Hybrid', label: '17 Steps' },
+                    { time: '56:40', artist: 'Sebastien Leger', title: 'Hypnotized', label: 'Systematic' },
+                    { time: '62:15', artist: 'Camelphat', title: 'Hypercolour', label: 'Hypercolour' },
+                    { time: '68:30', artist: 'Kidnap', title: 'Moments', label: 'Anjunadeep' },
+                    { time: '74:45', artist: 'Solomun', title: 'Friends', label: 'Diynamic' },
+                    { time: '80:12', artist: 'Tale Of Us', title: 'Monument', label: 'Afterlife' }
+                ]
+            },
+            'tech-house-01': {
+                title: 'Tech House Vibes',
+                subtitle: 'Ritmos techno fusionados con groove house para la pista de baile',
+                audioUrl: 'https://archive.org/download/tech-house-vibes/tech-house-vibes.mp3',
+                downloadUrl: 'https://archive.org/download/tech-house-vibes/tech-house-vibes.mp3',
+                duration: '01:15:30',
+                cover: `
+                    <svg class="session-cover-svg" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="techHouseLargeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#00ff88;stop-opacity:0.7" />
+                                <stop offset="50%" style="stop-color:#00aa55;stop-opacity:0.8" />
+                                <stop offset="100%" style="stop-color:#007733;stop-opacity:0.9" />
+                            </linearGradient>
+                        </defs>
+                        <rect width="400" height="400" fill="url(#techHouseLargeGradient)"/>
+                        <polygon points="100,100 300,100 350,200 300,300 100,300 50,200" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.3)" stroke-width="3"/>
+                        <polygon points="130,130 270,130 310,200 270,270 130,270 90,200" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+                        <rect x="180" y="180" width="40" height="40" fill="rgba(255,255,255,0.8)"/>
+                    </svg>
+                `,
+                tracklist: [
+                    { time: '00:00', artist: 'Fisher', title: 'Losing It', label: 'Catch & Release' },
+                    { time: '05:30', artist: 'Chris Lake', title: 'Operator', label: 'Black Book Records' },
+                    { time: '10:45', artist: 'Walker & Royce', title: 'Take Me to Your Leader', label: 'Dirtybird' },
+                    { time: '16:20', artist: 'Green Velvet', title: 'Flash', label: 'Relief Records' },
+                    { time: '21:15', artist: 'Claude VonStroke', title: 'All My People', label: 'Dirtybird' },
+                    { time: '26:40', artist: 'Solardo', title: 'XTC', label: 'Hot Creations' },
+                    { time: '32:10', artist: 'CamelPhat', title: 'Cola', label: 'Defected' },
+                    { time: '37:55', artist: 'Gorgon City', title: 'Burning', label: 'Positiva' },
+                    { time: '43:25', artist: 'Disclosure', title: 'Energy', label: 'Island Records' },
+                    { time: '48:50', artist: 'Tchami', title: 'Praise', label: 'Confession' },
+                    { time: '54:15', artist: 'Malaa', title: 'Bylina', label: 'Tchami Music' },
+                    { time: '59:30', artist: 'AC Slater', title: 'Take the Night', label: 'Night Bass' },
+                    { time: '64:45', artist: 'Dombresky', title: 'Soul Sacrifice', label: 'Sweat It Out' },
+                    { time: '70:00', artist: 'Noizu', title: 'Summer 91', label: 'Insomniac Records' }
+                ]
+            }
+        };
+
+        // Get session ID from URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const sessionId = urlParams.get('session') || 'deep-house-01';
+        const session = sessionData[sessionId] || sessionData['deep-house-01'];
+
+        // Initialize player with session data
+        function initializePlayer() {
+            document.getElementById('sessionTitle').textContent = session.title;
+            document.getElementById('mainSessionTitle').textContent = session.title;
+            document.getElementById('sessionSubtitle').textContent = session.subtitle;
+            document.getElementById('duration').textContent = session.duration;
+            document.getElementById('sessionCover').innerHTML = session.cover;
+            document.getElementById('audioSource').src = session.audioUrl;
+            
+            // Load audio
+            const audio = document.getElementById('mainAudioPlayer');
+            audio.load();
+            
+            // Generate tracklist
+            generateTracklist();
+            
+            // Setup download button
+            setupDownload();
+        }
+
+        function generateTracklist() {
+            const tracklistContainer = document.getElementById('tracklist');
+            tracklistContainer.innerHTML = '';
+            
+            session.tracklist.forEach((track, index) => {
+                const trackElement = document.createElement('div');
+                trackElement.className = 'track-item';
+                trackElement.innerHTML = `
+                    <div class="track-number">${String(index + 1).padStart(2, '0')}</div>
+                    <div class="track-time">${track.time}</div>
+                    <div class="track-info">
+                        <div class="track-artist">${track.artist}</div>
+                        <div class="track-title">${track.title}</div>
+                        <div class="track-label">${track.label}</div>
+                    </div>
+                `;
+                tracklistContainer.appendChild(trackElement);
+            });
+        }
+
+        function setupDownload() {
+            const downloadBtn = document.getElementById('downloadBtn');
+            downloadBtn.addEventListener('click', () => {
+                const link = document.createElement('a');
+                link.href = session.downloadUrl;
+                link.download = `${session.title}.mp3`;
+                link.click();
+            });
+        }
+
+        // Scroll Progress Indicator
+        window.addEventListener('scroll', () => {
+            const scrolled = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+            document.querySelector('.scroll-progress').style.width = scrolled + '%';
+        });
+
+        // Parallax Effect for Background Particles
+        window.addEventListener('scroll', () => {
+            const scrolled = window.scrollY;
+            const particles = document.querySelectorAll('.particle');
+            
+            particles.forEach((particle, index) => {
+                const speed = (index + 1) * 0.2;
+                particle.style.transform = `translateY(${scrolled * speed}px) rotate(${scrolled * 0.1}deg)`;
+            });
+        });
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', initializePlayer);
+    </script>
+</body>
+</html>
