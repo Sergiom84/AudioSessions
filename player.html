@@ -38,10 +38,62 @@
                     <p class="session-subtitle" id="sessionSubtitle">First Date Vol. II</p>
                     
                     <div class="audio-player-container">
-                        <audio controls preload="none" id="mainAudioPlayer" aria-label="Reproductor principal de audio" crossorigin="anonymous">
+                        <!-- Hidden audio element -->
+                        <audio preload="none" id="mainAudioPlayer" aria-label="Reproductor principal de audio" crossorigin="anonymous">
                             <source id="audioSource" src="https://archive.org/download/first-date-vol.-ii/First%20Date%20Vol.II.mp3" type="audio/mpeg">
                             Tu navegador no soporta el elemento de audio.
                         </audio>
+                        
+                        <!-- Custom Player Controls -->
+                        <div class="custom-player">
+                            <div class="player-controls-row">
+                                <button class="control-btn" id="rewindBtn" title="Rebobinar 10s">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12,5V1L7,6L12,11V7A6,6 0 0,1 18,13A6,6 0 0,1 12,19A6,6 0 0,1 6,13H4A8,8 0 0,0 12,21A8,8 0 0,0 20,13A8,8 0 0,0 12,5Z"/>
+                                        <text x="12" y="15" text-anchor="middle" font-size="8" fill="currentColor">10</text>
+                                    </svg>
+                                </button>
+                                
+                                <button class="control-btn" id="stopBtn" title="Parar">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                        <rect x="6" y="6" width="12" height="12"/>
+                                    </svg>
+                                </button>
+                                
+                                <button class="control-btn play-pause-btn" id="playPauseBtn" title="Reproducir/Pausar">
+                                    <svg class="play-icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M8,5.14V19.14L19,12.14L8,5.14Z"/>
+                                    </svg>
+                                    <svg class="pause-icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" style="display: none;">
+                                        <path d="M14,19H18V5H14M6,19H10V5H6V19Z"/>
+                                    </svg>
+                                </button>
+                                
+                                <button class="control-btn" id="forwardBtn" title="Adelantar 10s">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12,5V1L17,6L12,11V7A6,6 0 0,0 6,13A6,6 0 0,0 12,19A6,6 0 0,0 18,13H20A8,8 0 0,1 12,21A8,8 0 0,1 4,13A8,8 0 0,1 12,5Z"/>
+                                        <text x="12" y="15" text-anchor="middle" font-size="8" fill="currentColor">10</text>
+                                    </svg>
+                                </button>
+                                
+                                <button class="control-btn" id="volumeBtn" title="Volumen">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M14,3.23V5.29C16.89,6.15 19,8.83 19,12C19,15.17 16.89,17.85 14,18.71V20.77C18.01,19.86 21,16.28 21,12C21,7.72 18.01,4.14 14,3.23M16.5,12C16.5,10.23 15.5,8.71 14,7.97V16C15.5,15.29 16.5,13.76 16.5,12M3,9V15H7L12,20V4L7,9H3Z"/>
+                                    </svg>
+                                </button>
+                                
+                                <div class="time-display">
+                                    <span id="currentTime">00:00</span> / <span id="totalTime">00:00</span>
+                                </div>
+                            </div>
+                            
+                            <div class="progress-container">
+                                <div class="progress-bar" id="progressBar">
+                                    <div class="progress-fill" id="progressFill"></div>
+                                    <div class="progress-handle" id="progressHandle"></div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     
                     <div class="player-actions">
@@ -69,8 +121,13 @@
                 </div>
             </div>
             
-            <!-- Spacer for better layout -->
-            <div class="content-spacer" style="height: 50px;"></div>
+            <!-- Tracklist Section -->
+            <div class="tracklist-section">
+                <h2 class="tracklist-title">Tracklist</h2>
+                <div class="tracklist" id="tracklist">
+                    <!-- Tracks will be dynamically inserted here -->
+                </div>
+            </div>
         </main>
     </div>
     
@@ -284,8 +341,142 @@
             const audio = document.getElementById('mainAudioPlayer');
             audio.load();
             
+            // Generate tracklist
+            generateTracklist();
+            
+            // Setup custom player
+            setupCustomPlayer();
+            
             // Setup download button
             setupDownload();
+        }
+
+        function generateTracklist() {
+            const tracklistContainer = document.getElementById('tracklist');
+            tracklistContainer.innerHTML = '';
+            
+            session.tracklist.forEach((track, index) => {
+                const trackElement = document.createElement('div');
+                trackElement.className = 'track-item';
+                trackElement.innerHTML = `
+                    <div class="track-number">${String(index + 1).padStart(2, '0')}</div>
+                    <div class="track-time">${track.time}</div>
+                    <div class="track-info">
+                        <div class="track-artist">${track.artist}</div>
+                        <div class="track-title">${track.title}</div>
+                        <div class="track-label">${track.label}</div>
+                    </div>
+                `;
+                tracklistContainer.appendChild(trackElement);
+            });
+        }
+
+        function setupCustomPlayer() {
+            const audio = document.getElementById('mainAudioPlayer');
+            const playPauseBtn = document.getElementById('playPauseBtn');
+            const stopBtn = document.getElementById('stopBtn');
+            const rewindBtn = document.getElementById('rewindBtn');
+            const forwardBtn = document.getElementById('forwardBtn');
+            const progressBar = document.getElementById('progressBar');
+            const progressFill = document.getElementById('progressFill');
+            const progressHandle = document.getElementById('progressHandle');
+            const currentTimeEl = document.getElementById('currentTime');
+            const totalTimeEl = document.getElementById('totalTime');
+            const playIcon = document.querySelector('.play-icon');
+            const pauseIcon = document.querySelector('.pause-icon');
+
+            let isPlaying = false;
+            let isDragging = false;
+
+            // Play/Pause functionality
+            playPauseBtn.addEventListener('click', () => {
+                if (isPlaying) {
+                    audio.pause();
+                } else {
+                    audio.play();
+                }
+            });
+
+            // Stop functionality
+            stopBtn.addEventListener('click', () => {
+                audio.pause();
+                audio.currentTime = 0;
+            });
+
+            // Rewind 10 seconds
+            rewindBtn.addEventListener('click', () => {
+                audio.currentTime = Math.max(0, audio.currentTime - 10);
+            });
+
+            // Forward 10 seconds
+            forwardBtn.addEventListener('click', () => {
+                audio.currentTime = Math.min(audio.duration, audio.currentTime + 10);
+            });
+
+            // Update play/pause button state
+            audio.addEventListener('play', () => {
+                isPlaying = true;
+                playIcon.style.display = 'none';
+                pauseIcon.style.display = 'block';
+            });
+
+            audio.addEventListener('pause', () => {
+                isPlaying = false;
+                playIcon.style.display = 'block';
+                pauseIcon.style.display = 'none';
+            });
+
+            // Update progress and time
+            audio.addEventListener('timeupdate', () => {
+                if (!isDragging) {
+                    const progress = (audio.currentTime / audio.duration) * 100;
+                    progressFill.style.width = progress + '%';
+                    progressHandle.style.left = progress + '%';
+                }
+                currentTimeEl.textContent = formatTime(audio.currentTime);
+            });
+
+            // Set total time when metadata loads
+            audio.addEventListener('loadedmetadata', () => {
+                totalTimeEl.textContent = formatTime(audio.duration);
+            });
+
+            // Progress bar click and drag
+            progressBar.addEventListener('click', (e) => {
+                const rect = progressBar.getBoundingClientRect();
+                const percent = (e.clientX - rect.left) / rect.width;
+                audio.currentTime = percent * audio.duration;
+            });
+
+            // Drag functionality for progress handle
+            progressHandle.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                e.preventDefault();
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (isDragging) {
+                    const rect = progressBar.getBoundingClientRect();
+                    const percent = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+                    progressFill.style.width = (percent * 100) + '%';
+                    progressHandle.style.left = (percent * 100) + '%';
+                }
+            });
+
+            document.addEventListener('mouseup', () => {
+                if (isDragging) {
+                    const rect = progressBar.getBoundingClientRect();
+                    const percent = parseFloat(progressHandle.style.left) / 100;
+                    audio.currentTime = percent * audio.duration;
+                    isDragging = false;
+                }
+            });
+
+            function formatTime(seconds) {
+                const mins = Math.floor(seconds / 60);
+                const secs = Math.floor(seconds % 60);
+                return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            }
         }
 
         function setupDownload() {
