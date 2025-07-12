@@ -63,6 +63,24 @@
                 particle.style.transform = `translateY(${scrolled * speed}px) rotate(${scrolled * 0.1}deg)`;
             });
         });
+
+        // Session Card Navigation (for future sessions)
+        document.addEventListener('DOMContentLoaded', () => {
+            const sessionCards = document.querySelectorAll('.session-preview-card');
+            
+            sessionCards.forEach(card => {
+                card.classList.add('in-view');
+                
+                card.addEventListener('click', () => {
+                    const sessionId = card.getAttribute('data-session');
+                    if (sessionId) {
+                        window.location.href = `player.html?session=${sessionId}`;
+                    }
+                });
+                
+                card.style.cursor = 'pointer';
+            });
+        });
     </script>
 </body>
 </html>

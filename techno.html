@@ -109,6 +109,42 @@
                 particle.style.transform = `translateY(${scrolled * speed}px) rotate(${scrolled * 0.1}deg)`;
             });
         });
+
+        // Session Card Navigation
+        document.addEventListener('DOMContentLoaded', () => {
+            const sessionCards = document.querySelectorAll('.session-preview-card');
+            
+            // Make cards visible immediately
+            sessionCards.forEach(card => {
+                card.classList.add('in-view');
+                
+                card.addEventListener('click', () => {
+                    const sessionId = card.getAttribute('data-session');
+                    if (sessionId) {
+                        window.location.href = `player.html?session=${sessionId}`;
+                    }
+                });
+                
+                // Add hover effect
+                card.style.cursor = 'pointer';
+            });
+
+            // Intersection Observer for scroll-triggered animations
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('in-view');
+                    }
+                });
+            }, observerOptions);
+
+            sessionCards.forEach(card => observer.observe(card));
+        });
     </script>
 </body>
 </html>
