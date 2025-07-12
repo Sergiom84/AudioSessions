@@ -28,8 +28,40 @@
     <div class="viewport">
         <main class="container sessions-container">
             <!-- 💡 Copia este bloque para nuevas sesiones de Techno -->
+            <article class="session-preview-card" data-session="hard-techno-01">
+                <div class="session-image-container">
+                    <svg class="session-image" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="hardTechnoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#ff0066;stop-opacity:0.9" />
+                                <stop offset="50%" style="stop-color:#cc0044;stop-opacity:0.8" />
+                                <stop offset="100%" style="stop-color:#990022;stop-opacity:0.9" />
+                            </linearGradient>
+                            <filter id="glow">
+                                <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                                <feMerge> 
+                                    <feMergeNode in="coloredBlur"/>
+                                    <feMergeNode in="SourceGraphic"/>
+                                </feMerge>
+                            </filter>
+                        </defs>
+                        <rect width="300" height="300" fill="url(#hardTechnoGradient)"/>
+                        <circle cx="150" cy="150" r="80" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+                        <circle cx="150" cy="150" r="60" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+                        <circle cx="150" cy="150" r="40" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+                        <circle cx="150" cy="150" r="8" fill="rgba(255,255,255,0.8)" filter="url(#glow)"/>
+                        <text x="150" y="250" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="16" font-weight="bold">HARD TECHNO SESSION</text>
+                    </svg>
+                    <div class="session-overlay">
+                        <span class="session-cta">Reproducir →</span>
+                    </div>
+                </div>
+                <div class="session-meta">
+                    <h2>Hard Techno Journey</h2>
+                    <p class="session-description">Una sesión industrial y potente que explora los sonidos del techno más duro</p>
+                </div>
+            </article>
 
-            <!-- Nature Session -->
             <article class="session-preview-card" data-session="nature-tech-house">
                 <div class="session-image-container">
                     <svg class="session-image" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
@@ -79,6 +111,32 @@
                 <div class="session-meta">
                     <h2>Nature</h2>
                     <p class="session-description">Una selección potente de Tech House con beats profundos y grooves hipnóticos</p>
+                </div>
+            </article>
+
+            <article class="session-preview-card" data-session="minimal-techno-01">
+                <div class="session-image-container">
+                    <svg class="session-image" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="minimalTechnoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#6600ff;stop-opacity:0.7" />
+                                <stop offset="50%" style="stop-color:#4400aa;stop-opacity:0.8" />
+                                <stop offset="100%" style="stop-color:#220055;stop-opacity:0.9" />
+                            </linearGradient>
+                        </defs>
+                        <rect width="300" height="300" fill="url(#minimalTechnoGradient)"/>
+                        <polygon points="75,75 225,75 275,150 225,225 75,225 25,150" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+                        <polygon points="100,100 200,100 240,150 200,200 100,200 60,150" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+                        <rect x="140" y="140" width="20" height="20" fill="rgba(255,255,255,0.8)"/>
+                        <text x="150" y="250" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="16" font-weight="bold">MINIMAL TECHNO</text>
+                    </svg>
+                    <div class="session-overlay">
+                        <span class="session-cta">Reproducir →</span>
+                    </div>
+                </div>
+                <div class="session-meta">
+                    <h2>Minimal Techno</h2>
+                    <p class="session-description">Patrones hipnóticos y texturas minimalistas para la experiencia techno más pura</p>
                 </div>
             </article>
         </main>
