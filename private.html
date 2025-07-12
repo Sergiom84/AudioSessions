@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Private Zone - Audio Sessions Archive</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body data-genre="private" data-page="sessions">
+    <!-- Scroll Progress Indicator -->
+    <div class="scroll-progress"></div>
+    
+    <!-- Navigation -->
+    <nav class="main-nav">
+        <a href="index.html" class="nav-back">← Inicio</a>
+        <div class="nav-info">
+            <span class="nav-title">Private Zone</span>
+        </div>
+    </nav>
+    
+    <!-- Parallax Background Elements -->
+    <div class="parallax-background">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+    
+    <div class="viewport">
+        <main class="container sessions-container">
+            <div class="genre-header-large">
+                <h1 class="genre-title-large">Private Zone</h1>
+                <p class="genre-subtitle-large">Sesiones exclusivas VIP para miembros especiales</p>
+            </div>
+
+            <!-- VIP Sessions will be added here -->
+            <div class="private-sessions-placeholder">
+                <div class="vip-welcome">
+                    <svg width="80" height="80" viewBox="0 0 24 24" fill="currentColor" class="vip-icon">
+                        <path d="M5,16L3,5H1V3H4L6,14H18.5L19.5,12H21.7L20.2,16H5M6,18A2,2 0 0,0 8,20A2,2 0 0,0 6,18M17,18A2,2 0 0,0 19,20A2,2 0 0,0 17,18M12,1L9,9H15L12,1M12,2.5L13.5,8H10.5L12,2.5Z"/>
+                    </svg>
+                    <h2>¡Bienvenido a la Zona VIP!</h2>
+                    <p>Esta es tu área privada para sesiones exclusivas.<br>
+                    Aquí podrás encontrar contenido especial reservado para miembros VIP.</p>
+                    <div class="coming-soon">
+                        <span class="status-badge">Próximamente</span>
+                        <p>Estamos preparando sesiones exclusivas para ti. ¡Mantente atento!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Template for future VIP sessions -->
+            <!-- 
+            <article class="session-preview-card vip-session" data-session="vip-exclusive-01">
+                <div class="session-image-container">
+                    <svg class="session-image" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="vipGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#8b00ff;stop-opacity:0.9" />
+                                <stop offset="50%" style="stop-color:#4a00aa;stop-opacity:0.8" />
+                                <stop offset="100%" style="stop-color:#220055;stop-opacity:0.9" />
+                            </linearGradient>
+                        </defs>
+                        <rect width="400" height="400" fill="url(#vipGradient)"/>
+                        <text x="200" y="350" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="16" font-weight="bold">VIP EXCLUSIVE</text>
+                    </svg>
+                    <div class="session-overlay">
+                        <span class="session-cta">Reproducir →</span>
+                    </div>
+                    <div class="vip-badge">VIP</div>
+                </div>
+                <div class="session-meta">
+                    <h2>Sesión VIP Exclusiva</h2>
+                    <p class="session-description">Contenido exclusivo para miembros VIP</p>
+                </div>
+            </article>
+            -->
+        </main>
+    </div>
+    
+    <script>
+        // Check access on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!sessionStorage.getItem('privateAccess')) {
+                alert('Acceso no autorizado. Redirigiendo al inicio.');
+                window.location.href = 'index.html';
+                return;
+            }
+        });
+
+        // Scroll Progress Indicator
+        window.addEventListener('scroll', () => {
+            const scrolled = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+            document.querySelector('.scroll-progress').style.width = scrolled + '%';
+        });
+
+        // Parallax Effect for Background Particles
+        window.addEventListener('scroll', () => {
+            const scrolled = window.scrollY;
+            const particles = document.querySelectorAll('.particle');
+            
+            particles.forEach((particle, index) => {
+                const speed = (index + 1) * 0.2;
+                particle.style.transform = `translateY(${scrolled * speed}px) rotate(${scrolled * 0.1}deg)`;
+            });
+        });
+
+        // Session card click handlers (for future VIP sessions)
+        document.querySelectorAll('.session-preview-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const sessionId = card.dataset.session;
+                // Redirect to player page
+                window.location.href = `player.html?session=${sessionId}`;
+            });
+        });
+    </script>
+</body>
+</html>

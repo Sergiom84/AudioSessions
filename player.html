@@ -405,12 +405,16 @@
 
             // Rewind 10 seconds
             rewindBtn.addEventListener('click', () => {
-                audio.currentTime = Math.max(0, audio.currentTime - 10);
+                if (!isNaN(audio.duration) && audio.currentTime >= 0) {
+                    audio.currentTime = Math.max(0, audio.currentTime - 10);
+                }
             });
 
             // Forward 10 seconds
             forwardBtn.addEventListener('click', () => {
-                audio.currentTime = Math.min(audio.duration, audio.currentTime + 10);
+                if (!isNaN(audio.duration) && audio.currentTime >= 0) {
+                    audio.currentTime = Math.min(audio.duration, audio.currentTime + 10);
+                }
             });
 
             // Update play/pause button state
@@ -428,24 +432,30 @@
 
             // Update progress and time
             audio.addEventListener('timeupdate', () => {
-                if (!isDragging) {
+                if (!isDragging && !isNaN(audio.duration) && audio.duration > 0) {
                     const progress = (audio.currentTime / audio.duration) * 100;
                     progressFill.style.width = progress + '%';
                     progressHandle.style.left = progress + '%';
                 }
-                currentTimeEl.textContent = formatTime(audio.currentTime);
+                if (!isNaN(audio.currentTime)) {
+                    currentTimeEl.textContent = formatTime(audio.currentTime);
+                }
             });
 
             // Set total time when metadata loads
             audio.addEventListener('loadedmetadata', () => {
-                totalTimeEl.textContent = formatTime(audio.duration);
+                if (!isNaN(audio.duration)) {
+                    totalTimeEl.textContent = formatTime(audio.duration);
+                }
             });
 
             // Progress bar click and drag
             progressBar.addEventListener('click', (e) => {
-                const rect = progressBar.getBoundingClientRect();
-                const percent = (e.clientX - rect.left) / rect.width;
-                audio.currentTime = percent * audio.duration;
+                if (!isNaN(audio.duration) && audio.duration > 0) {
+                    const rect = progressBar.getBoundingClientRect();
+                    const percent = (e.clientX - rect.left) / rect.width;
+                    audio.currentTime = percent * audio.duration;
+                }
             });
 
             // Drag functionality for progress handle
@@ -464,7 +474,7 @@
             });
 
             document.addEventListener('mouseup', () => {
-                if (isDragging) {
+                if (isDragging && !isNaN(audio.duration) && audio.duration > 0) {
                     const rect = progressBar.getBoundingClientRect();
                     const percent = parseFloat(progressHandle.style.left) / 100;
                     audio.currentTime = percent * audio.duration;

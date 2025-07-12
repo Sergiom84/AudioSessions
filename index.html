@@ -141,7 +141,73 @@
                     </a>
                 </div>
             </section>
+
+            <!-- Private Zone Section -->
+            <section class="genre-section" data-genre="private">
+                <div class="genre-header">
+                    <h1 class="genre-title">PRIVATE ZONE</h1>
+                    <div class="genre-indicator"></div>
+                </div>
+                <div class="genre-preview">
+                    <div class="genre-link private-access" id="privateAccess">
+                        <div class="genre-image-container">
+                            <svg class="genre-image" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <linearGradient id="privateGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#8b00ff;stop-opacity:0.8" />
+                                        <stop offset="50%" style="stop-color:#4a00aa;stop-opacity:0.9" />
+                                        <stop offset="100%" style="stop-color:#220055;stop-opacity:1" />
+                                    </linearGradient>
+                                    <filter id="glow">
+                                        <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                                        <feMerge> 
+                                            <feMergeNode in="coloredBlur"/>
+                                            <feMergeNode in="SourceGraphic"/>
+                                        </feMerge>
+                                    </filter>
+                                </defs>
+                                <rect width="400" height="300" fill="url(#privateGradient)"/>
+                                <!-- Lock Icon -->
+                                <g transform="translate(170, 100)">
+                                    <rect x="10" y="30" width="40" height="30" rx="3" fill="rgba(255,255,255,0.8)" stroke="rgba(139,0,255,0.6)" stroke-width="2"/>
+                                    <path d="M20,30 V20 Q20,10 30,10 Q40,10 40,20 V30" stroke="rgba(255,255,255,0.8)" stroke-width="3" fill="none"/>
+                                    <circle cx="30" cy="45" r="3" fill="rgba(139,0,255,0.8)"/>
+                                    <rect x="29" y="48" width="2" height="8" fill="rgba(139,0,255,0.8)"/>
+                                </g>
+                                <!-- Sparkles -->
+                                <circle cx="120" cy="80" r="2" fill="rgba(255,255,255,0.6)" filter="url(#glow)"/>
+                                <circle cx="280" cy="90" r="1.5" fill="rgba(255,255,255,0.7)" filter="url(#glow)"/>
+                                <circle cx="150" cy="200" r="1" fill="rgba(255,255,255,0.5)" filter="url(#glow)"/>
+                                <circle cx="320" cy="180" r="2.5" fill="rgba(255,255,255,0.8)" filter="url(#glow)"/>
+                                <text x="200" y="240" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="16" font-weight="bold">VIP ACCESS REQUIRED</text>
+                            </svg>
+                            <div class="genre-overlay">
+                                <span class="genre-cta">Acceso privado →</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </main>
+    </div>
+
+    <!-- Password Modal -->
+    <div id="passwordModal" class="password-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Acceso Privado</h2>
+                <span class="close" id="closeModal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p>Introduce la contraseña para acceder a la zona VIP:</p>
+                <input type="password" id="passwordInput" placeholder="Contraseña" maxlength="20">
+                <div class="modal-buttons">
+                    <button id="submitPassword" class="submit-btn">Acceder</button>
+                    <button id="cancelAccess" class="cancel-btn">Cancelar</button>
+                </div>
+                <div id="errorMessage" class="error-message"></div>
+            </div>
+        </div>
     </div>
     
     <script>
@@ -196,6 +262,53 @@
                     document.body.setAttribute('data-active-genre', genre);
                 }
             });
+        });
+
+        // Private Zone Access
+        document.getElementById('privateAccess').addEventListener('click', () => {
+            document.getElementById('passwordModal').style.display = 'flex';
+            document.getElementById('passwordInput').focus();
+        });
+
+        document.getElementById('closeModal').addEventListener('click', () => {
+            document.getElementById('passwordModal').style.display = 'none';
+            document.getElementById('passwordInput').value = '';
+            document.getElementById('errorMessage').textContent = '';
+        });
+
+        document.getElementById('cancelAccess').addEventListener('click', () => {
+            document.getElementById('passwordModal').style.display = 'none';
+            document.getElementById('passwordInput').value = '';
+            document.getElementById('errorMessage').textContent = '';
+        });
+
+        document.getElementById('submitPassword').addEventListener('click', () => {
+            const password = document.getElementById('passwordInput').value;
+            if (password === 'Julio25') {
+                // Store access in session
+                sessionStorage.setItem('privateAccess', 'true');
+                window.location.href = 'private.html';
+            } else {
+                document.getElementById('errorMessage').textContent = 'Contraseña incorrecta. Inténtalo de nuevo.';
+                document.getElementById('passwordInput').value = '';
+                document.getElementById('passwordInput').focus();
+            }
+        });
+
+        // Enter key support
+        document.getElementById('passwordInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                document.getElementById('submitPassword').click();
+            }
+        });
+
+        // Close modal when clicking outside
+        document.getElementById('passwordModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('passwordModal')) {
+                document.getElementById('passwordModal').style.display = 'none';
+                document.getElementById('passwordInput').value = '';
+                document.getElementById('errorMessage').textContent = '';
+            }
         });
     </script>
 </body>
