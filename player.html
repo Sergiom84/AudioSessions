@@ -134,6 +134,82 @@
     <script>
         // Session data structure
         const sessionData = {
+            'nature-tech-house': {
+                title: 'Nature',
+                subtitle: 'Una selección potente de Tech House con beats profundos y grooves hipnóticos',
+                audioUrl: '', // URL del audio cuando esté disponible
+                downloadUrl: '#',
+                duration: '01:15:32',
+                cover: `
+                    <svg class="session-cover-svg" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="natureGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#1a1a1a;stop-opacity:1" />
+                                <stop offset="50%" style="stop-color:#2d2d2d;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#0d0d0d;stop-opacity:1" />
+                            </linearGradient>
+                            <linearGradient id="natureTextGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#9ed82c;stop-opacity:1" />
+                                <stop offset="50%" style="stop-color:#7bc142;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#6ba83a;stop-opacity:1" />
+                            </linearGradient>
+                            <filter id="glow-green">
+                                <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+                                <feMerge> 
+                                    <feMergeNode in="coloredBlur"/>
+                                    <feMergeNode in="SourceGraphic"/>
+                                </feMerge>
+                            </filter>
+                        </defs>
+                        
+                        <!-- Background -->
+                        <rect width="400" height="400" fill="url(#natureGradient)"/>
+                        
+                        <!-- Oval border like in the original -->
+                        <ellipse cx="200" cy="200" rx="180" ry="120" fill="none" stroke="rgba(255, 255, 255, 0.8)" stroke-width="3" stroke-dasharray="8,4"/>
+                        
+                        <!-- Nature text in the center with green gradient -->
+                        <text x="200" y="190" text-anchor="middle" fill="url(#natureTextGradient)" font-size="48" font-weight="bold" font-family="Arial, sans-serif" filter="url(#glow-green)">NATURE</text>
+                        <text x="200" y="220" text-anchor="middle" fill="url(#natureTextGradient)" font-size="12" font-weight="bold" font-family="Arial, sans-serif">®</text>
+                        
+                        <!-- Tech elements -->
+                        <circle cx="80" cy="100" r="2" fill="rgba(158, 216, 44, 0.6)" opacity="0.8"/>
+                        <circle cx="320" cy="120" r="1.5" fill="rgba(158, 216, 44, 0.7)" opacity="0.9"/>
+                        <circle cx="60" cy="300" r="1" fill="rgba(158, 216, 44, 0.5)" opacity="0.6"/>
+                        <circle cx="340" cy="280" r="2.5" fill="rgba(158, 216, 44, 0.8)" opacity="1"/>
+                        
+                        <!-- Tech House label -->
+                        <text x="200" y="350" text-anchor="middle" fill="rgba(255, 255, 255, 0.8)" font-size="14" font-weight="bold" font-family="Arial, sans-serif">TECH HOUSE</text>
+                    </svg>
+                `,
+                tracklist: [
+                    { time: '00:00', artist: 'Desert Lettin', title: 'Ya Mind Go Bottomless', label: 'Tech House' },
+                    { time: '03:12', artist: 'Tdr', title: 'Squelch', label: 'Tech House' },
+                    { time: '06:45', artist: 'Darren Kay', title: 'Splintered', label: 'Ben Sims Remix' },
+                    { time: '09:30', artist: 'Andrew Mclauchlan', title: 'Love Story', label: 'Tech House' },
+                    { time: '12:15', artist: 'Milo', title: 'Jungle Of Mirror', label: 'Tech House' },
+                    { time: '15:20', artist: 'Ben Sims', title: 'Manipulated', label: 'Adam Beyer Remix' },
+                    { time: '18:45', artist: 'Christian Smith', title: 'Silver Streak', label: 'Tech House' },
+                    { time: '21:30', artist: 'DIGITAL EXPRESS', title: 'The Club', label: 'Tech House' },
+                    { time: '24:10', artist: 'Deetron', title: 'Emphasis', label: 'Tech House' },
+                    { time: '27:25', artist: 'Stephane Malca feat. Kenny', title: 'Revolution', label: 'Mike Monday Badman Remix' },
+                    { time: '30:40', artist: 'Monolink', title: 'Deluxe TGX', label: 'Tech House' },
+                    { time: '33:55', artist: 'Native', title: 'Feel the Drums', label: 'Tech House' },
+                    { time: '36:20', artist: 'Renato Cohen', title: 'Pontapé', label: 'Tech House' },
+                    { time: '39:10', artist: 'Tekken', title: 'Tribal Pursuit', label: 'Tech House' },
+                    { time: '42:35', artist: 'D-Factor', title: 'Barana', label: 'Tech House' },
+                    { time: '45:20', artist: 'Dj Luccio Feat Sandy Wilhelm', title: 'Paradise', label: 'Tech House' },
+                    { time: '48:15', artist: 'Oxia', title: 'Inspiration', label: 'Tech House' },
+                    { time: '51:40', artist: 'Solid Session', title: 'Format 1', label: 'Dj Misjah Xxl Mix' },
+                    { time: '54:25', artist: 'Surgeon', title: 'La Real', label: 'Tech House' },
+                    { time: '57:50', artist: 'Gaetek', title: 'Ghana b2', label: 'Tech House' },
+                    { time: '60:10', artist: 'Olav Basoski pres. The Zarrow Bros', title: 'Revelation 3', label: 'Tech House' },
+                    { time: '63:25', artist: 'Jel Ford', title: 'Flaunt the Law', label: 'Tech House' },
+                    { time: '66:40', artist: 'Defaced', title: 'Out Run', label: 'Tech House' },
+                    { time: '69:15', artist: 'Len Faki', title: 'Figure 13', label: 'Schranz' },
+                    { time: '72:30', artist: 'Jeff Mills', title: 'The Bells', label: 'Lewis Lastella Remix' }
+                ]
+            },
             'first-date-vol-ii': {
                 title: 'First Date Vol. II',
                 subtitle: 'Una selección progresiva house que combina melodías envolventes con ritmos hipnóticos',
@@ -330,9 +406,15 @@
 
         // Initialize player with session data
         function initializePlayer() {
-            // Set the correct titles
-            document.getElementById('mainSessionTitle').textContent = 'Progressive House';
-            document.getElementById('sessionSubtitle').textContent = 'First Date Vol. II';
+            // Set the correct titles based on session
+            if (sessionId === 'nature-tech-house') {
+                document.getElementById('mainSessionTitle').textContent = 'Nature';
+                document.getElementById('sessionSubtitle').textContent = 'Tech House';
+            } else {
+                document.getElementById('mainSessionTitle').textContent = 'Progressive House';
+                document.getElementById('sessionSubtitle').textContent = 'First Date Vol. II';
+            }
+            
             document.getElementById('duration').textContent = session.duration;
             document.getElementById('sessionCover').innerHTML = session.cover;
             document.getElementById('audioSource').src = session.audioUrl;
