@@ -1376,3 +1376,25 @@ body[data-genre="private"] {
     z-index: 10;
     box-shadow: 0 2px 10px rgba(139, 0, 255, 0.5);
 }
+
+/* Coming Soon Placeholder */
+.coming-soon-placeholder {
+    text-align: center;
+    padding: 80px 20px;
+    margin: 40px 0;
+}
+
+.coming-soon-placeholder h2 {
+    color: #ffffff;
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    font-weight: 700;
+}
+
+.coming-soon-placeholder p {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1.2rem;
+    line-height: 1.6;
+    max-width: 600px;
+    margin: 0 auto;
+}

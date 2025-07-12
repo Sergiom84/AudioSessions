@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Remember - Audio Sessions Archive</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body data-genre="remember" data-page="sessions">
+    <!-- Scroll Progress Indicator -->
+    <div class="scroll-progress"></div>
+    
+    <!-- Navigation -->
+    <nav class="main-nav">
+        <a href="index.html" class="nav-back">← Inicio</a>
+        <div class="nav-info">
+            <span class="nav-title">Remember</span>
+        </div>
+    </nav>
+    
+    <!-- Parallax Background Elements -->
+    <div class="parallax-background">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+    
+    <div class="viewport">
+        <main class="container sessions-container">
+            <div class="genre-header-large">
+                <h1 class="genre-title-large">Remember</h1>
+                <p class="genre-subtitle-large">Clásicos inolvidables que trascienden el tiempo</p>
+            </div>
+
+            <!-- Coming Soon placeholder -->
+            <div class="coming-soon-placeholder">
+                <h2>Próximamente</h2>
+                <p>Estamos preparando una selección especial de clásicos atemporales.<br>
+                ¡Mantente atento para las próximas actualizaciones!</p>
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        // Scroll Progress Indicator
+        window.addEventListener('scroll', () => {
+            const scrolled = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+            document.querySelector('.scroll-progress').style.width = scrolled + '%';
+        });
+
+        // Parallax Effect for Background Particles
+        window.addEventListener('scroll', () => {
+            const scrolled = window.scrollY;
+            const particles = document.querySelectorAll('.particle');
+            
+            particles.forEach((particle, index) => {
+                const speed = (index + 1) * 0.2;
+                particle.style.transform = `translateY(${scrolled * speed}px) rotate(${scrolled * 0.1}deg)`;
+            });
+        });
+    </script>
+</body>
+</html>
