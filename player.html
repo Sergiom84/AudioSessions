@@ -437,6 +437,21 @@
                 console.log('Audio loaded successfully');
             });
             
+            // Prevent auto-pause when window loses focus or is minimized
+            audio.addEventListener('pause', function(e) {
+                // Only auto-resume if not manually paused by user
+                if (!window.userPausedAudio && document.visibilityState === 'hidden') {
+                    setTimeout(() => {
+                        if (!window.userPausedAudio) {
+                            audio.play().catch(e => console.log('Auto-resume prevented by browser policy'));
+                        }
+                    }, 100);
+                }
+            });
+            
+            // Track user-initiated pause/play
+            window.userPausedAudio = false;
+            
             audio.load();
             
             // Generate tracklist
@@ -490,8 +505,10 @@
             playPauseBtn.addEventListener('click', () => {
                 if (isPlaying) {
                     audio.pause();
+                    window.userPausedAudio = true; // User manually paused
                 } else {
                     audio.play();
+                    window.userPausedAudio = false; // User manually played
                 }
             });
 
@@ -499,6 +516,7 @@
             stopBtn.addEventListener('click', () => {
                 audio.pause();
                 audio.currentTime = 0;
+                window.userPausedAudio = true; // User manually stopped
             });
 
             // Rewind 10 seconds
@@ -612,6 +630,33 @@
                 const speed = (index + 1) * 0.2;
                 particle.style.transform = `translateY(${scrolled * speed}px) rotate(${scrolled * 0.1}deg)`;
             });
+        });
+
+        // Handle visibility changes to keep audio playing when minimized
+        document.addEventListener('visibilitychange', function() {
+            const audio = document.getElementById('mainAudioPlayer');
+            
+            if (document.visibilityState === 'hidden') {
+                // Page is hidden (minimized, tab switched, etc.)
+                console.log('Page hidden, audio should continue playing');
+                // Don't pause the audio automatically
+            } else if (document.visibilityState === 'visible') {
+                // Page is visible again
+                console.log('Page visible again');
+                // If audio was playing before hiding and user didn't manually pause it, resume
+                if (!window.userPausedAudio && audio.paused) {
+                    audio.play().catch(e => console.log('Auto-resume prevented by browser'));
+                }
+            }
+        });
+
+        // Prevent audio from pausing when window loses focus
+        window.addEventListener('blur', function() {
+            console.log('Window lost focus - keeping audio playing');
+        });
+
+        window.addEventListener('focus', function() {
+            console.log('Window gained focus');
         });
 
         // Initialize when page loads
