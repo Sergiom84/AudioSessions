@@ -37,7 +37,7 @@
                 <p class="genre-subtitle-large">Sesiones exclusivas VIP para miembros especiales</p>
             </div>
 
-            <!-- VIP Sessions -->
+            <!-- Sari Bari 2025 VIP Session -->
             <article class="session-preview-card vip-session" data-session="sari-bari-2025">
                 <div class="session-image-container">
                     <svg class="session-image" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
@@ -145,32 +145,6 @@
                 </div>
             </article>
 
-            <!-- Template for future VIP sessions -->
-            <!-- 
-            <article class="session-preview-card vip-session" data-session="vip-exclusive-01">
-                <div class="session-image-container">
-                    <svg class="session-image" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
-                        <defs>
-                            <linearGradient id="vipGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" style="stop-color:#8b00ff;stop-opacity:0.9" />
-                                <stop offset="50%" style="stop-color:#4a00aa;stop-opacity:0.8" />
-                                <stop offset="100%" style="stop-color:#220055;stop-opacity:0.9" />
-                            </linearGradient>
-                        </defs>
-                        <rect width="400" height="400" fill="url(#vipGradient)"/>
-                        <text x="200" y="350" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="16" font-weight="bold">VIP EXCLUSIVE</text>
-                    </svg>
-                    <div class="session-overlay">
-                        <span class="session-cta">Reproducir →</span>
-                    </div>
-                    <div class="vip-badge">VIP</div>
-                </div>
-                <div class="session-meta">
-                    <h2>Sesión VIP Exclusiva</h2>
-                    <p class="session-description">Contenido exclusivo para miembros VIP</p>
-                </div>
-            </article>
-            -->
         </main>
     </div>
     
@@ -201,7 +175,7 @@
             });
         });
 
-        // Session card click handlers (for future VIP sessions)
+        // Session card click handlers
         document.querySelectorAll('.session-preview-card').forEach(card => {
             card.addEventListener('click', () => {
                 const sessionId = card.dataset.session;
