@@ -11,11 +11,9 @@
     <div class="scroll-progress"></div>
     
     <!-- Navigation -->
-    <nav class="main-nav">
-        <a href="index.html" class="nav-back">← Inicio</a>
-        <div class="nav-info">
-            <span class="nav-title">Remember</span>
-        </div>
+    <nav class="genre-nav">
+        <a href="index.html" class="nav-back">← Volver</a>
+        <h1 class="nav-title">REMEMBER</h1>
     </nav>
     
     <!-- Parallax Background Elements -->
@@ -32,17 +30,73 @@
     
     <div class="viewport">
         <main class="container sessions-container">
-            <div class="genre-header-large">
-                <h1 class="genre-title-large">Remember</h1>
-                <p class="genre-subtitle-large">Clásicos inolvidables que trascienden el tiempo</p>
-            </div>
-
-            <!-- Coming Soon placeholder -->
-            <div class="coming-soon-placeholder">
-                <h2>Próximamente</h2>
-                <p>Estamos preparando una selección especial de clásicos atemporales.<br>
-                ¡Mantente atento para las próximas actualizaciones!</p>
-            </div>
+            
+            <!-- Plastic Session -->
+            <article class="session-preview-card" data-session="plastic">
+                <div class="session-image-container">
+                    <svg class="session-image" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <!-- Purple gradient background inspired by original cover -->
+                            <linearGradient id="plasticGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#9B59B6;stop-opacity:1" />
+                                <stop offset="30%" style="stop-color:#8E44AD;stop-opacity:1" />
+                                <stop offset="60%" style="stop-color:#7D3C98;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#6C3483;stop-opacity:1" />
+                            </linearGradient>
+                            <!-- White accent gradient -->
+                            <linearGradient id="whiteAccent" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:0.9" />
+                                <stop offset="100%" style="stop-color:#F8F9FA;stop-opacity:0.8" />
+                            </linearGradient>
+                            <!-- Text gradient -->
+                            <linearGradient id="plasticText" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#FFD700;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#FFA500;stop-opacity:1" />
+                            </linearGradient>
+                            <filter id="glow-plastic">
+                                <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                                <feMerge> 
+                                    <feMergeNode in="coloredBlur"/>
+                                    <feMergeNode in="SourceGraphic"/>
+                                </feMerge>
+                            </filter>
+                        </defs>
+                        
+                        <!-- Purple background -->
+                        <rect width="400" height="400" fill="url(#plasticGradient)"/>
+                        
+                        <!-- White curved shape inspired by original logo -->
+                        <path d="M80,100 Q200,80 320,100 Q300,200 200,220 Q100,200 80,100 Z" fill="url(#whiteAccent)" opacity="0.9"/>
+                        
+                        <!-- Secondary white accent -->
+                        <path d="M120,150 Q200,130 280,150 Q260,220 200,240 Q140,220 120,150 Z" fill="rgba(255,255,255,0.6)" opacity="0.7"/>
+                        
+                        <!-- Geometric elements -->
+                        <circle cx="200" cy="180" r="30" fill="rgba(255,255,255,0.3)" stroke="rgba(255,255,255,0.5)" stroke-width="2"/>
+                        <circle cx="200" cy="180" r="15" fill="rgba(255,255,255,0.8)"/>
+                        
+                        <!-- Retro elements -->
+                        <rect x="100" y="320" width="200" height="4" fill="rgba(255,255,255,0.6)"/>
+                        <rect x="120" y="330" width="160" height="2" fill="rgba(255,255,255,0.4)"/>
+                        
+                        <!-- Main title -->
+                        <text x="200" y="300" text-anchor="middle" fill="url(#plasticText)" font-size="42" font-weight="bold" font-family="Arial, sans-serif" filter="url(#glow-plastic)">PLASTIC</text>
+                        
+                        <!-- Subtitle -->
+                        <text x="200" y="360" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="14" font-weight="bold">CLASSIC TRANCE ANTHEMS</text>
+                        
+                        <!-- Top label -->
+                        <text x="200" y="40" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="12" font-weight="bold">REMEMBER</text>
+                    </svg>
+                    <div class="session-overlay">
+                        <span class="session-cta">Reproducir →</span>
+                    </div>
+                </div>
+                <div class="session-meta">
+                    <h2>Plastic</h2>
+                    <p class="session-description">Homenaje a la mítica discoteca Plastic de Madrid. Una selección de clásicos trance que marcaron una época</p>
+                </div>
+            </article>
         </main>
     </div>
     
