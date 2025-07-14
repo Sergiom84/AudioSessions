@@ -592,21 +592,21 @@
                         <text x="200" y="60" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="12" font-weight="bold">REMEMBER</text>
                     </svg>
                 `,
-                tracks: [
-                    'Fragma - Man On The Moon',
-                    'Mauro Picotto - Komodo', 
-                    'Kai Tracid - Your Own Reality',
-                    'Virtualmismo - I Try To Find',
-                    'Joy Kitikonti - Joyenergizer',
-                    'Aqualords - Children of the Demon',
-                    'Cosmicman - I Love You (Shane 54 Remix)',
-                    'Basic Dawn - Pure Thrust (Nu NRG Remix)',
-                    'Abel Ramos - Das Spiegel',
-                    'Miguel Serna - In My Dreams',
-                    'Elastica - The Test',
-                    'AND ONE - Metalhammer',
-                    'Tyna Saez - Tupakamaru',
-                    'Iguana - Mauro Picotto'
+                tracklist: [
+                    { time: '00:00', artist: 'Fragma', title: 'Man On The Moon', label: 'Trance' },
+                    { time: '04:15', artist: 'Mauro Picotto', title: 'Komodo', label: 'Hard Trance' },
+                    { time: '08:30', artist: 'Kai Tracid', title: 'Your Own Reality', label: 'Progressive Trance' },
+                    { time: '12:45', artist: 'Virtualmismo', title: 'I Try To Find', label: 'Euro Trance' },
+                    { time: '16:20', artist: 'Joy Kitikonti', title: 'Joyenergizer', label: 'Uplifting Trance' },
+                    { time: '20:10', artist: 'Aqualords', title: 'Children of the Demon', label: 'Classic Trance' },
+                    { time: '24:25', artist: 'Cosmicman', title: 'I Love You (Shane 54 Remix)', label: 'Vocal Trance' },
+                    { time: '28:40', artist: 'Basic Dawn', title: 'Pure Thrust (Nu NRG Remix)', label: 'Tech Trance' },
+                    { time: '32:55', artist: 'Abel Ramos', title: 'Das Spiegel', label: 'Progressive Trance' },
+                    { time: '36:30', artist: 'Miguel Serna', title: 'In My Dreams', label: 'Uplifting Trance' },
+                    { time: '40:15', artist: 'Elastica', title: 'The Test', label: 'Electronic' },
+                    { time: '44:20', artist: 'AND ONE', title: 'Metalhammer', label: 'EBM/Trance' },
+                    { time: '48:35', artist: 'Tyna Saez', title: 'Tupakamaru', label: 'Progressive Trance' },
+                    { time: '52:10', artist: 'Iguana', title: 'Mauro Picotto', label: 'Hard Trance' }
                 ]
             }
         };
@@ -686,16 +686,17 @@
             const tracklistContainer = document.getElementById('tracklist');
             tracklistContainer.innerHTML = '';
             
-            session.tracklist.forEach((track, index) => {
+            const tracklist = session.tracklist || session.tracks || [];
+            tracklist.forEach((track, index) => {
                 const trackElement = document.createElement('div');
                 trackElement.className = 'track-item';
                 trackElement.innerHTML = `
                     <div class="track-number">${String(index + 1).padStart(2, '0')}</div>
-                    <div class="track-time">${track.time}</div>
+                    <div class="track-time">${track.time || '--:--'}</div>
                     <div class="track-info">
-                        <div class="track-artist">${track.artist}</div>
-                        <div class="track-title">${track.title}</div>
-                        <div class="track-label">${track.label}</div>
+                        <div class="track-artist">${track.artist || track.split(' - ')[0] || 'Unknown Artist'}</div>
+                        <div class="track-title">${track.title || track.split(' - ')[1] || track}</div>
+                        <div class="track-label">${track.label || 'Trance'}</div>
                     </div>
                 `;
                 tracklistContainer.appendChild(trackElement);

@@ -80,6 +80,13 @@ Color scheme: Dark theme with neon accent colors (green, pink, blue, orange)
   - Premium tracklist with Deep House, Vocal House, and Classic House tracks
   - Complete VIP experience with exclusive access
 
+- **Plastic**: Classic Trance session with 14-track tracklist (55:40 duration)
+  - Location: Remember section as Classic Trance Anthems
+  - Archive.org URL: https://archive.org/details/plastic_202507
+  - Purple-themed SVG artwork inspired by original Plastic club cover design
+  - Tribute to the legendary Plastic club in Madrid (Cea Bermúdez)
+  - Features classic trance tracks from early 2000s era including Fragma, Mauro Picotto, Kai Tracid
+
 ### Private Zone Features
 - **Password Authentication**: Secure access with password "Julio25"
 - **Session Storage**: Browser session storage for access persistence
