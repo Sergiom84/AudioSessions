@@ -396,6 +396,139 @@
                     { time: '64:45', artist: 'Dombresky', title: 'Soul Sacrifice', label: 'Sweat It Out' },
                     { time: '70:00', artist: 'Noizu', title: 'Summer 91', label: 'Insomniac Records' }
                 ]
+            },
+            'sari-bari-2025': {
+                title: 'Sari Bari 2025',
+                subtitle: 'Una sesión exclusiva VIP con una selección premium de House, Deep y Vocal',
+                audioUrl: 'https://archive.org/download/saribari-20-25/Saribari%2020%2025.mp3',
+                downloadUrl: 'https://archive.org/details/saribari-20-25',
+                duration: '01:45:30',
+                cover: `
+                    <svg class="session-cover-svg" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <!-- Sunset gradient background -->
+                            <linearGradient id="sunsetGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" style="stop-color:#FFB366;stop-opacity:1" />
+                                <stop offset="30%" style="stop-color:#FF8A65;stop-opacity:1" />
+                                <stop offset="60%" style="stop-color:#FF7043;stop-opacity:1" />
+                                <stop offset="80%" style="stop-color:#D84315;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#1565C0;stop-opacity:1" />
+                            </linearGradient>
+                            <!-- Ocean gradient -->
+                            <linearGradient id="oceanGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" style="stop-color:#4FC3F7;stop-opacity:0.8" />
+                                <stop offset="100%" style="stop-color:#0277BD;stop-opacity:1" />
+                            </linearGradient>
+                            <!-- Text gradient -->
+                            <linearGradient id="titleGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#5D4037;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#3E2723;stop-opacity:1" />
+                            </linearGradient>
+                            <filter id="glow-warm">
+                                <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                                <feMerge> 
+                                    <feMergeNode in="coloredBlur"/>
+                                    <feMergeNode in="SourceGraphic"/>
+                                </feMerge>
+                            </filter>
+                        </defs>
+                        
+                        <!-- Sky background -->
+                        <rect width="400" height="280" fill="url(#sunsetGradient)"/>
+                        
+                        <!-- Ocean -->
+                        <rect x="0" y="280" width="400" height="120" fill="url(#oceanGradient)"/>
+                        
+                        <!-- Sun -->
+                        <circle cx="200" cy="220" r="40" fill="#FFD54F" opacity="0.9"/>
+                        <circle cx="200" cy="220" r="35" fill="#FFF176" opacity="0.7"/>
+                        
+                        <!-- Palm trees silhouettes -->
+                        <g fill="#263238" opacity="0.8">
+                            <!-- Left palm -->
+                            <ellipse cx="320" cy="270" rx="3" ry="25"/>
+                            <path d="M320,245 Q310,235 305,230 Q315,235 320,245"/>
+                            <path d="M320,245 Q330,235 335,230 Q325,235 320,245"/>
+                            <path d="M320,245 Q325,225 330,220 Q320,230 320,245"/>
+                            <path d="M320,245 Q315,225 310,220 Q320,230 320,245"/>
+                            
+                            <!-- Right palm -->
+                            <ellipse cx="350" cy="280" rx="2" ry="20"/>
+                            <path d="M350,260 Q345,250 340,245 Q350,250 350,260"/>
+                            <path d="M350,260 Q355,250 360,245 Q350,250 350,260"/>
+                            <path d="M350,260 Q352,240 355,235 Q350,245 350,260"/>
+                        </g>
+                        
+                        <!-- Tropical flowers -->
+                        <g>
+                            <!-- Pink flower -->
+                            <circle cx="80" cy="320" r="12" fill="#FF8A80"/>
+                            <circle cx="80" cy="320" r="8" fill="#FF5722" opacity="0.8"/>
+                            
+                            <!-- Yellow hibiscus -->
+                            <circle cx="120" cy="340" r="10" fill="#FFD54F"/>
+                            <circle cx="120" cy="340" r="6" fill="#FF9800" opacity="0.7"/>
+                            
+                            <!-- Red flower -->
+                            <circle cx="280" cy="350" r="8" fill="#D32F2F"/>
+                            <circle cx="280" cy="350" r="5" fill="#F44336" opacity="0.8"/>
+                            
+                            <!-- Blue flower -->
+                            <circle cx="100" cy="360" r="6" fill="#1976D2"/>
+                            <circle cx="100" cy="360" r="4" fill="#2196F3" opacity="0.7"/>
+                        </g>
+                        
+                        <!-- Botanical icon at top -->
+                        <circle cx="200" cy="60" r="25" fill="rgba(93, 64, 55, 0.2)" stroke="#5D4037" stroke-width="2"/>
+                        <g fill="#5D4037" opacity="0.8">
+                            <path d="M190,55 Q195,45 200,50 Q205,45 210,55 Q200,65 190,55"/>
+                            <path d="M195,65 Q200,70 205,65"/>
+                            <circle cx="198" cy="58" r="1"/>
+                            <circle cx="202" cy="58" r="1"/>
+                        </g>
+                        
+                        <!-- Main title -->
+                        <text x="200" y="130" text-anchor="middle" fill="url(#titleGradient)" font-size="36" font-weight="bold" font-family="Arial, sans-serif" filter="url(#glow-warm)">SARI BARI</text>
+                        <text x="200" y="160" text-anchor="middle" fill="url(#titleGradient)" font-size="18" font-weight="bold" font-family="Arial, sans-serif">AGOSTO 2025</text>
+                        
+                        <!-- VIP Badge -->
+                        <rect x="160" y="300" width="80" height="20" rx="10" fill="rgba(139,0,255,0.9)" stroke="rgba(255,255,255,0.7)" stroke-width="1"/>
+                        <text x="200" y="314" text-anchor="middle" fill="rgba(255,255,255,0.95)" font-size="11" font-weight="bold">VIP EXCLUSIVE</text>
+                        
+                        <!-- Genre label -->
+                        <text x="200" y="380" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="14" font-weight="bold">HOUSE / DEEP / VOCAL</text>
+                    </svg>
+                `,
+                tracklist: [
+                    { time: '00:00', artist: 'Nomumbah', title: 'Like A Rainbow feat. Nadirah Shakoor', label: 'Deep House' },
+                    { time: '04:30', artist: 'Various', title: 'Caterpillar (Atjazz Instrumental Remix)', label: 'Deep House' },
+                    { time: '08:45', artist: 'Beatsbyhand x Kali Mija', title: 'Gypsy Woman', label: 'House' },
+                    { time: '12:20', artist: 'Maverick Sabre Feat Jorja Smith', title: 'Slow Down James Cole', label: 'Vocal House' },
+                    { time: '16:10', artist: 'Various', title: 'Wish I Didn\'t Miss You (feat. Billie Brown)', label: 'Vocal House' },
+                    { time: '19:45', artist: 'iO (Mulen)', title: 'Report (Original Mix)', label: 'Tech House' },
+                    { time: '23:30', artist: 'Soulsearcher', title: 'Can\'t Get Enough', label: 'Classic House' },
+                    { time: '27:15', artist: 'Ezel', title: 'Don\'t Know Yet', label: 'Deep House' },
+                    { time: '31:00', artist: 'RNDT feat. Kleophazz', title: 'Check One Two', label: 'House' },
+                    { time: '34:20', artist: 'Various', title: 'Suena el Sabor', label: 'Latin House' },
+                    { time: '38:10', artist: 'Moloko', title: 'Sing It Back (Boris Dlugosch Reprise)', label: 'Classic House' },
+                    { time: '42:45', artist: 'Spencer Morales feat Tasha Larae', title: 'I Need Your Lovin', label: 'Vocal House' },
+                    { time: '46:30', artist: 'LUZON', title: 'THE BAGIO TRACK (CHUS Y CEBALLOS RMX)', label: 'Tech House' },
+                    { time: '50:15', artist: 'Blue Six', title: 'Music & Wine (Speakeasy 3000!)', label: 'Deep House' },
+                    { time: '54:00', artist: 'Sam Ruffillo', title: 'House Tipo Cosi', label: 'House' },
+                    { time: '57:25', artist: 'Dirty Old Ann', title: 'Turn Me On', label: 'Tech House' },
+                    { time: '61:10', artist: 'Massiande', title: 'Dancing Stuff (I love the way)', label: 'House' },
+                    { time: '64:45', artist: 'Julien Jabre', title: 'Swimming Places', label: 'Deep House' },
+                    { time: '68:20', artist: 'DJ Rolando', title: 'Jaguar (Golan Zocher & Kai Vice Remix)', label: 'Tech House' },
+                    { time: '72:00', artist: 'Master Le Funk', title: 'Believe (Ministers Vocal Mix)', label: 'Vocal House' },
+                    { time: '75:40', artist: 'Jaykill, Linda Lovatón', title: 'Cure Me (Vocal Mix)', label: 'Vocal House' },
+                    { time: '79:15', artist: 'Droog', title: 'Lucent', label: 'Deep House' },
+                    { time: '82:50', artist: 'Fingers Inc', title: 'My House Acapella', label: 'Classic House' },
+                    { time: '86:30', artist: 'Sparrow & Barbossa, Cee ElAssaad', title: 'Libre', label: 'Afro House' },
+                    { time: '90:10', artist: '&ME', title: 'The Rapture Pt.II (Coco Vocal Edit)', label: 'Deep House' },
+                    { time: '93:45', artist: 'Franky Rizardo', title: 'Revoke', label: 'Tech House' },
+                    { time: '97:20', artist: 'Octave One', title: 'Black Water (Full Strings) - TMR', label: 'Deep House' },
+                    { time: '101:00', artist: 'Berin, Mana Project', title: 'Many Times (Original Mix)', label: 'Deep House' }
+                ]
             }
         };
 
@@ -410,6 +543,9 @@
             if (sessionId === 'nature-tech-house') {
                 document.getElementById('mainSessionTitle').textContent = 'Nature';
                 document.getElementById('sessionSubtitle').textContent = 'Tech House';
+            } else if (sessionId === 'sari-bari-2025') {
+                document.getElementById('mainSessionTitle').textContent = 'Sari Bari 2025';
+                document.getElementById('sessionSubtitle').textContent = 'VIP Exclusive';
             } else {
                 document.getElementById('mainSessionTitle').textContent = 'Progressive House';
                 document.getElementById('sessionSubtitle').textContent = 'First Date Vol. II';

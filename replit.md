@@ -67,6 +67,19 @@ Color scheme: Dark theme with neon accent colors (green, pink, blue, orange)
   - Complete metadata and tracklist integration
   - Modern custom audio player with play/pause, stop, forward/rewind controls
 
+- **Nature**: Tech House session with 25-track tracklist (75:32 duration)
+  - Location: Techno section as Tech House
+  - Archive.org URL: https://archive.org/details/nature-club
+  - Green-themed SVG artwork with oval design and tech elements
+  - Full audio playback functionality with background play support
+
+- **Sari Bari 2025**: VIP Exclusive House/Deep/Vocal session with 28-track tracklist (105:00 duration)
+  - Location: Private Zone as VIP Exclusive
+  - Archive.org URL: https://archive.org/details/saribari-20-25
+  - Tropical sunset themed SVG artwork inspired by original cover design
+  - Premium tracklist with Deep House, Vocal House, and Classic House tracks
+  - Complete VIP experience with exclusive access
+
 ### Private Zone Features
 - **Password Authentication**: Secure access with password "Julio25"
 - **Session Storage**: Browser session storage for access persistence
