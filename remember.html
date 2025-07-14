@@ -31,10 +31,17 @@
     <div class="viewport">
         <main class="container sessions-container">
             
-            <!-- Plastic Session -->
-            <article class="session-preview-card" data-session="plastic">
-                <div class="session-image-container">
-                    <svg class="session-image" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+            <!-- Remember Header -->
+            <div class="genre-header">
+                <h1>Remember</h1>
+                <p>Clásicos atemporales que trascienden el tiempo</p>
+            </div>
+            
+            <div class="sessions-grid">
+                <!-- Plastic Session -->
+                <article class="session-card" data-session="plastic">
+                    <div class="session-image-container">
+                        <svg class="session-image" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
                         <defs>
                             <!-- Purple gradient background inspired by original cover -->
                             <linearGradient id="plasticGradient" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -85,15 +92,16 @@
                         <!-- Subtitle -->
                         <text x="150" y="270" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="12" font-weight="bold">CLASSIC TRANCE</text>
                     </svg>
-                    <div class="session-overlay">
-                        <span class="session-cta">Reproducir →</span>
+                        <div class="session-overlay">
+                            <span class="session-cta">Reproducir →</span>
+                        </div>
                     </div>
-                </div>
-                <div class="session-meta">
-                    <h2>Plastic</h2>
-                    <p class="session-description">Homenaje a la mítica discoteca Plastic de Madrid. Una selección de clásicos trance que marcaron una época</p>
-                </div>
-            </article>
+                    <div class="session-meta">
+                        <h2>Plastic</h2>
+                        <p class="session-description">Homenaje a la mítica discoteca Plastic de Madrid. Una selección de clásicos trance que marcaron una época</p>
+                    </div>
+                </article>
+            </div>
         </main>
     </div>
     
@@ -117,7 +125,7 @@
 
         // Session Card Navigation (for future sessions)
         document.addEventListener('DOMContentLoaded', () => {
-            const sessionCards = document.querySelectorAll('.session-preview-card');
+            const sessionCards = document.querySelectorAll('.session-card');
             
             sessionCards.forEach(card => {
                 card.classList.add('in-view');
