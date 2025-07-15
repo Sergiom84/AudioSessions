@@ -6,6 +6,7 @@
     <title>Audio Player - Sessions Archive</title>
     <meta name="description" content="Audio player with tracklist and download">
     <link rel="stylesheet" href="style.css">
+    <script src="global-player.js"></script>
 </head>
 <body data-page="player">
     <!-- Scroll Progress Indicator -->
@@ -1068,14 +1069,31 @@
             let isPlaying = false;
             let isDragging = false;
 
+            // Store current session data for global player
+            window.currentSessionData = {
+                title: session.title,
+                subtitle: session.subtitle,
+                audioUrl: session.audioUrl
+            };
+
             // Play/Pause functionality
             playPauseBtn.addEventListener('click', () => {
                 if (isPlaying) {
                     audio.pause();
                     window.userPausedAudio = true; // User manually paused
+                    
+                    // Pause global player too
+                    if (window.globalAudioPlayer) {
+                        window.globalAudioPlayer.pause();
+                    }
                 } else {
                     audio.play();
                     window.userPausedAudio = false; // User manually played
+                    
+                    // Start global player with current session
+                    if (window.startGlobalPlayer) {
+                        window.startGlobalPlayer(window.currentSessionData);
+                    }
                 }
             });
 
@@ -1084,12 +1102,22 @@
                 audio.pause();
                 audio.currentTime = 0;
                 window.userPausedAudio = true; // User manually stopped
+                
+                // Stop global player too
+                if (window.globalAudioPlayer) {
+                    window.globalAudioPlayer.stop();
+                }
             });
 
             // Rewind 10 seconds
             rewindBtn.addEventListener('click', () => {
                 if (!isNaN(audio.duration) && audio.currentTime >= 0) {
                     audio.currentTime = Math.max(0, audio.currentTime - 10);
+                    
+                    // Sync with global player
+                    if (window.globalAudioPlayer && window.globalAudioPlayer.audio) {
+                        window.globalAudioPlayer.audio.currentTime = audio.currentTime;
+                    }
                 }
             });
 
@@ -1097,6 +1125,11 @@
             forwardBtn.addEventListener('click', () => {
                 if (!isNaN(audio.duration) && audio.currentTime >= 0) {
                     audio.currentTime = Math.min(audio.duration, audio.currentTime + 10);
+                    
+                    // Sync with global player
+                    if (window.globalAudioPlayer && window.globalAudioPlayer.audio) {
+                        window.globalAudioPlayer.audio.currentTime = audio.currentTime;
+                    }
                 }
             });
 
@@ -1138,6 +1171,11 @@
                     const rect = progressBar.getBoundingClientRect();
                     const percent = (e.clientX - rect.left) / rect.width;
                     audio.currentTime = percent * audio.duration;
+                    
+                    // Sync with global player
+                    if (window.globalAudioPlayer && window.globalAudioPlayer.audio) {
+                        window.globalAudioPlayer.audio.currentTime = audio.currentTime;
+                    }
                 }
             });
 

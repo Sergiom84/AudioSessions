@@ -6,6 +6,7 @@
     <title>House Sessions Archive</title>
     <meta name="description" content="House music sessions collection">
     <link rel="stylesheet" href="style.css">
+    <script src="global-player.js"></script>
 </head>
 <body data-genre="house">
     <!-- Scroll Progress Indicator -->
@@ -327,12 +328,40 @@
             });
         });
 
+        // Session data for global player
+        const sessionData = {
+            'first-date-vol-ii': {
+                title: 'First Date Vol. II',
+                subtitle: 'Progressive House - Melodic & Deep',
+                audioUrl: 'https://archive.org/download/first-date-vol.-ii/First%20Date%20Vol.%20II.mp3'
+            },
+            'nati-nati': {
+                title: 'Nati Nati',
+                subtitle: 'Organic House - Melodic & Groovy',
+                audioUrl: 'https://archive.org/download/nati-nati/Nati%20Nati.mp3'
+            },
+            'elrow': {
+                title: 'ElROW',
+                subtitle: 'House Festival - Tech House, Groovy, Party',
+                audioUrl: 'https://archive.org/download/ro-wllaz-o/ElROW.mp3'
+            }
+        };
+
         // Session card click handlers
         document.querySelectorAll('.session-preview-card').forEach(card => {
-            card.addEventListener('click', () => {
+            card.addEventListener('click', (e) => {
+                e.preventDefault();
                 const sessionId = card.dataset.session;
-                // Redirect to player page
-                window.location.href = `player.html?session=${sessionId}`;
+                
+                // Start global player with session data
+                if (sessionData[sessionId] && window.startGlobalPlayer) {
+                    window.startGlobalPlayer(sessionData[sessionId]);
+                }
+                
+                // Still navigate to player page for full experience after a short delay
+                setTimeout(() => {
+                    window.location.href = `player.html?session=${sessionId}`;
+                }, 300);
             });
         });
 

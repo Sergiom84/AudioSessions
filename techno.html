@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Techno - Audio Sessions Archive</title>
     <link rel="stylesheet" href="style.css">
+    <script src="global-player.js"></script>
 </head>
 <body data-genre="techno" data-page="sessions">
     <!-- Scroll Progress Indicator -->
@@ -312,6 +313,25 @@
             });
         });
 
+        // Session data for global player
+        const sessionData = {
+            'los-ninos-del-parque': {
+                title: 'Los niños del parque',
+                subtitle: 'Underground Techno - Industrial, Acid, Minimal',
+                audioUrl: 'https://archive.org/download/los-ninos-del-parque/Los%20ni%C3%B1os%20del%20parque.mp3'
+            },
+            'aero-red': {
+                title: 'Aero-Red',
+                subtitle: 'Acid Techno - Acid, Hard, Old School, Underground',
+                audioUrl: 'https://archive.org/download/aero-red/Aero-Red.mp3'
+            },
+            'nature-club': {
+                title: 'Nature',
+                subtitle: 'Tech House - Progressive & Melodic',
+                audioUrl: 'https://archive.org/download/nature-club/Nature.mp3'
+            }
+        };
+
         // Session Card Navigation
         document.addEventListener('DOMContentLoaded', () => {
             const sessionCards = document.querySelectorAll('.session-preview-card');
@@ -320,10 +340,20 @@
             sessionCards.forEach(card => {
                 card.classList.add('in-view');
                 
-                card.addEventListener('click', () => {
+                card.addEventListener('click', (e) => {
+                    e.preventDefault();
                     const sessionId = card.getAttribute('data-session');
+                    
+                    // Start global player with session data
+                    if (sessionId && sessionData[sessionId] && window.startGlobalPlayer) {
+                        window.startGlobalPlayer(sessionData[sessionId]);
+                    }
+                    
+                    // Still navigate to player page for full experience after a short delay
                     if (sessionId) {
-                        window.location.href = `player.html?session=${sessionId}`;
+                        setTimeout(() => {
+                            window.location.href = `player.html?session=${sessionId}`;
+                        }, 300);
                     }
                 });
                 
