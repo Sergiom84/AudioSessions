@@ -787,6 +787,79 @@
                     { time: '61:30', artist: 'The Infinity Project', title: 'Stimuli (Astral Projection)', label: 'Acid' },
                     { time: '65:20', artist: 'Popof', title: 'Popof', label: 'Hard' }
                 ]
+            },
+            'nati-nati': {
+                title: 'Nati Nati',
+                subtitle: 'Organic House - Melodic, Deep, Groovy',
+                audioUrl: 'https://archive.org/download/nati-nati/Nati%20Nati.mp3',
+                downloadUrl: 'https://archive.org/details/nati-nati',
+                duration: '35:20',
+                cover: `
+                    <svg class="session-cover-svg" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="natiGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#ff6b35;stop-opacity:1" />
+                                <stop offset="25%" style="stop-color:#f7931e;stop-opacity:1" />
+                                <stop offset="50%" style="stop-color:#ffd23f;stop-opacity:1" />
+                                <stop offset="75%" style="stop-color:#06d6a0;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#118ab2;stop-opacity:1" />
+                            </linearGradient>
+                            <radialGradient id="circleGradient1" cx="50%" cy="50%" r="50%">
+                                <stop offset="0%" style="stop-color:#ff6b35;stop-opacity:0.8" />
+                                <stop offset="100%" style="stop-color:#073b4c;stop-opacity:0.6" />
+                            </radialGradient>
+                            <radialGradient id="circleGradient2" cx="50%" cy="50%" r="50%">
+                                <stop offset="0%" style="stop-color:#06d6a0;stop-opacity:0.9" />
+                                <stop offset="100%" style="stop-color:#118ab2;stop-opacity:0.7" />
+                            </radialGradient>
+                            <filter id="glow-organic">
+                                <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+                                <feMerge> 
+                                    <feMergeNode in="coloredBlur"/>
+                                    <feMergeNode in="SourceGraphic"/>
+                                </feMerge>
+                            </filter>
+                        </defs>
+                        
+                        <!-- Base gradient background -->
+                        <rect width="400" height="400" fill="url(#natiGradient)"/>
+                        
+                        <!-- Organic circular patterns inspired by the image -->
+                        <circle cx="100" cy="90" r="35" fill="url(#circleGradient1)" opacity="0.8"/>
+                        <circle cx="300" cy="120" r="45" fill="url(#circleGradient2)" opacity="0.7"/>
+                        <circle cx="200" cy="160" r="25" fill="rgba(255,107,53,0.6)" opacity="0.9"/>
+                        <circle cx="80" cy="240" r="40" fill="rgba(6,214,160,0.7)" opacity="0.8"/>
+                        <circle cx="320" cy="280" r="38" fill="rgba(17,138,178,0.8)" opacity="0.9"/>
+                        <circle cx="240" cy="330" r="30" fill="rgba(255,210,63,0.7)" opacity="0.8"/>
+                        
+                        <!-- Smaller organic dots -->
+                        <circle cx="160" cy="70" r="12" fill="rgba(247,147,30,0.8)" filter="url(#glow-organic)"/>
+                        <circle cx="270" cy="210" r="16" fill="rgba(255,107,53,0.9)" filter="url(#glow-organic)"/>
+                        <circle cx="120" cy="310" r="14" fill="rgba(6,214,160,0.8)" filter="url(#glow-organic)"/>
+                        <circle cx="340" cy="70" r="8" fill="rgba(17,138,178,0.9)" filter="url(#glow-organic)"/>
+                        <circle cx="50" cy="160" r="18" fill="rgba(255,210,63,0.7)" filter="url(#glow-organic)"/>
+                        
+                        <!-- Central focal point -->
+                        <circle cx="200" cy="200" r="50" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="3" filter="url(#glow-organic)"/>
+                        <circle cx="200" cy="200" r="20" fill="rgba(255,255,255,0.9)" filter="url(#glow-organic)"/>
+                        
+                        <!-- Title -->
+                        <text x="200" y="350" text-anchor="middle" fill="rgba(255,255,255,0.95)" font-size="32" font-weight="bold" filter="url(#glow-organic)">NATI</text>
+                        <text x="200" y="380" text-anchor="middle" fill="rgba(255,255,255,0.95)" font-size="32" font-weight="bold" filter="url(#glow-organic)">NATI</text>
+                    </svg>
+                `,
+                tracklist: [
+                    { time: '00:00', artist: 'Rampa', title: '2000', label: 'Melodic' },
+                    { time: '03:30', artist: 'Sergio Fernández', title: 'Jade', label: 'Deep' },
+                    { time: '07:15', artist: 'Cioz', title: 'Burning Soul', label: 'Groovy' },
+                    { time: '10:45', artist: 'Cioz ft. Eleonora', title: 'Dancing In The Night', label: 'Melodic' },
+                    { time: '14:20', artist: 'Keinemusik', title: 'Discoteca feat. Sofie', label: 'Deep' },
+                    { time: '18:00', artist: 'Rampa', title: 'The Church', label: 'Groovy' },
+                    { time: '21:35', artist: 'Clemente', title: 'The Captain Of Her Heart', label: 'Melodic' },
+                    { time: '25:10', artist: 'Cioz', title: 'A Funky Peacock and a Tiger', label: 'Groovy' },
+                    { time: '28:45', artist: 'Eli & Fur', title: 'Coming Back', label: 'Deep' },
+                    { time: '32:20', artist: 'Spektre', title: 'Another Life', label: 'Melodic' }
+                ]
             }
         };
 
@@ -813,6 +886,9 @@
             } else if (sessionId === 'aero-red') {
                 document.getElementById('mainSessionTitle').textContent = 'Aero-Red';
                 document.getElementById('sessionSubtitle').textContent = 'Acid Techno';
+            } else if (sessionId === 'nati-nati') {
+                document.getElementById('mainSessionTitle').textContent = 'Nati Nati';
+                document.getElementById('sessionSubtitle').textContent = 'Organic House';
             } else {
                 document.getElementById('mainSessionTitle').textContent = 'Progressive House';
                 document.getElementById('sessionSubtitle').textContent = 'First Date Vol. II';

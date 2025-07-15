@@ -67,6 +67,13 @@ Color scheme: Dark theme with neon accent colors (green, pink, blue, orange)
   - Complete metadata and tracklist integration
   - Modern custom audio player with play/pause, stop, forward/rewind controls
 
+- **Nati Nati**: Organic House session with 10-track tracklist (35:20 duration)
+  - Location: House section as Organic House
+  - Archive.org URL: https://archive.org/details/nati-nati
+  - Colorful organic pattern SVG artwork inspired by cellular/natural forms
+  - Features artists like Rampa, Keinemusik, Cioz, and Eli & Fur
+  - Melodic and groovy house vibes with deep emotional elements
+
 - **Los niños del parque**: Underground Techno session with 16-track tracklist (64:32 duration)
   - Location: Techno section as Underground Techno
   - Archive.org URL: https://archive.org/details/los-ninos-del-parque
