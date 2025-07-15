@@ -240,6 +240,72 @@
                     <p class="session-description">Una selección orgánica de house melódico con artistas como Rampa, Keinemusik y Cioz</p>
                 </div>
             </article>
+
+            <!-- ElROW Session -->
+            <article class="session-preview-card" data-session="elrow">
+                <div class="session-image-container">
+                    <svg class="session-image" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="elrowGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#ff4081;stop-opacity:1" />
+                                <stop offset="25%" style="stop-color:#ff9800;stop-opacity:1" />
+                                <stop offset="50%" style="stop-color:#ffeb3b;stop-opacity:1" />
+                                <stop offset="75%" style="stop-color:#4caf50;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#2196f3;stop-opacity:1" />
+                            </linearGradient>
+                            <linearGradient id="elrowAccent" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#e91e63;stop-opacity:1" />
+                                <stop offset="50%" style="stop-color:#ff5722;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#ff9800;stop-opacity:1" />
+                            </linearGradient>
+                            <filter id="glow-party">
+                                <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                                <feMerge> 
+                                    <feMergeNode in="coloredBlur"/>
+                                    <feMergeNode in="SourceGraphic"/>
+                                </feMerge>
+                            </filter>
+                        </defs>
+                        
+                        <!-- Festive gradient background -->
+                        <rect width="300" height="300" fill="url(#elrowGradient)"/>
+                        
+                        <!-- Party banner elements -->
+                        <path d="M0,40 Q75,20 150,40 Q225,60 300,40 L300,70 Q225,90 150,70 Q75,50 0,70 Z" fill="rgba(233,30,99,0.8)" filter="url(#glow-party)"/>
+                        <path d="M0,220 Q75,200 150,220 Q225,240 300,220 L300,250 Q225,270 150,250 Q75,230 0,250 Z" fill="rgba(255,87,34,0.8)" filter="url(#glow-party)"/>
+                        
+                        <!-- Triangular flags -->
+                        <polygon points="50,40 70,15 90,40" fill="rgba(76,175,80,0.9)"/>
+                        <polygon points="110,70 130,45 150,70" fill="rgba(33,150,243,0.9)"/>
+                        <polygon points="170,40 190,15 210,40" fill="rgba(255,193,7,0.9)"/>
+                        <polygon points="230,70 250,45 270,70" fill="rgba(156,39,176,0.9)"/>
+                        
+                        <!-- Central elrow text inspired by logo -->
+                        <rect x="60" y="120" width="180" height="60" rx="30" fill="rgba(255,235,59,0.95)" filter="url(#glow-party)"/>
+                        
+                        <!-- Main title with party style -->
+                        <text x="150" y="155" text-anchor="middle" fill="url(#elrowAccent)" font-size="32" font-weight="bold" font-family="Arial, sans-serif">elrow</text>
+                        
+                        <!-- Party confetti dots -->
+                        <circle cx="80" cy="90" r="4" fill="rgba(233,30,99,0.8)" filter="url(#glow-party)"/>
+                        <circle cx="220" cy="100" r="5" fill="rgba(76,175,80,0.8)" filter="url(#glow-party)"/>
+                        <circle cx="90" cy="200" r="3" fill="rgba(33,150,243,0.8)" filter="url(#glow-party)"/>
+                        <circle cx="210" cy="190" r="4" fill="rgba(255,193,7,0.8)" filter="url(#glow-party)"/>
+                        <circle cx="250" cy="120" r="3" fill="rgba(255,87,34,0.8)" filter="url(#glow-party)"/>
+                        <circle cx="70" cy="160" r="5" fill="rgba(156,39,176,0.8)" filter="url(#glow-party)"/>
+                        
+                        <!-- Subtitle -->
+                        <text x="150" y="270" text-anchor="middle" fill="rgba(255,255,255,0.95)" font-size="14" font-weight="bold">HOUSE FESTIVAL</text>
+                    </svg>
+                    <div class="session-overlay">
+                        <span class="session-cta">Reproducir →</span>
+                    </div>
+                </div>
+                <div class="session-meta">
+                    <h2>ElROW</h2>
+                    <p class="session-description">Una sesión festiva de house con artistas como Jay Lumen, George Privatti y Sergio Fernández</p>
+                </div>
+            </article>
         </main>
     </div>
     

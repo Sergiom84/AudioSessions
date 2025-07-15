@@ -74,6 +74,13 @@ Color scheme: Dark theme with neon accent colors (green, pink, blue, orange)
   - Features artists like Rampa, Keinemusik, Cioz, and Eli & Fur
   - Melodic and groovy house vibes with deep emotional elements
 
+- **ElROW**: House Festival session with 20-track tracklist (68:30 duration)
+  - Location: House section as House Festival
+  - Archive.org URL: https://archive.org/details/ro-wllaz-o
+  - Vibrant party-themed SVG artwork with colorful banners and festive elements
+  - Features artists like Jay Lumen, George Privatti, Sergio Fernández, and Umek
+  - Tech house and groovy party tracks inspired by ElROW festival atmosphere
+
 - **Los niños del parque**: Underground Techno session with 16-track tracklist (64:32 duration)
   - Location: Techno section as Underground Techno
   - Archive.org URL: https://archive.org/details/los-ninos-del-parque
