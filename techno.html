@@ -149,6 +149,71 @@
                 </div>
             </article>
 
+            <!-- Aero-Red Session -->
+            <article class="session-preview-card" data-session="aero-red">
+                <div class="session-image-container">
+                    <svg class="session-image" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="acidGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#ff1744;stop-opacity:1" />
+                                <stop offset="30%" style="stop-color:#e91e63;stop-opacity:1" />
+                                <stop offset="60%" style="stop-color:#9c27b0;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#673ab7;stop-opacity:1" />
+                            </linearGradient>
+                            <linearGradient id="acidAccent" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#00e676;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#1de9b6;stop-opacity:1" />
+                            </linearGradient>
+                            <filter id="glow-acid">
+                                <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+                                <feMerge> 
+                                    <feMergeNode in="coloredBlur"/>
+                                    <feMergeNode in="SourceGraphic"/>
+                                </feMerge>
+                            </filter>
+                            <filter id="distortion">
+                                <feTurbulence baseFrequency="0.9" numOctaves="4" result="noise"/>
+                                <feDisplacementMap in="SourceGraphic" in2="noise" scale="3"/>
+                            </filter>
+                        </defs>
+                        
+                        <!-- Acid gradient background -->
+                        <rect width="300" height="300" fill="url(#acidGradient)"/>
+                        
+                        <!-- Abstract acid shapes -->
+                        <path d="M50,80 Q100,50 150,80 Q200,110 250,80 Q220,150 150,170 Q80,150 50,80" fill="rgba(0,230,118,0.3)" filter="url(#glow-acid)"/>
+                        <path d="M80,120 Q130,90 180,120 Q230,150 180,180 Q130,210 80,180 Q50,150 80,120" fill="rgba(29,233,182,0.4)" filter="url(#glow-acid)"/>
+                        
+                        <!-- Central acid circle -->
+                        <circle cx="150" cy="150" r="60" fill="none" stroke="url(#acidAccent)" stroke-width="4" filter="url(#glow-acid)"/>
+                        <circle cx="150" cy="150" r="40" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2" stroke-dasharray="10,5"/>
+                        <circle cx="150" cy="150" r="20" fill="rgba(0,230,118,0.8)" filter="url(#glow-acid)"/>
+                        
+                        <!-- Acid tech elements -->
+                        <rect x="130" y="40" width="40" height="4" fill="url(#acidAccent)" filter="url(#glow-acid)"/>
+                        <rect x="130" y="50" width="40" height="2" fill="rgba(255,255,255,0.8)"/>
+                        <rect x="130" y="250" width="40" height="4" fill="url(#acidAccent)" filter="url(#glow-acid)"/>
+                        <rect x="130" y="260" width="40" height="2" fill="rgba(255,255,255,0.8)"/>
+                        
+                        <!-- Side tech elements -->
+                        <rect x="40" y="130" width="4" height="40" fill="url(#acidAccent)" filter="url(#glow-acid)"/>
+                        <rect x="256" y="130" width="4" height="40" fill="url(#acidAccent)" filter="url(#glow-acid)"/>
+                        
+                        <!-- Title -->
+                        <text x="150" y="220" text-anchor="middle" fill="url(#acidAccent)" font-size="28" font-weight="bold" filter="url(#glow-acid)">AERO</text>
+                        <text x="150" y="245" text-anchor="middle" fill="rgba(255,23,68,0.9)" font-size="28" font-weight="bold" filter="url(#glow-acid)">RED</text>
+                        <text x="150" y="285" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="12">ACID TECHNO</text>
+                    </svg>
+                    <div class="session-overlay">
+                        <span class="session-cta">Reproducir →</span>
+                    </div>
+                </div>
+                <div class="session-meta">
+                    <h2>Aero-Red</h2>
+                    <p class="session-description">Una sesión de acid techno old school con sonidos duros y underground</p>
+                </div>
+            </article>
+
             <article class="session-preview-card" data-session="nature-tech-house">
                 <div class="session-image-container">
                     <svg class="session-image" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">

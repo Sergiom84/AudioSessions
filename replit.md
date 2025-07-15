@@ -67,6 +67,20 @@ Color scheme: Dark theme with neon accent colors (green, pink, blue, orange)
   - Complete metadata and tracklist integration
   - Modern custom audio player with play/pause, stop, forward/rewind controls
 
+- **Los niños del parque**: Underground Techno session with 16-track tracklist (64:32 duration)
+  - Location: Techno section as Underground Techno
+  - Archive.org URL: https://archive.org/details/los-ninos-del-parque
+  - Black and white doll-themed SVG artwork inspired by underground aesthetic
+  - Tags: Industrial, Acid, Minimal, Underground, Tech House, Berlin Techno
+  - Full audio playback functionality with background play support
+
+- **Aero-Red**: Acid Techno session with 20-track tracklist (68:45 duration)
+  - Location: Techno section as Acid Techno
+  - Archive.org URL: https://archive.org/details/aero-red
+  - Vibrant acid-themed SVG artwork with neon gradients and geometric elements
+  - Tags: Acid, Hard, Old School, Underground
+  - Features classic acid techno tracks from ASYS, Union Jack, Pan-Pot, and more
+
 - **Nature**: Tech House session with 25-track tracklist (75:32 duration)
   - Location: Techno section as Tech House
   - Archive.org URL: https://archive.org/details/nature-club
