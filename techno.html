@@ -27,6 +27,93 @@
     
     <div class="viewport">
         <main class="container sessions-container">
+            
+            <!-- Los niños del parque Session -->
+            <article class="session-preview-card" data-session="los-ninos-del-parque">
+                <div class="session-image-container">
+                    <svg class="session-image" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="darkGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#0a0a0a;stop-opacity:1" />
+                                <stop offset="50%" style="stop-color:#1a1a1a;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#000000;stop-opacity:1" />
+                            </linearGradient>
+                            <filter id="glow-white">
+                                <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                                <feMerge> 
+                                    <feMergeNode in="coloredBlur"/>
+                                    <feMergeNode in="SourceGraphic"/>
+                                </feMerge>
+                            </filter>
+                        </defs>
+                        
+                        <!-- Black background -->
+                        <rect width="300" height="300" fill="url(#darkGradient)"/>
+                        
+                        <!-- Doll figure inspired by original -->
+                        <g fill="#ffffff" stroke="#000" stroke-width="1.5" filter="url(#glow-white)">
+                            <!-- Head -->
+                            <ellipse cx="150" cy="100" rx="35" ry="40" fill="#ffffff"/>
+                            <!-- Hair -->
+                            <path d="M115,80 Q150,60 185,80 Q185,90 180,95 Q170,85 150,85 Q130,85 120,95 Q115,90 115,80" fill="#ffffff"/>
+                            <!-- Hair spikes -->
+                            <path d="M140,65 L145,55 L150,65 M150,65 L155,55 L160,65" stroke="#000" stroke-width="2" fill="none"/>
+                            
+                            <!-- Eyes -->
+                            <circle cx="140" cy="95" r="8" fill="#ffffff" stroke="#000" stroke-width="2"/>
+                            <circle cx="160" cy="95" r="8" fill="#ffffff" stroke="#000" stroke-width="2"/>
+                            <circle cx="140" cy="95" r="3" fill="#000"/>
+                            <circle cx="160" cy="95" r="3" fill="#000"/>
+                            <!-- Eye stitches -->
+                            <path d="M132,88 L148,102 M148,88 L132,102" stroke="#000" stroke-width="1.5"/>
+                            <path d="M152,88 L168,102 M168,88 L152,102" stroke="#000" stroke-width="1.5"/>
+                            
+                            <!-- Nose cross stitch -->
+                            <path d="M150,105 L150,115 M145,110 L155,110" stroke="#000" stroke-width="2"/>
+                            
+                            <!-- Mouth -->
+                            <path d="M135,120 Q150,130 165,120" stroke="#000" stroke-width="2" fill="none"/>
+                            
+                            <!-- Face stitches -->
+                            <path d="M125,100 L130,105 L125,110" stroke="#000" stroke-width="1.5" fill="none"/>
+                            <path d="M175,100 L170,105 L175,110" stroke="#000" stroke-width="1.5" fill="none"/>
+                            
+                            <!-- Body -->
+                            <rect x="130" y="140" width="40" height="60" rx="5" fill="#ffffff"/>
+                            
+                            <!-- Dress/coat details -->
+                            <path d="M135,150 L165,150 M135,160 L165,160 M135,170 L165,170" stroke="#000" stroke-width="1"/>
+                            <!-- Buttons -->
+                            <circle cx="150" cy="155" r="2" fill="#000"/>
+                            <circle cx="150" cy="165" r="2" fill="#000"/>
+                            <circle cx="150" cy="175" r="2" fill="#000"/>
+                            
+                            <!-- Arms -->
+                            <rect x="115" y="150" width="15" height="30" rx="7" fill="#ffffff"/>
+                            <rect x="170" y="150" width="15" height="30" rx="7" fill="#ffffff"/>
+                            
+                            <!-- Legs -->
+                            <rect x="135" y="200" width="12" height="40" rx="6" fill="#ffffff"/>
+                            <rect x="153" y="200" width="12" height="40" rx="6" fill="#ffffff"/>
+                            
+                            <!-- Collar/bow -->
+                            <path d="M145,145 Q150,140 155,145 Q150,150 145,145" fill="#ffffff" stroke="#000"/>
+                        </g>
+                        
+                        <!-- Title -->
+                        <text x="150" y="270" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="14" font-weight="bold">LOS NIÑOS DEL PARQUE</text>
+                        <text x="150" y="285" text-anchor="middle" fill="rgba(255,255,255,0.7)" font-size="10">UNDERGROUND TECHNO</text>
+                    </svg>
+                    <div class="session-overlay">
+                        <span class="session-cta">Reproducir →</span>
+                    </div>
+                </div>
+                <div class="session-meta">
+                    <h2>Los niños del parque</h2>
+                    <p class="session-description">Una selección underground de techno industrial, acid y minimal con sonidos de Berlin</p>
+                </div>
+            </article>
+
             <!-- 💡 Copia este bloque para nuevas sesiones de Techno -->
             <article class="session-preview-card" data-session="hard-techno-01">
                 <div class="session-image-container">
