@@ -30,281 +30,155 @@
     <div class="viewport">
         <main class="container sessions-container">
             <!-- 💡 Copia este bloque para nuevas sesiones de House -->
-            <article class="session-preview-card" data-session="deep-house-01">
-                <div class="session-image-container">
-                    <svg class="session-image" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
-                        <defs>
-                            <linearGradient id="deepHouseGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" style="stop-color:#00ff88;stop-opacity:0.9" />
-                                <stop offset="50%" style="stop-color:#00cc66;stop-opacity:0.8" />
-                                <stop offset="100%" style="stop-color:#009944;stop-opacity:0.9" />
-                            </linearGradient>
-                            <filter id="glow">
-                                <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
-                                <feMerge> 
-                                    <feMergeNode in="coloredBlur"/>
-                                    <feMergeNode in="SourceGraphic"/>
-                                </feMerge>
-                            </filter>
-                        </defs>
-                        <rect width="300" height="300" fill="url(#deepHouseGradient)"/>
-                        <circle cx="150" cy="150" r="80" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
-                        <circle cx="150" cy="150" r="60" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
-                        <circle cx="150" cy="150" r="40" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
-                        <circle cx="150" cy="150" r="8" fill="rgba(255,255,255,0.8)" filter="url(#glow)"/>
-                        <text x="150" y="250" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="16" font-weight="bold">DEEP HOUSE SESSION</text>
-                    </svg>
-                    <div class="session-overlay">
-                        <span class="session-cta">Reproducir →</span>
-                    </div>
-                </div>
-                <div class="session-meta">
-                    <h2>Deep House Journey</h2>
-                    <p class="session-description">Una sesión profunda y melódica que explora los sonidos del deep house contemporáneo</p>
-                </div>
-            </article>
-
-            <article class="session-preview-card" data-session="tech-house-01">
-                <div class="session-image-container">
-                    <svg class="session-image" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
-                        <defs>
-                            <linearGradient id="techHouseGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" style="stop-color:#00ff88;stop-opacity:0.7" />
-                                <stop offset="50%" style="stop-color:#00aa55;stop-opacity:0.8" />
-                                <stop offset="100%" style="stop-color:#007733;stop-opacity:0.9" />
-                            </linearGradient>
-                        </defs>
-                        <rect width="300" height="300" fill="url(#techHouseGradient)"/>
-                        <polygon points="75,75 225,75 275,150 225,225 75,225 25,150" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
-                        <polygon points="100,100 200,100 240,150 200,200 100,200 60,150" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
-                        <rect x="140" y="140" width="20" height="20" fill="rgba(255,255,255,0.8)"/>
-                        <text x="150" y="250" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="16" font-weight="bold">TECH HOUSE VIBES</text>
-                    </svg>
-                    <div class="session-overlay">
-                        <span class="session-cta">Reproducir →</span>
-                    </div>
-                </div>
-                <div class="session-meta">
-                    <h2>Tech House Vibes</h2>
-                    <p class="session-description">Ritmos techno fusionados con groove house para la pista de baile</p>
-                </div>
-            </article>
+            <!-- Eliminadas las cards de Deep House Journey y Tech House Vibes -->
 
             <article class="session-preview-card" data-session="first-date-vol-ii">
                 <div class="session-image-container">
-                    <svg class="session-image" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
-                        <defs>
-                            <linearGradient id="realSunsetGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" style="stop-color:#FFD700;stop-opacity:0.9" />
-                                <stop offset="20%" style="stop-color:#FFA500;stop-opacity:0.9" />
-                                <stop offset="40%" style="stop-color:#FF8C00;stop-opacity:0.8" />
-                                <stop offset="60%" style="stop-color:#FF7F50;stop-opacity:0.8" />
-                                <stop offset="80%" style="stop-color:#CD853F;stop-opacity:0.7" />
-                                <stop offset="100%" style="stop-color:#8B4513;stop-opacity:0.9" />
-                            </linearGradient>
-                            <linearGradient id="desertGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" style="stop-color:#DEB887;stop-opacity:0.8" />
-                                <stop offset="50%" style="stop-color:#CD853F;stop-opacity:0.7" />
-                                <stop offset="100%" style="stop-color:#8B4513;stop-opacity:0.6" />
-                            </linearGradient>
-                            <radialGradient id="sunRadial" cx="70%" cy="25%" r="50%">
-                                <stop offset="0%" style="stop-color:#FFFACD;stop-opacity:0.9" />
-                                <stop offset="30%" style="stop-color:#FFE4B5;stop-opacity:0.6" />
-                                <stop offset="70%" style="stop-color:#FFA500;stop-opacity:0.3" />
-                                <stop offset="100%" style="stop-color:#FF8C00;stop-opacity:0.1" />
-                            </radialGradient>
-                            <filter id="desert-glow">
-                                <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
-                                <feMerge> 
-                                    <feMergeNode in="coloredBlur"/>
-                                    <feMergeNode in="SourceGraphic"/>
-                                </feMerge>
-                            </filter>
-                        </defs>
-                        
-                        <!-- Sky background with real sunset colors -->
-                        <rect width="400" height="400" fill="url(#realSunsetGradient)"/>
-                        
-                        <!-- Sun glow -->
-                        <ellipse cx="280" cy="100" rx="100" ry="40" fill="url(#sunRadial)" filter="url(#desert-glow)"/>
-                        
-                        <!-- Layered mountains like in the original -->
-                        <path d="M0,160 Q50,140 100,150 T200,145 T300,150 T400,160 L400,400 L0,400 Z" fill="rgba(139, 69, 19, 0.6)"/>
-                        <path d="M0,180 Q80,160 150,170 T250,165 T350,170 T400,180 L400,400 L0,400 Z" fill="rgba(160, 82, 45, 0.5)"/>
-                        <path d="M0,200 Q100,180 180,190 T280,185 T400,200 L400,400 L0,400 Z" fill="rgba(205, 133, 63, 0.4)"/>
-                        
-                        <!-- Desert floor more realistic -->
-                        <rect x="0" y="250" width="400" height="150" fill="url(#desertGradient)"/>
-                        
-                        <!-- Van positioned like in original (left side) -->
-                        <g transform="translate(80, 260)">
-                            <!-- Van body - more realistic proportions -->
-                            <rect x="0" y="15" width="70" height="30" rx="4" fill="rgba(245, 245, 220, 0.9)" stroke="rgba(139, 69, 19, 0.8)" stroke-width="1"/>
-                            <!-- Van front -->
-                            <rect x="70" y="10" width="30" height="35" rx="3" fill="rgba(245, 245, 220, 0.9)" stroke="rgba(139, 69, 19, 0.8)" stroke-width="1"/>
-                            <!-- Windows with realistic tint -->
-                            <rect x="75" y="13" width="20" height="10" rx="1" fill="rgba(70, 130, 180, 0.6)"/>
-                            <rect x="5" y="18" width="10" height="8" rx="1" fill="rgba(70, 130, 180, 0.6)"/>
-                            <rect x="20" y="18" width="10" height="8" rx="1" fill="rgba(70, 130, 180, 0.6)"/>
-                            <rect x="35" y="18" width="10" height="8" rx="1" fill="rgba(70, 130, 180, 0.6)"/>
-                            <rect x="50" y="18" width="10" height="8" rx="1" fill="rgba(70, 130, 180, 0.6)"/>
-                            <!-- Wheels -->
-                            <circle cx="20" cy="50" r="8" fill="rgba(64, 64, 64, 0.9)"/>
-                            <circle cx="80" cy="50" r="8" fill="rgba(64, 64, 64, 0.9)"/>
-                            <!-- Dust trail more prominent -->
-                            <ellipse cx="-15" cy="55" rx="25" ry="5" fill="rgba(222, 184, 135, 0.5)" opacity="0.8"/>
-                            <ellipse cx="-35" cy="57" rx="30" ry="3" fill="rgba(222, 184, 135, 0.4)" opacity="0.6"/>
-                            <ellipse cx="-55" cy="58" rx="35" ry="2" fill="rgba(222, 184, 135, 0.3)" opacity="0.4"/>
-                        </g>
-                        
-                        <!-- Atmospheric dust particles -->
-                        <circle cx="150" cy="180" r="1" fill="rgba(255, 255, 255, 0.4)" opacity="0.6"/>
-                        <circle cx="250" cy="160" r="1.5" fill="rgba(255, 255, 255, 0.5)" opacity="0.7"/>
-                        <circle cx="320" cy="170" r="1" fill="rgba(255, 255, 255, 0.3)" opacity="0.5"/>
-                        <circle cx="180" cy="190" r="0.8" fill="rgba(255, 255, 255, 0.3)" opacity="0.4"/>
-                        
-                        <!-- Title overlay -->
-                        <text x="200" y="330" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="14" font-weight="bold" font-family="Arial, sans-serif">PROGRESSIVE</text>
-                        <text x="200" y="350" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="14" font-weight="bold" font-family="Arial, sans-serif">HOUSE</text>
-                    </svg>
+                    <img class="session-image" src="attached_assets/First Date Vol. II_1752256054711.png" alt="Carátula First Date Vol. II" />
                     <div class="session-overlay">
                         <span class="session-cta">Reproducir →</span>
                     </div>
                 </div>
                 <div class="session-meta">
-                    <h2>Progressive House</h2>
-                    <p class="session-description">First Date Vol. II</p>
+                    <h2 style="text-align:left;">
+                        <span style="color:#181818; user-select:none; display:block;">Invisible</span>
+                        <span style="color:#181818; user-select:none; display:block;">Invisible</span>
+                        First Date<br>Vol.II
+                    </h2>
+                    <div style="text-align:center;">
+                        <p class="session-description" style="margin-bottom:0.3em;">
+                            <span style="color:#181818; user-select:none; display:block;">Invisible</span><span style="color:#181818; user-select:none; display:block;">Invisible</span><span style="color:#181818; user-select:none; display:block;">Invisible</span>
+                            First Date Vol.II
+                        </p>
+                        <p class="session-description" style="margin-top:0;">La primera cita que nadie vio venir. Sin aviso, sin Vol. I. Solo música para desnudarse sin palabras</p>
+                    </div>
                 </div>
             </article>
 
             <!-- Nati Nati Session -->
             <article class="session-preview-card" data-session="nati-nati">
                 <div class="session-image-container">
-                    <svg class="session-image" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
-                        <defs>
-                            <linearGradient id="natiGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" style="stop-color:#ff6b35;stop-opacity:1" />
-                                <stop offset="25%" style="stop-color:#f7931e;stop-opacity:1" />
-                                <stop offset="50%" style="stop-color:#ffd23f;stop-opacity:1" />
-                                <stop offset="75%" style="stop-color:#06d6a0;stop-opacity:1" />
-                                <stop offset="100%" style="stop-color:#118ab2;stop-opacity:1" />
-                            </linearGradient>
-                            <radialGradient id="circleGradient1" cx="50%" cy="50%" r="50%">
-                                <stop offset="0%" style="stop-color:#ff6b35;stop-opacity:0.8" />
-                                <stop offset="100%" style="stop-color:#073b4c;stop-opacity:0.6" />
-                            </radialGradient>
-                            <radialGradient id="circleGradient2" cx="50%" cy="50%" r="50%">
-                                <stop offset="0%" style="stop-color:#06d6a0;stop-opacity:0.9" />
-                                <stop offset="100%" style="stop-color:#118ab2;stop-opacity:0.7" />
-                            </radialGradient>
-                            <filter id="glow-organic">
-                                <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
-                                <feMerge> 
-                                    <feMergeNode in="coloredBlur"/>
-                                    <feMergeNode in="SourceGraphic"/>
-                                </feMerge>
-                            </filter>
-                        </defs>
-                        
-                        <!-- Base gradient background -->
-                        <rect width="300" height="300" fill="url(#natiGradient)"/>
-                        
-                        <!-- Organic circular patterns inspired by the image -->
-                        <circle cx="80" cy="70" r="25" fill="url(#circleGradient1)" opacity="0.8"/>
-                        <circle cx="220" cy="90" r="35" fill="url(#circleGradient2)" opacity="0.7"/>
-                        <circle cx="150" cy="120" r="20" fill="rgba(255,107,53,0.6)" opacity="0.9"/>
-                        <circle cx="60" cy="180" r="30" fill="rgba(6,214,160,0.7)" opacity="0.8"/>
-                        <circle cx="240" cy="200" r="28" fill="rgba(17,138,178,0.8)" opacity="0.9"/>
-                        <circle cx="180" cy="250" r="22" fill="rgba(255,210,63,0.7)" opacity="0.8"/>
-                        
-                        <!-- Smaller organic dots -->
-                        <circle cx="120" cy="50" r="8" fill="rgba(247,147,30,0.8)" filter="url(#glow-organic)"/>
-                        <circle cx="200" cy="160" r="12" fill="rgba(255,107,53,0.9)" filter="url(#glow-organic)"/>
-                        <circle cx="90" cy="230" r="10" fill="rgba(6,214,160,0.8)" filter="url(#glow-organic)"/>
-                        <circle cx="250" cy="50" r="6" fill="rgba(17,138,178,0.9)" filter="url(#glow-organic)"/>
-                        <circle cx="40" cy="120" r="14" fill="rgba(255,210,63,0.7)" filter="url(#glow-organic)"/>
-                        
-                        <!-- Central focal point -->
-                        <circle cx="150" cy="150" r="40" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2" filter="url(#glow-organic)"/>
-                        <circle cx="150" cy="150" r="15" fill="rgba(255,255,255,0.9)" filter="url(#glow-organic)"/>
-                        
-                        <!-- Title -->
-                        <text x="150" y="270" text-anchor="middle" fill="rgba(255,255,255,0.95)" font-size="24" font-weight="bold" filter="url(#glow-organic)">NATI</text>
-                        <text x="150" y="290" text-anchor="middle" fill="rgba(255,255,255,0.95)" font-size="24" font-weight="bold" filter="url(#glow-organic)">NATI</text>
-                    </svg>
+                    <img class="session-image" src="attached_assets/Nati Nati_1752569294098.png" alt="Carátula Nati Nati" />
                     <div class="session-overlay">
                         <span class="session-cta">Reproducir →</span>
                     </div>
                 </div>
                 <div class="session-meta">
-                    <h2>Nati Nati</h2>
-                    <p class="session-description">Una selección orgánica de house melódico con artistas como Rampa, Keinemusik y Cioz</p>
+                    <h2 style="text-align:left;">
+                        <span style="color:#181818; user-select:none; display:block;">Invisible</span>
+                        <span style="color:#181818; user-select:none; display:block;">Invisible</span>
+                        Nati Nati <span style="color:#181818; font-size:0.8em;">[LOG CAMBIO]</span>
+                    </h2>
+                    <p class="session-description">Una oda al groove fino y la emoción en loop. Así suena Nati Nati: femenina, profunda, inolvidable</p>
                 </div>
             </article>
 
-            <!-- ElROW Session -->
-            <article class="session-preview-card" data-session="elrow">
+            <article class="session-preview-card" data-session="ros-in-da-house">
                 <div class="session-image-container">
-                    <svg class="session-image" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
-                        <defs>
-                            <linearGradient id="elrowGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" style="stop-color:#ff4081;stop-opacity:1" />
-                                <stop offset="25%" style="stop-color:#ff9800;stop-opacity:1" />
-                                <stop offset="50%" style="stop-color:#ffeb3b;stop-opacity:1" />
-                                <stop offset="75%" style="stop-color:#4caf50;stop-opacity:1" />
-                                <stop offset="100%" style="stop-color:#2196f3;stop-opacity:1" />
-                            </linearGradient>
-                            <linearGradient id="elrowAccent" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" style="stop-color:#e91e63;stop-opacity:1" />
-                                <stop offset="50%" style="stop-color:#ff5722;stop-opacity:1" />
-                                <stop offset="100%" style="stop-color:#ff9800;stop-opacity:1" />
-                            </linearGradient>
-                            <filter id="glow-party">
-                                <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
-                                <feMerge> 
-                                    <feMergeNode in="coloredBlur"/>
-                                    <feMergeNode in="SourceGraphic"/>
-                                </feMerge>
-                            </filter>
-                        </defs>
-                        
-                        <!-- Festive gradient background -->
-                        <rect width="300" height="300" fill="url(#elrowGradient)"/>
-                        
-                        <!-- Party banner elements -->
-                        <path d="M0,40 Q75,20 150,40 Q225,60 300,40 L300,70 Q225,90 150,70 Q75,50 0,70 Z" fill="rgba(233,30,99,0.8)" filter="url(#glow-party)"/>
-                        <path d="M0,220 Q75,200 150,220 Q225,240 300,220 L300,250 Q225,270 150,250 Q75,230 0,250 Z" fill="rgba(255,87,34,0.8)" filter="url(#glow-party)"/>
-                        
-                        <!-- Triangular flags -->
-                        <polygon points="50,40 70,15 90,40" fill="rgba(76,175,80,0.9)"/>
-                        <polygon points="110,70 130,45 150,70" fill="rgba(33,150,243,0.9)"/>
-                        <polygon points="170,40 190,15 210,40" fill="rgba(255,193,7,0.9)"/>
-                        <polygon points="230,70 250,45 270,70" fill="rgba(156,39,176,0.9)"/>
-                        
-                        <!-- Central elrow text inspired by logo -->
-                        <rect x="60" y="120" width="180" height="60" rx="30" fill="rgba(255,235,59,0.95)" filter="url(#glow-party)"/>
-                        
-                        <!-- Main title with party style -->
-                        <text x="150" y="155" text-anchor="middle" fill="url(#elrowAccent)" font-size="32" font-weight="bold" font-family="Arial, sans-serif">elrow</text>
-                        
-                        <!-- Party confetti dots -->
-                        <circle cx="80" cy="90" r="4" fill="rgba(233,30,99,0.8)" filter="url(#glow-party)"/>
-                        <circle cx="220" cy="100" r="5" fill="rgba(76,175,80,0.8)" filter="url(#glow-party)"/>
-                        <circle cx="90" cy="200" r="3" fill="rgba(33,150,243,0.8)" filter="url(#glow-party)"/>
-                        <circle cx="210" cy="190" r="4" fill="rgba(255,193,7,0.8)" filter="url(#glow-party)"/>
-                        <circle cx="250" cy="120" r="3" fill="rgba(255,87,34,0.8)" filter="url(#glow-party)"/>
-                        <circle cx="70" cy="160" r="5" fill="rgba(156,39,176,0.8)" filter="url(#glow-party)"/>
-                        
-                        <!-- Subtitle -->
-                        <text x="150" y="270" text-anchor="middle" fill="rgba(255,255,255,0.95)" font-size="14" font-weight="bold">HOUSE FESTIVAL</text>
-                    </svg>
+                    <img class="session-image" src="attached_assets/ROS.png" alt="Carátula Ros In Da House" />
                     <div class="session-overlay">
                         <span class="session-cta">Reproducir →</span>
                     </div>
                 </div>
                 <div class="session-meta">
-                    <h2>ElROW</h2>
-                    <p class="session-description">Una sesión festiva de house con artistas como Jay Lumen, George Privatti y Sergio Fernández</p>
+                    <h2 style="text-align:left;">
+                        <span style="color:#181818; user-select:none; display:block;">Invisible</span>
+                        <span style="color:#181818; user-select:none; display:block;">Invisible</span>
+                        Ros In Da House
+                    </h2>
+                    <div style="text-align:center;">
+                        <p class="session-description">
+                            <span style="color:#181818; user-select:none; display:block;">Invisible</span>
+                            Ritmos profundos y mínimos, texturas orgánicas y matices afro unidos por pulsos melódicos y grooves implacables.
+                        </p>
+                    </div>
+                </div>
+            </article>
+
+            <article class="session-preview-card" data-session="primavera-sound">
+                <div class="session-image-container">
+                    <img class="session-image" src="attached_assets/primavera-sound.jpg" alt="Carátula Primavera Sound" />
+                    <div class="session-overlay">
+                        <span class="session-cta">Reproducir →</span>
+                    </div>
+                </div>
+                <div class="session-meta">
+                    <h2 style="text-align:left;">
+                        <span style="color:#181818; user-select:none; display:block;">Invisible</span>
+                        <span style="color:#181818; user-select:none; display:block;">Invisible</span>
+                        Primavera Sound
+                    </h2>
+                    <div style="text-align:center;">
+                        <p class="session-description">
+                            <span style="color:#181818; user-select:none; display:block;">Invisible</span>
+                            Esta sesión es un viaje sonoro desde una terraza al atardecer hasta un club al borde del amanecer.
+                        </p>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Terraceo en Graná Session -->
+            <article class="session-preview-card" data-session="terraceo-en-grana">
+                <div class="session-image-container">
+                    <img class="session-image" src="attached_assets/Terraceo_en_Grana.jpg" alt="Carátula Terraceo en Graná" />
+                    <div class="session-overlay">
+                        <span class="session-cta">Reproducir →</span>
+                    </div>
+                </div>
+                <div class="session-meta">
+                    <h2 style="text-align:left;">
+                        <span style="color:#181818; user-select:none; display:block;">Invisible</span>
+                        <span style="color:#181818; user-select:none; display:block;">Invisible</span>
+                        Terraceo en Graná
+                    </h2>
+                    <div style="text-align:center;">
+                        <p class="session-description">
+                            <span style="color:#181818; user-select:none; display:block;">Invisible</span>
+                            Sol, groove y buen rollo servido en copa larga.<br>Esta sesión huele a tarde de vermú, palmas discretas y cuerpos bailando sin mirar el reloj.
+                        </p>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Tributo SpS Session -->
+            <article class="session-preview-card" data-session="tributo-sps">
+                <div class="session-image-container">
+                    <img class="session-image" src="attached_assets/Tributo_SpS.jpg" alt="Carátula Tributo SpS" />
+                    <div class="session-overlay">
+                        <span class="session-cta">Reproducir →</span>
+                    </div>
+                </div>
+                <div class="session-meta">
+                    <h2 style="text-align:left;">
+                        <span style="color:#181818; user-select:none; display:block;">Invisible</span>
+                        <span style="color:#181818; user-select:none; display:block;">Invisible</span>
+                        Tributo SpS
+                    </h2>
+                    <p class="session-description">Grooves oscuros, vocales embriagadores y esencia tribal con aroma a domingo en Madrid. Revive la magia del templo sonoro que marcó a toda una generación.</p>
+                </div>
+            </article>
+
+            <article class="session-preview-card" data-session="jaus-musik">
+                <div class="session-image-container">
+                    <img class="session-image" src="attached_assets/Jaus Musik.jpg" alt="Carátula Jaus Musik" />
+                    <div class="session-overlay">
+                        <span class="session-cta">Reproducir →</span>
+                    </div>
+                </div>
+                <div class="session-meta">
+                    <h2 style="text-align:left;">
+                        <span style="color:#181818; user-select:none; display:block;">Invisible</span>
+                        <span style="color:#181818; user-select:none; display:block;">Invisible</span>
+                        Jaus Musik
+                    </h2>
+                    <div style="text-align:center;">
+                        <p class="session-description">
+                            <span style="color:#181818; user-select:none; display:block;">Invisible</span>
+                            El título no es solo un juego de palabras, es una declaración de intenciones.<br>
+                            Una sesión que celebra los himnos que hicieron historia en la pista, voces icónicas y beats que no envejecen.<br>
+                            Ponte cómodo... o mejor, ¡ponte a bailar!
+                        </p>
+                    </div>
                 </div>
             </article>
         </main>
@@ -332,18 +206,38 @@
         const sessionData = {
             'first-date-vol-ii': {
                 title: 'First Date Vol. II',
-                subtitle: 'Progressive House - Melodic & Deep',
+                subtitle: 'La primera cita que nadie vio venir. Sin aviso, sin Vol. I. Solo música para desnudarse sin palabras',
                 audioUrl: 'https://archive.org/download/first-date-vol.-ii/First%20Date%20Vol.%20II.mp3'
             },
             'nati-nati': {
                 title: 'Nati Nati',
-                subtitle: 'Organic House - Melodic & Groovy',
+                subtitle: 'Una oda al groove fino y la emoción en loop. Así suena Nati Nati: femenina, profunda, inolvidable',
                 audioUrl: 'https://archive.org/download/nati-nati/Nati%20Nati.mp3'
             },
-            'elrow': {
-                title: 'ElROW',
-                subtitle: 'House Festival - Tech House, Groovy, Party',
-                audioUrl: 'https://archive.org/download/ro-wllaz-o/ElROW.mp3'
+            'ros-in-da-house': {
+                title: 'Ros In Da House',
+                subtitle: 'Ritmos profundos y mínimos, texturas orgánicas y matices afro unidos por pulsos melódicos y grooves implacables.',
+                audioUrl: 'https://dn721404.ca.archive.org/0/items/ros-in-da-house/Ros%20in%20da%20House.flac'
+            },
+            'tributo-sps': {
+                title: 'Tributo SpS',
+                subtitle: 'Grooves oscuros, vocales embriagadores y esencia tribal con aroma a domingo en Madrid. Revive la magia del templo sonoro que marcó a toda una generación.',
+                audioUrl: 'https://dn720705.ca.archive.org/0/items/tributo-sp-s/Tributo%20SpS.mp3'
+            },
+            'jaus-musik': {
+                title: 'Jaus Musik',
+                subtitle: 'El título no es solo un juego de palabras, es una declaración de intenciones. Una sesión que celebra los himnos que hicieron historia en la pista, voces icónicas y beats que no envejecen. Ponte cómodo... o mejor, ¡ponte a bailar!',
+                audioUrl: 'https://ia601702.us.archive.org/27/items/jaus-musik/Jaus%20Musik.flac'
+            },
+            'primavera-sound': {
+                title: 'Primavera Sound',
+                subtitle: 'Sound Journey',
+                audioUrl: 'https://dn721908.ca.archive.org/0/items/primavera-sound/Primavera%20Sound.flac'
+            },
+            'terraceo-en-grana': {
+                title: 'Terraceo en Graná',
+                subtitle: 'Sol, groove y buen rollo servido en copa larga. Esta sesión huele a tarde de vermú, palmas discretas y cuerpos bailando sin mirar el reloj.',
+                audioUrl: 'https://ia903103.us.archive.org/29/items/terraceo-en-grana/Terraceo%20en%20Gran%C3%A1.flac'
             }
         };
 
@@ -353,15 +247,8 @@
                 e.preventDefault();
                 const sessionId = card.dataset.session;
                 
-                // Start global player with session data
-                if (sessionData[sessionId] && window.startGlobalPlayer) {
-                    window.startGlobalPlayer(sessionData[sessionId]);
-                }
-                
-                // Still navigate to player page for full experience after a short delay
-                setTimeout(() => {
-                    window.location.href = `player.html?session=${sessionId}`;
-                }, 300);
+                // Navigate directly to player page
+                window.location.href = `player.html?session=${sessionId}`;
             });
         });
 

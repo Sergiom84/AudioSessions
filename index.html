@@ -284,16 +284,38 @@
             document.getElementById('errorMessage').textContent = '';
         });
 
-        document.getElementById('submitPassword').addEventListener('click', () => {
+        document.getElementById('submitPassword').addEventListener('click', async () => {
             const password = document.getElementById('passwordInput').value;
-            if (password === 'Julio25') {
-                // Store access in session
-                sessionStorage.setItem('privateAccess', 'true');
-                window.location.href = 'private.html';
-            } else {
-                document.getElementById('errorMessage').textContent = 'Contraseña incorrecta. Inténtalo de nuevo.';
-                document.getElementById('passwordInput').value = '';
-                document.getElementById('passwordInput').focus();
+            const errorMsg = document.getElementById('errorMessage');
+            
+            if (!password.trim()) {
+                errorMsg.textContent = 'Por favor, introduce una contraseña.';
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/auth', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ password: password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    // Store access in session
+                    sessionStorage.setItem('privateAccess', 'true');
+                    window.location.href = 'private.html';
+                } else {
+                    errorMsg.textContent = data.error || 'Contraseña incorrecta. Inténtalo de nuevo.';
+                    document.getElementById('passwordInput').value = '';
+                    document.getElementById('passwordInput').focus();
+                }
+            } catch (error) {
+                console.error('Authentication error:', error);
+                errorMsg.textContent = 'Error de conexión. Inténtalo de nuevo.';
             }
         });
 

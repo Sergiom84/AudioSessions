@@ -35,66 +35,38 @@
             <!-- Plastic Session -->
             <article class="session-preview-card" data-session="plastic">
                 <div class="session-image-container">
-                    <svg class="session-image" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
-                        <defs>
-                            <!-- Purple gradient background inspired by original cover -->
-                            <linearGradient id="plasticGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" style="stop-color:#9B59B6;stop-opacity:1" />
-                                <stop offset="30%" style="stop-color:#8E44AD;stop-opacity:1" />
-                                <stop offset="60%" style="stop-color:#7D3C98;stop-opacity:1" />
-                                <stop offset="100%" style="stop-color:#6C3483;stop-opacity:1" />
-                            </linearGradient>
-                            <!-- White accent gradient -->
-                            <linearGradient id="whiteAccent" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:0.9" />
-                                <stop offset="100%" style="stop-color:#F8F9FA;stop-opacity:0.8" />
-                            </linearGradient>
-                            <!-- Text gradient -->
-                            <linearGradient id="plasticText" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" style="stop-color:#FFD700;stop-opacity:1" />
-                                <stop offset="100%" style="stop-color:#FFA500;stop-opacity:1" />
-                            </linearGradient>
-                            <filter id="glow-plastic">
-                                <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
-                                <feMerge> 
-                                    <feMergeNode in="coloredBlur"/>
-                                    <feMergeNode in="SourceGraphic"/>
-                                </feMerge>
-                            </filter>
-                        </defs>
-                        
-                        <!-- Purple background -->
-                        <rect width="300" height="300" fill="url(#plasticGradient)"/>
-                        
-                        <!-- White curved shape inspired by original logo -->
-                        <path d="M60,80 Q150,60 240,80 Q220,150 150,170 Q80,150 60,80 Z" fill="url(#whiteAccent)" opacity="0.9"/>
-                        
-                        <!-- Secondary white accent -->
-                        <path d="M90,120 Q150,100 210,120 Q195,170 150,180 Q105,170 90,120 Z" fill="rgba(255,255,255,0.6)" opacity="0.7"/>
-                        
-                        <!-- Geometric elements -->
-                        <circle cx="150" cy="150" r="25" fill="rgba(255,255,255,0.3)" stroke="rgba(255,255,255,0.5)" stroke-width="2"/>
-                        <circle cx="150" cy="150" r="12" fill="rgba(255,255,255,0.8)"/>
-                        
-                        <!-- Retro elements -->
-                        <rect x="75" y="240" width="150" height="3" fill="rgba(255,255,255,0.6)"/>
-                        <rect x="90" y="248" width="120" height="2" fill="rgba(255,255,255,0.4)"/>
-                        
-                        <!-- Main title -->
-                        <text x="150" y="225" text-anchor="middle" fill="url(#plasticText)" font-size="28" font-weight="bold" font-family="Arial, sans-serif" filter="url(#glow-plastic)">PLASTIC</text>
-                        
-                        <!-- Subtitle -->
-                        <text x="150" y="270" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="12" font-weight="bold">CLASSIC TRANCE</text>
-                    </svg>
-                        <div class="session-overlay">
-                            <span class="session-cta">Reproducir →</span>
-                        </div>
+                    <img class="session-image" src="attached_assets/Plastic_1752516636118.png" alt="Carátula Plastic" />
+                    <div class="session-overlay">
+                        <span class="session-cta">Reproducir →</span>
                     </div>
-                    <div class="session-meta">
-                        <h2>Plastic</h2>
-                        <p class="session-description">Homenaje a la mítica discoteca Plastic de Madrid. Una selección de clásicos trance que marcaron una época</p>
+                </div>
+                <div class="session-meta">
+                    <h2 style="text-align:left;">
+                        <span style="color:#181818; user-select:none; display:block;">Invisible</span>
+                        <span style="color:#181818; user-select:none; display:block;">Invisible</span>
+                        Plastic
+                    </h2>
+                    <p class="session-description">Homenaje a la mítica discoteca Plastic de Madrid. Una selección de clásicos que marcaron una época</p>
+                </div>
+            </article>
+
+            <!-- Tributo MA Session -->
+            <article class="session-preview-card" data-session="tributo-ma">
+                <div class="session-image-container">
+                    <img class="session-image" src="attached_assets/Tributo_MA.jpg" alt="Carátula Tributo MA" />
+                    <div class="session-overlay">
+                        <span class="session-cta">Reproducir →</span>
                     </div>
-                </article>
+                </div>
+                <div class="session-meta">
+                    <h2 style="text-align:left;">
+                        <span style="color:#181818; user-select:none; display:block;">Invisible</span>
+                        <span style="color:#181818; user-select:none; display:block;">Invisible</span>
+                        Tributo MA
+                    </h2>
+                    <p class="session-description">Sube el volumen, cierra los ojos y transportémonos a aquella cabina del 97 donde todo era ritmo.</p>
+                </div>
+            </article>
         </main>
     </div>
     
@@ -123,11 +95,12 @@
             sessionCards.forEach(card => {
                 card.classList.add('in-view');
                 
-                card.addEventListener('click', () => {
+                card.addEventListener('click', (e) => {
+                    e.preventDefault();
                     const sessionId = card.getAttribute('data-session');
-                    if (sessionId) {
-                        window.location.href = `player.html?session=${sessionId}`;
-                    }
+                    
+                    // Navigate directly to player page
+                    window.location.href = `player.html?session=${sessionId}`;
                 });
                 
                 card.style.cursor = 'pointer';
