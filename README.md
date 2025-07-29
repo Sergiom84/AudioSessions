@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 🎵 AudioSessions - Interactive Music Archive
 
 Una aplicación web interactiva para archivo de sesiones de audio con reproductor global avanzado y sistema de autenticación seguro.
