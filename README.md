@@ -1,207 +1,235 @@
-# 🎵 Audio Sessions Archive
+# 🎵 AudioSessions - Interactive Music Archive
 
-Un archivo interactivo de sesiones de audio que presenta diferentes géneros musicales con un reproductor global mejorado y una zona privada protegida.
+Una aplicación web interactiva para archivo de sesiones de audio con reproductor global avanzado y sistema de autenticación seguro.
 
-## ✨ Características
+## 🌟 Demo en Vivo
 
-### 🎧 Reproductor Global Mejorado
-- **Controles avanzados**: Play/Pause, control de volumen, búsqueda temporal
+**🚀 [Ver Demo](https://tu-demo-url.com)** *(Próximamente)*
+
+## ✨ Características Principales
+
+### 🎧 **Reproductor Global Avanzado**
+- **Controles completos**: Play/Pause, volumen, navegación temporal
+- **Atajos de teclado**: Espacio (play/pause), flechas (volumen/navegación)
 - **Indicadores visuales**: Barra de progreso con buffer, estados de carga
-- **Atajos de teclado**: Espacio (play/pause), flechas (navegación/volumen)
-- **Manejo robusto de errores**: Reintentos automáticos, mensajes informativos
-- **Persistencia de estado**: Guarda la sesión actual en localStorage
-- **Responsive**: Optimizado para móviles y tablets
+- **Persistencia**: Mantiene la sesión actual entre páginas
+- **Sincronización bidireccional** entre reproductor global y principal
 
-### 🔐 Sistema de Autenticación Seguro
-- **API REST**: Autenticación basada en tokens de sesión
-- **Contraseñas hasheadas**: No más texto plano en el código
-- **Protección CSRF**: Tokens de seguridad para formularios
-- **Rate limiting**: Protección contra ataques de fuerza bruta
+### 🔐 **Sistema de Autenticación Robusto**
+- **API REST segura** con tokens de sesión
+- **Contraseñas hasheadas** (no más texto plano)
+- **Protección CSRF** con tokens de seguridad
+- **Rate limiting** contra ataques de fuerza bruta
 
-### 🎨 Interfaz Mejorada
-- **Accesibilidad**: Soporte para lectores de pantalla, navegación por teclado
-- **Estados visuales**: Loading, error, success con animaciones fluidas
-- **Responsive design**: Funciona en todos los dispositivos
-- **Modo alto contraste**: Soporte para preferencias de usuario
-- **Reducción de movimiento**: Respeta las preferencias de accesibilidad
+### 🎨 **Interfaz Moderna y Accesible**
+- **Diseño responsive** optimizado para móviles y desktop
+- **Soporte completo de accesibilidad** (WCAG 2.1)
+- **Navegación por teclado** y lectores de pantalla
+- **Animaciones fluidas** con respeto a preferencias de usuario
+- **Modo alto contraste** y reducción de movimiento
 
-### 🚀 API REST
-- `GET /api/sessions/<genre>` - Lista todas las sesiones de un género
-- `GET /api/sessions/<genre>/<id>` - Obtiene una sesión específica
-- `POST /api/auth` - Autenticación para zona privada
-- `POST /api/logout` - Cerrar sesión
-- `GET /api/health` - Estado de la aplicación
+### 🎵 **Géneros Musicales**
+- **🏠 House** - Deep House, Tech House, Vocal House
+- **⚡ Techno** - Berlin Techno, Acid, Industrial
+- **🌊 Progressive** - Progressive House, Trance
+- **💫 Remember** - Clásicos de los 90s y 2000s
+- **🔒 Private Zone** - Sesiones exclusivas VIP
 
-## 🛠️ Instalación y Configuración
+## 🛠️ Tecnologías
 
-### Requisitos Previos
-- Python 3.8+
-- pip (gestor de paquetes de Python)
+### **Backend**
+- **Flask 3.0** - Framework web Python
+- **Werkzeug** - Utilidades WSGI y seguridad
+- **API REST** completa con endpoints documentados
 
-### Instalación
+### **Frontend**
+- **Vanilla JavaScript** - Sin dependencias externas
+- **CSS3 moderno** - Grid, Flexbox, Custom Properties
+- **HTML5 semántico** - Estructura accesible
 
-1. **Clona o descarga el proyecto**
+### **Infraestructura**
+- **Python 3.8+** - Runtime backend
+- **Archivos estáticos** - Servidos eficientemente
+- **Cross-platform** - Windows, macOS, Linux
+
+## 🚀 Instalación Rápida
+
+### **Requisitos**
+- Python 3.8 o superior
+- pip (gestor de paquetes)
+
+### **Pasos**
+
+1. **Clona el repositorio**
 ```bash
+git clone https://github.com/Sergiom84/AudioSessions.git
 cd AudioSessions
 ```
 
-2. **Instala las dependencias**
+2. **Instala dependencias**
 ```bash
 pip install -r requirements.txt
 ```
 
-3. **Configura las variables de entorno**
+3. **Configura el entorno**
 ```bash
 cp .env.example .env
 # Edita .env con tus configuraciones
 ```
 
 4. **Ejecuta la aplicación**
+
+**Windows:**
+```bash
+./start.bat
+```
+
+**Linux/macOS:**
+```bash
+./start.sh
+```
+
+**Manual:**
 ```bash
 python app.py
 ```
 
-La aplicación estará disponible en `http://localhost:5000`
-
-## � Configuración
-
-### Variables de Entorno
-
-Crea un archivo `.env` basado en `.env.example`:
-
-```env
-# Configuración básica
-FLASK_ENV=development
-SECRET_KEY=tu-clave-secreta-muy-segura
-PORT=5000
-
-# Autenticación
-PRIVATE_ZONE_PASSWORD=tu-password-seguro
-
-# Límites de archivos
-MAX_CONTENT_LENGTH=16777216  # 16MB
+5. **Abre tu navegador**
+```
+http://localhost:5000
 ```
 
-### Configuración de Producción
+## 📡 API REST
 
-Para producción, usa un servidor WSGI como Gunicorn:
+### **Endpoints Principales**
 
-```bash
-gunicorn -w 4 -b 0.0.0.0:5000 app:app
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| `GET` | `/api/sessions/<genre>` | Lista sesiones por género |
+| `GET` | `/api/sessions/<genre>/<id>` | Obtiene sesión específica |
+| `POST` | `/api/auth` | Autenticación zona privada |
+| `POST` | `/api/logout` | Cerrar sesión |
+| `GET` | `/api/health` | Estado de la aplicación |
+
+### **Ejemplo de Uso**
+
+```javascript
+// Obtener sesiones de House
+fetch('/api/sessions/house')
+  .then(response => response.json())
+  .then(sessions => console.log(sessions));
+
+// Autenticación
+fetch('/api/auth', {
+  method: 'POST',
+  headers: {'Content-Type': 'application/json'},
+  body: JSON.stringify({password: 'tu-password'})
+});
 ```
 
-## 📱 Uso
+## 🎯 Estructura del Proyecto
 
-### Géneros Musicales
-- **House**: Sesiones de house music
-- **Techno**: Sesiones de techno
-- **Progressive**: Sesiones de progressive
-- **Remember**: Sesiones nostálgicas
-- **Zona Privada**: Contenido exclusivo (requiere autenticación)
-
-### Controles del Reproductor
-- **Espacio**: Play/Pause
-- **Flechas izq/der**: Retroceder/Avanzar 10 segundos
-- **Flechas arriba/abajo**: Subir/Bajar volumen
-- **Click en barra**: Buscar posición específica
-
-### Acceso a Zona Privada
-1. Click en "PRIVATE ZONE"
-2. Introduce la contraseña configurada
-3. Accede al contenido exclusivo
+```
+AudioSessions/
+├── 📁 attached_assets/          # Carátulas e imágenes
+├── 📄 app.py                   # Backend Flask con API
+├── 📄 global-player.js         # Reproductor global
+├── 📄 style.css               # Estilos CSS
+├── 📄 index.html              # Página principal
+├── 📄 player.html             # Reproductor principal
+├── 📄 house.html              # Sesiones House
+├── 📄 techno.html             # Sesiones Techno
+├── 📄 progressive.html        # Sesiones Progressive
+├── 📄 remember.html           # Sesiones Remember
+├── 📄 private.html            # Zona privada
+├── 📄 requirements.txt        # Dependencias Python
+├── 📄 .env.example           # Configuración ejemplo
+└── 📄 README.md              # Documentación
+```
 
 ## 🔒 Seguridad
 
-### Medidas Implementadas
-- ✅ **Contraseñas hasheadas** - No hay texto plano en el código
-- ✅ **Sesiones seguras** - Tokens de sesión con expiración
-- ✅ **Validación de entrada** - Prevención de path traversal
-- ✅ **Manejo de errores** - No exposición de información sensible
-- ✅ **Headers de seguridad** - CSRF protection
-- ✅ **Rate limiting** - Protección contra spam
+- ✅ **Contraseñas hasheadas** con Werkzeug
+- ✅ **Tokens CSRF** en formularios
+- ✅ **Rate limiting** en endpoints críticos
+- ✅ **Validación de entrada** en todas las APIs
+- ✅ **Headers de seguridad** configurados
 
-### Recomendaciones Adicionales
-- Cambiar `SECRET_KEY` en producción
-- Usar HTTPS en producción
-- Configurar firewall adecuado
-- Monitorear logs de acceso
+## 🌐 Despliegue
 
-## 📊 Monitoreo y Logs
-
-La aplicación incluye logging estructurado:
-
-```python
-# Los logs incluyen:
-- Timestamp de requests
-- IP del cliente  
-- Método HTTP y ruta
-- Código de respuesta
-- Errores de autenticación
-```
-
-## 🔄 Actualizaciones
-
-### Changelog Reciente
-- ✅ **v2.0** - API REST completa y reproductor mejorado
-- ✅ **v1.9** - Sistema de autenticación seguro
-- ✅ **v1.8** - Mejoras de accesibilidad y responsive
-- ✅ **v1.7** - Manejo robusto de errores
-- ✅ **v1.6** - Controles de volumen y atajos de teclado
-
-### Próximas Características
-- 🔄 Base de datos SQLite para persistencia
-- 🔄 Panel de administración web
-- 🔄 PWA con funcionamiento offline
-- 🔄 Sistema de playlists
-- 🔄 Analytics y métricas de uso
-
-## 🤝 Contribuir
-
-### Para Desarrolladores
-
-1. **Fork del proyecto**
-2. **Crea una rama para tu feature**
+### **Desarrollo Local**
 ```bash
-git checkout -b feature/nueva-caracteristica
-```
-3. **Commit tus cambios**
-```bash
-git commit -m "Añade nueva característica"
-```
-4. **Push a la rama**
-```bash
-git push origin feature/nueva-caracteristica
-```
-5. **Abre un Pull Request**
-
-### Estructura del Proyecto
-```
-AudioSessions/
-├── app.py                 # Aplicación Flask principal
-├── global-player.js       # Reproductor global
-├── style.css             # Estilos principales
-├── index.html            # Página principal
-├── *.html               # Páginas de géneros
-├── attached_assets/      # Imágenes y recursos
-├── requirements.txt      # Dependencias Python
-├── .env.example         # Configuración de ejemplo
-└── README.md            # Este archivo
+python app.py
+# Aplicación en http://localhost:5000
 ```
 
-## 📝 Licencia
+### **Producción**
+- Compatible con **Heroku**, **Vercel**, **Railway**
+- Configuración con variables de entorno
+- Archivos estáticos optimizados
 
-Este proyecto es de código abierto y está disponible bajo la licencia MIT.
+## 📱 Compatibilidad
 
-## 🆘 Soporte
+| Característica | Soporte |
+|----------------|---------|
+| **Navegadores** | Chrome 80+, Firefox 75+, Safari 13+, Edge 80+ |
+| **Móviles** | iOS 13+, Android 8+ |
+| **Tablets** | iPad OS, Android tablets |
+| **Escritorio** | Windows, macOS, Linux |
 
-Si encuentras algún problema o tienes sugerencias:
+## 🎨 Capturas de Pantalla
 
-1. **Revisa los logs** en la consola del navegador y terminal
-2. **Verifica la configuración** en tu archivo `.env`
-3. **Consulta la documentación** de la API en `/api/health`
-4. **Reporta issues** con información detallada
+### **Página Principal**
+![Página Principal](screenshots/home.png)
+
+### **Reproductor Global**
+![Reproductor Global](screenshots/player.png)
+
+### **Zona Privada**
+![Zona Privada](screenshots/private.png)
+
+## 🤝 Contribución
+
+1. **Fork** el proyecto
+2. **Crea** una rama para tu feature (`git checkout -b feature/AmazingFeature`)
+3. **Commit** tus cambios (`git commit -m 'Add: Amazing Feature'`)
+4. **Push** a la rama (`git push origin feature/AmazingFeature`)
+5. **Abre** un Pull Request
+
+## 📝 Changelog
+
+### **v2.0.0** - Actual
+- ✨ Reproductor global con sincronización bidireccional
+- 🔐 Sistema de autenticación seguro
+- 🎨 Interfaz completamente rediseñada
+- 📱 Optimización para móviles
+- 🛠️ API REST completa
+
+### **v1.0.0** - Primera versión
+- 🎵 Reproductor básico
+- 📄 Páginas estáticas
+- 🎧 Sesiones individuales
+
+## 🐛 Reporte de Issues
+
+¿Encontraste un bug? [Abre un issue](https://github.com/Sergiom84/AudioSessions/issues)
+
+## 📄 Licencia
+
+Este proyecto está bajo la licencia MIT. Ver [LICENSE](LICENSE) para más detalles.
+
+## 👨‍💻 Autor
+
+**Sergio M.**
+- GitHub: [@Sergiom84](https://github.com/Sergiom84)
+- Email: tu-email@ejemplo.com
+
+## 🙏 Agradecimientos
+
+- **Archive.org** por el hosting de audio
+- **Comunidad de desarrolladores** por feedback
+- **Artistas** por la música increíble
 
 ---
 
-**Desarrollado con ❤️ para los amantes de la música electrónica**
-
+⭐ **¡No olvides dar una estrella si te gusta el proyecto!** ⭐
