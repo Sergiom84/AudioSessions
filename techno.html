@@ -164,6 +164,19 @@
                     e.preventDefault();
                     const sessionId = card.getAttribute('data-session');
                     
+                    // Log del click para debugging
+                    if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                        window.globalAudioPlayer.logger.log('CLICK', 'Click en card de sesión (techno)', {
+                            sessionId: sessionId,
+                            targetElement: e.target.tagName,
+                            targetClass: e.target.className,
+                            cardTitle: card.querySelector('h2') ? card.querySelector('h2').textContent.trim() : 'sin título',
+                            hasSessionData: sessionId && sessionData[sessionId] ? true : false
+                        });
+                    } else {
+                        console.log('DEBUG: Click en card techno', sessionId, 'pero no hay logger disponible');
+                    }
+                    
                     // Start global player with session data
                     if (sessionId && sessionData[sessionId] && window.startGlobalPlayer) {
                         window.startGlobalPlayer(sessionData[sessionId]);

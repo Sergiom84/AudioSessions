@@ -247,6 +247,18 @@
                 e.preventDefault();
                 const sessionId = card.dataset.session;
                 
+                // Log del click para debugging
+                if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                    window.globalAudioPlayer.logger.log('CLICK', 'Click en card de sesión', {
+                        sessionId: sessionId,
+                        targetElement: e.target.tagName,
+                        targetClass: e.target.className,
+                        cardTitle: card.querySelector('h2') ? card.querySelector('h2').textContent.trim() : 'sin título'
+                    });
+                } else {
+                    console.log('DEBUG: Click en card', sessionId, 'pero no hay logger disponible');
+                }
+                
                 // Navigate directly to player page
                 window.location.href = `player.html?session=${sessionId}`;
             });

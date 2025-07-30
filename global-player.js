@@ -1,4 +1,118 @@
-// Global Audio Player - Versión mejorada con manejo de errores
+// Global Audio Player - Versión mejorada con logging para diagnóstico móvil
+class DebugLogger {
+    constructor() {
+        this.logs = [];
+        this.maxLogs = 100;
+        this.isVisible = false;
+        this.createLoggerUI();
+    }
+
+    log(type, message, data = null) {
+        const timestamp = new Date().toLocaleTimeString();
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        
+        const logEntry = {
+            timestamp,
+            type,
+            message,
+            data,
+            isMobile,
+            userAgent: navigator.userAgent.substring(0, 50) + '...'
+        };
+
+        this.logs.unshift(logEntry);
+        if (this.logs.length > this.maxLogs) {
+            this.logs.pop();
+        }
+
+        // También log normal para debugging
+        console.log(`[${type.toUpperCase()}] ${message}`, data || '');
+        
+        this.updateLoggerUI();
+    }
+
+    createLoggerUI() {
+        const loggerHTML = `
+            <div id="debugLogger" style="position: fixed; top: 0; right: 0; width: 300px; height: 400px; background: rgba(0,0,0,0.9); color: white; z-index: 10000; transform: translateX(280px); transition: transform 0.3s; font-family: monospace; font-size: 11px;">
+                <div style="padding: 10px; border-bottom: 1px solid #333; background: #111;">
+                    <button id="debugToggle" style="background: #007acc; color: white; border: none; padding: 5px 10px; cursor: pointer; font-size: 12px;">📋 DEBUG</button>
+                    <button id="debugClear" style="background: #dc3545; color: white; border: none; padding: 5px 10px; cursor: pointer; margin-left: 5px; font-size: 10px;">CLEAR</button>
+                    <button id="debugExport" style="background: #28a745; color: white; border: none; padding: 5px 10px; cursor: pointer; margin-left: 5px; font-size: 10px;">EXPORT</button>
+                </div>
+                <div id="debugContent" style="padding: 10px; height: 350px; overflow-y: auto;">
+                    <div style="color: #28a745;">Debug Logger iniciado</div>
+                </div>
+            </div>
+        `;
+
+        document.body.insertAdjacentHTML('beforeend', loggerHTML);
+
+        // Bind events
+        document.getElementById('debugToggle').addEventListener('click', () => {
+            this.toggle();
+        });
+
+        document.getElementById('debugClear').addEventListener('click', () => {
+            this.clear();
+        });
+
+        document.getElementById('debugExport').addEventListener('click', () => {
+            this.export();
+        });
+    }
+
+    toggle() {
+        this.isVisible = !this.isVisible;
+        const logger = document.getElementById('debugLogger');
+        logger.style.transform = this.isVisible ? 'translateX(0)' : 'translateX(280px)';
+    }
+
+    clear() {
+        this.logs = [];
+        this.updateLoggerUI();
+    }
+
+    export() {
+        const logData = {
+            timestamp: new Date().toISOString(),
+            userAgent: navigator.userAgent,
+            logs: this.logs
+        };
+
+        const blob = new Blob([JSON.stringify(logData, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `audio-debug-${Date.now()}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    updateLoggerUI() {
+        const content = document.getElementById('debugContent');
+        if (!content) return;
+
+        const html = this.logs.map(log => {
+            const color = {
+                'ERROR': '#dc3545',
+                'WARN': '#ffc107',
+                'INFO': '#17a2b8',
+                'SUCCESS': '#28a745',
+                'CLICK': '#007bff',
+                'AUDIO': '#6f42c1'
+            }[log.type] || '#fff';
+
+            return `<div style="margin-bottom: 8px; border-left: 3px solid ${color}; padding-left: 8px;">
+                <div style="color: ${color}; font-weight: bold;">[${log.timestamp}] ${log.type}</div>
+                <div style="color: #ccc;">${log.message}</div>
+                ${log.data ? `<div style="color: #888; font-size: 10px;">${JSON.stringify(log.data).substring(0, 100)}...</div>` : ''}
+            </div>`;
+        }).join('');
+
+        content.innerHTML = html;
+    }
+}
+
 class GlobalAudioPlayer {
     constructor() {
         this.audio = null;
@@ -14,11 +128,100 @@ class GlobalAudioPlayer {
         this.isLoading = false;
         this.retryCount = 0;
         this.maxRetries = 3;
+        
+        // Inicializar logger de debug
+        this.logger = new DebugLogger();
+        this.logger.log('INFO', 'GlobalAudioPlayer inicializando...', {
+            userAgent: navigator.userAgent,
+            isMobile: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
+            supportsAudio: !!window.Audio,
+            supportsMediaSession: 'mediaSession' in navigator
+        });
+        
         this.init();
+        
+        // Diagnóstico inicial para móvil
+        this.performMobileDiagnostics();
+    }
+
+    performMobileDiagnostics() {
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        
+        this.logger.log('INFO', 'Diagnóstico móvil iniciado', {
+            isMobile: isMobile,
+            platform: navigator.platform,
+            maxTouchPoints: navigator.maxTouchPoints || 0,
+            orientation: screen.orientation ? screen.orientation.type : 'desconocido',
+            connection: navigator.connection ? {
+                effectiveType: navigator.connection.effectiveType,
+                downlink: navigator.connection.downlink
+            } : 'no disponible'
+        });
+
+        // Test de capacidades de audio
+        if (window.Audio) {
+            const testAudio = new Audio();
+            this.logger.log('INFO', 'Capacidades de audio', {
+                canPlayMP3: testAudio.canPlayType('audio/mpeg'),
+                canPlayAAC: testAudio.canPlayType('audio/aac'),
+                canPlayFLAC: testAudio.canPlayType('audio/flac'),
+                autoplaySupported: testAudio.autoplay !== undefined
+            });
+        }
+
+        // Test de eventos táctiles
+        if (isMobile) {
+            this.testTouchEvents();
+        }
+    }
+
+    testTouchEvents() {
+        this.logger.log('INFO', 'Testing touch events...');
+        
+        const testElement = document.createElement('div');
+        testElement.style.position = 'absolute';
+        testElement.style.width = '1px';
+        testElement.style.height = '1px';
+        testElement.style.opacity = '0';
+        testElement.style.pointerEvents = 'none';
+        document.body.appendChild(testElement);
+
+        let touchSupported = false;
+        
+        testElement.addEventListener('touchstart', () => {
+            touchSupported = true;
+        });
+
+        // Simular evento touch
+        if (typeof TouchEvent !== 'undefined') {
+            const touchEvent = new TouchEvent('touchstart', {
+                bubbles: true,
+                cancelable: true
+            });
+            testElement.dispatchEvent(touchEvent);
+        }
+
+        setTimeout(() => {
+            this.logger.log('INFO', 'Touch events test completado', {
+                touchSupported: touchSupported,
+                TouchEventExists: typeof TouchEvent !== 'undefined',
+                ontouchstart: 'ontouchstart' in window
+            });
+            document.body.removeChild(testElement);
+        }, 100);
     }
 
     setAudioElement(audioEl) {
-        if (!audioEl) return;
+        this.logger.log('AUDIO', 'setAudioElement llamado', {
+            hasAudioEl: !!audioEl,
+            currentAudio: !!this.audio,
+            audioElSrc: audioEl ? audioEl.src : null
+        });
+
+        if (!audioEl) {
+            this.logger.log('ERROR', 'setAudioElement: audioEl es null o undefined');
+            return;
+        }
 
         // Preserve state of previous element
         let wasPlaying = false;
@@ -30,7 +233,9 @@ class GlobalAudioPlayer {
 
             try {
                 this.audio.pause();
+                this.logger.log('AUDIO', 'Audio anterior pausado', { wasPlaying, currentTime });
             } catch (e) {
+                this.logger.log('ERROR', 'No se pudo pausar el audio anterior', { error: e.message });
                 console.warn('Could not pause previous audio element', e);
             }
         }
@@ -41,7 +246,10 @@ class GlobalAudioPlayer {
         this.setupAudioEventListeners();
 
         if (wasPlaying) {
-            this.audio.play().catch(e => console.warn('Sync play failed', e));
+            this.audio.play().catch(e => {
+                this.logger.log('ERROR', 'Falló reproducción automática tras cambio de audio', { error: e.message });
+                console.warn('Sync play failed', e);
+            });
         }
 
         this.updateMediaSession();
@@ -98,13 +306,29 @@ class GlobalAudioPlayer {
     }
 
     bindEvents() {
+        this.logger.log('INFO', 'Configurando event listeners...');
+
         // Play/pause button
-        this.playBtn.addEventListener('click', () => {
+        this.playBtn.addEventListener('click', (e) => {
+            this.logger.log('CLICK', 'Click en botón global play/pause', {
+                event: e.type,
+                target: e.target.tagName,
+                disabled: this.playBtn.disabled,
+                hasAudio: !!this.audio,
+                isPlaying: this.isPlaying
+            });
             this.togglePlayPause();
         });
 
         // Progress bar click
         document.getElementById('globalProgressBar').addEventListener('click', (e) => {
+            this.logger.log('CLICK', 'Click en barra de progreso global', {
+                hasAudio: !!this.audio,
+                hasDuration: this.audio ? !!this.audio.duration : false,
+                clientX: e.clientX,
+                targetWidth: e.target.getBoundingClientRect().width
+            });
+
             if (this.audio && this.audio.duration) {
                 const rect = e.target.getBoundingClientRect();
                 const percent = (e.clientX - rect.left) / rect.width;
@@ -116,6 +340,8 @@ class GlobalAudioPlayer {
                 if (mainAudio && mainAudio.duration) {
                     mainAudio.currentTime = newTime;
                 }
+            } else {
+                this.logger.log('WARN', 'No se puede hacer seek: audio no disponible o sin duración');
             }
         });
 
@@ -123,19 +349,23 @@ class GlobalAudioPlayer {
 
         // Close button
         document.getElementById('globalPlayerClose').addEventListener('click', () => {
+            this.logger.log('CLICK', 'Click en botón cerrar reproductor global');
             this.stop();
         });
 
         // Listen for play events from other players
         window.addEventListener('globalPlayerStart', (e) => {
+            this.logger.log('INFO', 'Evento globalPlayerStart recibido', e.detail);
             this.startSession(e.detail);
         });
 
         // Page visibility changes
         document.addEventListener('visibilitychange', () => {
             if (document.hidden) {
+                this.logger.log('INFO', 'Página oculta, reproductor global continúa');
                 console.log('Page hidden, global player continues');
             } else {
+                this.logger.log('INFO', 'Página visible, reproductor global activo');
                 console.log('Page visible, global player active');
                 // Verificar si el audio sigue siendo válido
                 if (this.audio && this.audio.error) {
@@ -143,6 +373,33 @@ class GlobalAudioPlayer {
                 }
             }
         });
+
+        // Eventos táctiles específicos para móvil
+        if ('ontouchstart' in window) {
+            this.logger.log('INFO', 'Dispositivo táctil detectado, configurando eventos touch');
+            
+            // Touch events para el botón de play
+            this.playBtn.addEventListener('touchstart', (e) => {
+                this.logger.log('CLICK', 'Touchstart en botón global play/pause', {
+                    targetElement: e.target.tagName,
+                    touches: e.touches.length,
+                    disabled: this.playBtn.disabled
+                });
+            });
+
+            this.playBtn.addEventListener('touchend', (e) => {
+                this.logger.log('CLICK', 'Touchend en botón global play/pause');
+                e.preventDefault(); // Prevenir doble evento
+            });
+
+            // Touch events para la barra de progreso
+            document.getElementById('globalProgressBar').addEventListener('touchstart', (e) => {
+                this.logger.log('CLICK', 'Touchstart en barra de progreso global', {
+                    touches: e.touches.length,
+                    hasAudio: !!this.audio
+                });
+            });
+        }
 
         // Keyboard shortcuts
         document.addEventListener('keydown', (e) => {
@@ -372,26 +629,57 @@ class GlobalAudioPlayer {
     }
 
     play() {
-        if (this.audio && !this.isLoading) {
-            const playPromise = this.audio.play();
-            if (playPromise !== undefined) {
-                playPromise
-                    .then(() => {
-                        console.log('Global audio playing');
-                        this.setStatus('');
-                    })
-                    .catch(error => {
-                        console.error('Global audio play error:', error);
-                        this.setStatus('Error al reproducir');
+        this.logger.log('AUDIO', 'play() llamado', {
+            hasAudio: !!this.audio,
+            isLoading: this.isLoading,
+            audioPaused: this.audio ? this.audio.paused : null,
+            audioReadyState: this.audio ? this.audio.readyState : null
+        });
+
+        if (!this.audio) {
+            this.logger.log('ERROR', 'play(): No hay elemento de audio');
+            return;
+        }
+
+        if (this.isLoading) {
+            this.logger.log('WARN', 'play(): Audio aún cargando, ignorando llamada');
+            return;
+        }
+
+        const playPromise = this.audio.play();
+        if (playPromise !== undefined) {
+            playPromise
+                .then(() => {
+                    this.logger.log('SUCCESS', 'Audio global reproduciendo correctamente');
+                    console.log('Global audio playing');
+                    this.setStatus('');
+                })
+                .catch(error => {
+                    this.logger.log('ERROR', 'Error al reproducir audio global', {
+                        error: error.message,
+                        name: error.name,
+                        audioSrc: this.audio ? this.audio.src : null
                     });
-            }
+                    console.error('Global audio play error:', error);
+                    this.setStatus('Error al reproducir');
+                });
+        } else {
+            this.logger.log('WARN', 'play(): playPromise es undefined');
         }
     }
 
     pause() {
+        this.logger.log('AUDIO', 'pause() llamado', {
+            hasAudio: !!this.audio,
+            isPlaying: this.isPlaying
+        });
+
         if (this.audio) {
             this.audio.pause();
+            this.logger.log('SUCCESS', 'Audio global pausado');
             console.log('Global audio paused');
+        } else {
+            this.logger.log('WARN', 'pause(): No hay elemento de audio');
         }
     }
 
@@ -413,7 +701,20 @@ class GlobalAudioPlayer {
     }
 
     togglePlayPause() {
+        this.logger.log('AUDIO', 'togglePlayPause llamado', {
+            isPlaying: this.isPlaying,
+            hasAudio: !!this.audio,
+            audioPaused: this.audio ? this.audio.paused : null,
+            audioSrc: this.audio ? this.audio.src : null
+        });
+
+        if (!this.audio) {
+            this.logger.log('ERROR', 'togglePlayPause: No hay elemento de audio disponible');
+            return;
+        }
+
         if (this.isPlaying) {
+            this.logger.log('AUDIO', 'Pausando reproductor global...');
             this.pause();
             
             // Sync with main player
@@ -421,16 +722,22 @@ class GlobalAudioPlayer {
             if (mainAudio && !mainAudio.paused) {
                 mainAudio.pause();
                 window.userPausedAudio = true;
+                this.logger.log('AUDIO', 'Audio principal sincronizado - pausado');
             }
         } else {
+            this.logger.log('AUDIO', 'Iniciando reproducción en reproductor global...');
             this.play();
             
             // Sync with main player
             const mainAudio = document.getElementById('mainAudioPlayer');
             if (mainAudio && mainAudio.paused) {
                 mainAudio.currentTime = this.audio.currentTime;
-                mainAudio.play().catch(e => console.log('Main audio sync play failed:', e));
+                mainAudio.play().catch(e => {
+                    this.logger.log('ERROR', 'Falló sincronización con audio principal', { error: e.message });
+                    console.log('Main audio sync play failed:', e);
+                });
                 window.userPausedAudio = false;
+                this.logger.log('AUDIO', 'Audio principal sincronizado - reproduciendo');
             }
         }
     }

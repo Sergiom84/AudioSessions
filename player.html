@@ -998,8 +998,18 @@
             }
 
 
-            // Play/Pause functionality with improved sync
-            playPauseBtn.addEventListener('click', () => {
+            // Play/Pause functionality with improved sync and logging
+            playPauseBtn.addEventListener('click', (e) => {
+                if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                    window.globalAudioPlayer.logger.log('CLICK', 'Click en botón play/pause principal', {
+                        isPlaying: isPlaying,
+                        hasAudio: !!audio,
+                        audioPaused: audio.paused,
+                        currentTime: audio.currentTime,
+                        duration: audio.duration
+                    });
+                }
+
                 if (isPlaying) {
                     audio.pause();
                     window.userPausedAudio = true;
@@ -1015,9 +1025,19 @@
                         // Sync play to global player
                         if (window.globalAudioPlayer && window.globalAudioPlayer.audio) {
                             window.globalAudioPlayer.audio.currentTime = audio.currentTime;
-                            window.globalAudioPlayer.audio.play().catch(e => console.log('Global sync play failed:', e));
+                            window.globalAudioPlayer.audio.play().catch(e => {
+                                if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                                    window.globalAudioPlayer.logger.log('ERROR', 'Falló sincronización global desde main player', { error: e.message });
+                                }
+                                console.log('Global sync play failed:', e);
+                            });
                         }
-                    }).catch(e => console.log('Main play failed:', e));
+                    }).catch(e => {
+                        if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                            window.globalAudioPlayer.logger.log('ERROR', 'Falló reproducción en main player', { error: e.message });
+                        }
+                        console.log('Main play failed:', e);
+                    });
                 }
             });
 
@@ -1215,11 +1235,30 @@
 
         function setupDownload() {
             const downloadBtn = document.getElementById('downloadBtn');
-            downloadBtn.addEventListener('click', () => {
-                const link = document.createElement('a');
-                link.href = session.downloadUrl;
-                link.download = `${session.title}.mp3`;
-                link.click();
+            downloadBtn.addEventListener('click', (e) => {
+                if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                    window.globalAudioPlayer.logger.log('CLICK', 'Click en botón de descarga', {
+                        sessionTitle: session ? session.title : 'desconocida',
+                        downloadUrl: session ? session.downloadUrl : null,
+                        event: e.type,
+                        target: e.target.tagName
+                    });
+                }
+
+                try {
+                    const link = document.createElement('a');
+                    link.href = session.downloadUrl;
+                    link.download = `${session.title}.mp3`;
+                    link.click();
+                    
+                    if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                        window.globalAudioPlayer.logger.log('SUCCESS', 'Descarga iniciada correctamente');
+                    }
+                } catch (error) {
+                    if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                        window.globalAudioPlayer.logger.log('ERROR', 'Error al iniciar descarga', { error: error.message });
+                    }
+                }
             });
         }
 
