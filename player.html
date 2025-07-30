@@ -874,6 +874,20 @@
             
             // Load audio
             const audio = document.getElementById('mainAudioPlayer');
+
+            // Restore progress from localStorage if available
+            try {
+                const saved = JSON.parse(localStorage.getItem('sessionProgress') || '{}');
+                if (saved.id === sessionId) {
+                    audio.addEventListener('loadedmetadata', () => {
+                        if (!isNaN(audio.duration)) {
+                            audio.currentTime = Math.min(saved.currentTime || 0, audio.duration);
+                        }
+                    });
+                }
+            } catch (e) {
+                console.warn('Could not load session progress:', e);
+            }
             
             // Add error handling for audio loading
             audio.addEventListener('error', function(e) {
@@ -1055,6 +1069,16 @@
                 }
                 if (!isNaN(audio.currentTime)) {
                     currentTimeEl.textContent = formatTime(audio.currentTime);
+                }
+
+                // Save progress to localStorage
+                try {
+                    localStorage.setItem('sessionProgress', JSON.stringify({
+                        id: sessionId,
+                        currentTime: audio.currentTime
+                    }));
+                } catch (e) {
+                    console.warn('Could not save session progress:', e);
                 }
             });
 
