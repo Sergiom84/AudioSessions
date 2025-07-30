@@ -1,0 +1,8 @@
+# AudioSessions - Dependencias de Producción
+Flask==3.0.0
+Werkzeug==3.0.1
+python-dotenv==1.0.0
+Flask-CORS==4.0.0
+Flask-Limiter==3.5.0
+Flask-Compress==1.14
+gunicorn==21.2.0

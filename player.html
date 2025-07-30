@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Player - Sessions Archive</title>
+    <meta name="description" content="Audio player with tracklist and download">
+    <link rel="stylesheet" href="style.css">
+    <script src="global-player.js"></script>
+</head>
+<body data-page="player">
+    <!-- Scroll Progress Indicator -->
+    <div class="scroll-progress"></div>
+    
+    <!-- Navigation -->
+    <nav class="player-nav">
+        <a href="javascript:history.back()" class="nav-back">← Volver</a>
+    </nav>
+    
+    <!-- Parallax Background Elements -->
+    <div class="bg-particles">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+    
+    <div class="viewport">
+        <main class="container player-container">
+            <!-- Session Cover & Player -->
+            <div class="player-section">
+                <div class="session-cover" id="sessionCover">
+                    <!-- SVG will be dynamically inserted here -->
+                </div>
+                
+                <div class="player-controls">
+                    <h1 class="session-title" id="mainSessionTitle">Progressive House</h1>
+                    <p class="session-subtitle" id="sessionSubtitle">First Date Vol. II</p>
+                    
+                    <div class="audio-player-container">
+                        <!-- Hidden audio element -->
+                        <audio preload="none" id="mainAudioPlayer" aria-label="Reproductor principal de audio" crossorigin="anonymous">
+                            <source id="audioSource" src="https://archive.org/download/first-date-vol.-ii/First%20Date%20Vol.II.mp3" type="audio/mpeg">
+                            Tu navegador no soporta el elemento de audio.
+                        </audio>
+                        
+                        <!-- Custom Player Controls -->
+                        <div class="custom-player">
+                            <div class="player-controls-row">
+                                <button class="control-btn" id="rewindBtn" title="Rebobinar 10s">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12,5V1L7,6L12,11V7A6,6 0 0,1 18,13A6,6 0 0,1 12,19A6,6 0 0,1 6,13H4A8,8 0 0,0 12,21A8,8 0 0,0 20,13A8,8 0 0,0 12,5Z"/>
+                                        <text x="12" y="15" text-anchor="middle" font-size="8" fill="currentColor">10</text>
+                                    </svg>
+                                </button>
+                                
+                                <button class="control-btn" id="stopBtn" title="Parar">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                        <rect x="6" y="6" width="12" height="12"/>
+                                    </svg>
+                                </button>
+                                
+                                <button class="control-btn play-pause-btn" id="playPauseBtn" title="Reproducir/Pausar">
+                                    <svg class="play-icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M8,5.14V19.14L19,12.14L8,5.14Z"/>
+                                    </svg>
+                                    <svg class="pause-icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" style="display: none;">
+                                        <path d="M14,19H18V5H14M6,19H10V5H6V19Z"/>
+                                    </svg>
+                                </button>
+                                
+                                <button class="control-btn" id="forwardBtn" title="Adelantar 10s">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12,5V1L17,6L12,11V7A6,6 0 0,0 6,13A6,6 0 0,0 12,19A6,6 0 0,0 18,13H20A8,8 0 0,1 12,21A8,8 0 0,1 4,13A8,8 0 0,1 12,5Z"/>
+                                        <text x="12" y="15" text-anchor="middle" font-size="8" fill="currentColor">10</text>
+                                    </svg>
+                                </button>
+                                
+                                <button class="control-btn" id="volumeBtn" title="Volumen">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M14,3.23V5.29C16.89,6.15 19,8.83 19,12C19,15.17 16.89,17.85 14,18.71V20.77C18.01,19.86 21,16.28 21,12C21,7.72 18.01,4.14 14,3.23M16.5,12C16.5,10.23 15.5,8.71 14,7.97V16C15.5,15.29 16.5,13.76 16.5,12M3,9V15H7L12,20V4L7,9H3Z"/>
+                                    </svg>
+                                </button>
+                                
+                                <div class="time-display">
+                                    <span id="currentTime">00:00</span> / <span id="totalTime">00:00</span>
+                                </div>
+                            </div>
+                            
+                            <div class="progress-container">
+                                <div class="progress-bar" id="progressBar">
+                                    <div class="progress-fill" id="progressFill"></div>
+                                    <div class="progress-handle" id="progressHandle"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="player-actions">
+                        <button class="download-btn" id="downloadBtn">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+                            </svg>
+                            Descargar
+                        </button>
+                        <div class="session-stats">
+                            <span class="stat">
+                                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                                </svg>
+                                <span id="duration">--:--</span>
+                            </span>
+                            <span class="stat">
+                                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                </svg>
+                                <span id="quality">320kbps</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tracklist Section -->
+            <div class="tracklist-section">
+                <h2 class="tracklist-title">Tracklist</h2>
+                <div class="tracklist" id="tracklist">
+                    <!-- Tracks will be dynamically inserted here -->
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        // Session data structure
+        const sessionData = {
+            'nature-tech-house': {
+                title: 'Nature',
+                subtitle: 'Una selección potente de Tech House con beats profundos y grooves hipnóticos',
+                audioUrl: 'https://archive.org/download/nature-club/Nature%20Club.mp3',
+                downloadUrl: 'https://archive.org/details/nature-club',
+                duration: '01:15:32',
+                cover: `
+                    <img class="session-cover-svg" src="attached_assets/Nature.png" alt="Carátula Nature" style="width:100%;height:300px;object-fit:cover;display:block;border-radius:var(--radius);box-shadow:var(--shadow-hover);" />
+                `,
+                tracklist: [
+                    { time: '00:00', artist: 'Desert Lettin', title: 'Ya Mind Go Bottomless', label: 'Tech House' },
+                    { time: '03:12', artist: 'Tdr', title: 'Squelch', label: 'Tech House' },
+                    { time: '06:45', artist: 'Darren Kay', title: 'Splintered', label: 'Ben Sims Remix' },
+                    { time: '09:30', artist: 'Andrew Mclauchlan', title: 'Love Story', label: 'Tech House' },
+                    { time: '12:15', artist: 'Milo', title: 'Jungle Of Mirror', label: 'Tech House' },
+                    { time: '15:20', artist: 'Ben Sims', title: 'Manipulated', label: 'Adam Beyer Remix' },
+                    { time: '18:45', artist: 'Christian Smith', title: 'Silver Streak', label: 'Tech House' },
+                    { time: '21:30', artist: 'DIGITAL EXPRESS', title: 'The Club', label: 'Tech House' },
+                    { time: '24:10', artist: 'Deetron', title: 'Emphasis', label: 'Tech House' },
+                    { time: '27:25', artist: 'Stephane Malca feat. Kenny', title: 'Revolution', label: 'Mike Monday Badman Remix' },
+                    { time: '30:40', artist: 'Monolink', title: 'Deluxe TGX', label: 'Tech House' },
+                    { time: '33:55', artist: 'Native', title: 'Feel the Drums', label: 'Tech House' },
+                    { time: '36:20', artist: 'Renato Cohen', title: 'Pontapé', label: 'Tech House' },
+                    { time: '39:10', artist: 'Tekken', title: 'Tribal Pursuit', label: 'Tech House' },
+                    { time: '42:35', artist: 'D-Factor', title: 'Barana', label: 'Tech House' },
+                    { time: '45:20', artist: 'Dj Luccio Feat Sandy Wilhelm', title: 'Paradise', label: 'Tech House' },
+                    { time: '48:15', artist: 'Oxia', title: 'Inspiration', label: 'Tech House' },
+                    { time: '51:40', artist: 'Solid Session', title: 'Format 1', label: 'Dj Misjah Xxl Mix' },
+                    { time: '54:25', artist: 'Surgeon', title: 'La Real', label: 'Tech House' },
+                    { time: '57:50', artist: 'Gaetek', title: 'Ghana b2', label: 'Tech House' },
+                    { time: '60:10', artist: 'Olav Basoski pres. The Zarrow Bros', title: 'Revelation 3', label: 'Tech House' },
+                    { time: '63:25', artist: 'Jel Ford', title: 'Flaunt the Law', label: 'Tech House' },
+                    { time: '66:40', artist: 'Defaced', title: 'Out Run', label: 'Tech House' },
+                    { time: '69:15', artist: 'Len Faki', title: 'Figure 13', label: 'Schranz' },
+                    { time: '72:30', artist: 'Jeff Mills', title: 'The Bells', label: 'Lewis Lastella Remix' }
+                ]
+            },
+            'first-date-vol-ii': {
+                title: 'First Date Vol. II',
+                subtitle: 'La primera cita que nadie vio venir. Sin aviso, sin Vol. I. Solo música para desnudarse sin palabras',
+                audioUrl: 'https://archive.org/download/first-date-vol.-ii/First%20Date%20Vol.II.mp3',
+                downloadUrl: 'https://archive.org/details/first-date-vol.-ii',
+                duration: '01:04:59',
+                cover: `
+                    <img class="session-cover-svg" src="attached_assets/First Date Vol. II_1752256054711.png" alt="Carátula First Date Vol. II" style="width:100%;height:300px;object-fit:cover;display:block;border-radius:var(--radius);box-shadow:var(--shadow-hover);" />
+                `,
+                tracklist: [
+                    { time: '00:00', artist: 'A.M.R', title: 'Sailor\'s Cry', label: '' },
+                    { time: '04:30', artist: 'A.M.R & Brandon Mignacca', title: 'Fell Out Of Love', label: '' },
+                    { time: '08:45', artist: 'Howling', title: '\'Bind', label: '' },
+                    { time: '12:20', artist: 'ARTBAT', title: 'Closer Feat. WhoMadeWho', label: '' },
+                    { time: '16:40', artist: '&ME', title: 'The Rapture Pt.II (Coco Vocal Edit)', label: '' },
+                    { time: '20:15', artist: 'Nicolas Duvoisin', title: 'Blue Turtle', label: '' },
+                    { time: '24:30', artist: 'Niconé & Aracil', title: 'Love Is A Colour ft. Allen Hulsey', label: '' },
+                    { time: '28:50', artist: 'Cioz', title: 'Cosmic Noise', label: 'Stil vor Talent' },
+                    { time: '32:10', artist: 'Chelsea Wolfe', title: 'The Warden', label: '' },
+                    { time: '35:45', artist: 'Julian Wassermann', title: 'Sol', label: '' },
+                    { time: '39:20', artist: 'Various', title: 'There Is Still Pain Left (Laolu Remix)', label: '' },
+                    { time: '42:55', artist: 'Bruno Zarra', title: 'Voyage', label: '' },
+                    { time: '46:30', artist: 'DJ Rolando', title: 'Jaguar (Golan Zocher & Kai Vice Remix)', label: '' },
+                    { time: '50:05', artist: 'Droog', title: 'Lucent', label: '' },
+                    { time: '53:40', artist: 'Mat Zo', title: 'Petrushka', label: '' },
+                    { time: '57:15', artist: 'Emanuel Top', title: 'Turkish Bazar', label: '' },
+                    { time: '60:50', artist: 'CHUS & CEBALLOS + RICHIE SANTANA', title: 'LOW FREQUENCY', label: '' },
+                    { time: '64:25', artist: 'Dj Chus', title: 'Afrika', label: '' },
+                    { time: '68:00', artist: 'HÆLOS', title: 'End of World Party (Sascha Funke)', label: '' },
+                    { time: '71:35', artist: 'UNKLE', title: 'Let\'s All Pray For This World', label: '' }
+                ]
+            },
+            'deep-house-01': {
+                title: 'Deep House Journey',
+                subtitle: 'Una sesión profunda y melódica que explora los sonidos del deep house contemporáneo',
+                audioUrl: 'https://archive.org/download/deep-house-session/deep-house-session.mp3',
+                downloadUrl: 'https://archive.org/download/deep-house-session/deep-house-session.mp3',
+                duration: '01:23:45',
+                cover: `
+                    <svg class="session-cover-svg" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="deepHouseLargeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#00ff88;stop-opacity:0.9" />
+                                <stop offset="50%" style="stop-color:#00cc66;stop-opacity:0.8" />
+                                <stop offset="100%" style="stop-color:#009944;stop-opacity:0.9" />
+                            </linearGradient>
+                            <filter id="glowLarge">
+                                <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+                                <feMerge> 
+                                    <feMergeNode in="coloredBlur"/>
+                                    <feMergeNode in="SourceGraphic"/>
+                                </feMerge>
+                            </filter>
+                        </defs>
+                        <rect width="400" height="400" fill="url(#deepHouseLargeGradient)"/>
+                        <circle cx="200" cy="200" r="120" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.3)" stroke-width="3"/>
+                        <circle cx="200" cy="200" r="90" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+                        <circle cx="200" cy="200" r="60" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+                        <circle cx="200" cy="200" r="12" fill="rgba(255,255,255,0.8)" filter="url(#glowLarge)"/>
+                    </svg>
+                `,
+                tracklist: [
+                    { time: '00:00', artist: 'Lane 8', title: 'Run', label: 'This Never Happened' },
+                    { time: '06:42', artist: 'Ben Böhmer', title: 'Beyond Beliefs', label: 'Anjunadeep' },
+                    { time: '12:15', artist: 'Yotto', title: 'The One You Left Behind', label: 'Odd One Out' },
+                    { time: '18:30', artist: 'Marsh', title: 'Lailonie', label: 'Anjunadeep' },
+                    { time: '24:45', artist: 'Spencer Brown', title: 'Windows 95 on Acid', label: 'Anjunabeats' },
+                    { time: '31:12', artist: 'Tinlicker', title: 'Need You', label: 'Anjunadeep' },
+                    { time: '37:28', artist: 'Nora En Pure', title: 'Come With Me', label: 'Enormous Tunes' },
+                    { time: '43:55', artist: 'Joris Voorn', title: 'Ryo', label: 'Spectrum' },
+                    { time: '50:20', artist: 'Dusky', title: 'Ingrid Is A Hybrid', label: '17 Steps' },
+                    { time: '56:40', artist: 'Sebastien Leger', title: 'Hypnotized', label: 'Systematic' },
+                    { time: '62:15', artist: 'Camelphat', title: 'Hypercolour', label: 'Hypercolour' },
+                    { time: '68:30', artist: 'Kidnap', title: 'Moments', label: 'Anjunadeep' },
+                    { time: '74:45', artist: 'Solomun', title: 'Friends', label: 'Diynamic' },
+                    { time: '80:12', artist: 'Tale Of Us', title: 'Monument', label: 'Afterlife' }
+                ]
+            },
+            'tech-house-01': {
+                title: 'Tech House Vibes',
+                subtitle: 'Ritmos techno fusionados con groove house para la pista de baile',
+                audioUrl: 'https://archive.org/download/tech-house-vibes/tech-house-vibes.mp3',
+                downloadUrl: 'https://archive.org/download/tech-house-vibes/tech-house-vibes.mp3',
+                duration: '01:15:30',
+                cover: `
+                    <svg class="session-cover-svg" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="techHouseLargeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#00ff88;stop-opacity:0.7" />
+                                <stop offset="50%" style="stop-color:#00aa55;stop-opacity:0.8" />
+                                <stop offset="100%" style="stop-color:#007733;stop-opacity:0.9" />
+                            </linearGradient>
+                        </defs>
+                        <rect width="400" height="400" fill="url(#techHouseLargeGradient)"/>
+                        <polygon points="100,100 300,100 350,200 300,300 100,300 50,200" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.3)" stroke-width="3"/>
+                        <polygon points="130,130 270,130 310,200 270,270 130,270 90,200" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+                        <rect x="180" y="180" width="40" height="40" fill="rgba(255,255,255,0.8)"/>
+                    </svg>
+                `,
+                tracklist: [
+                    { time: '00:00', artist: 'Fisher', title: 'Losing It', label: 'Catch & Release' },
+                    { time: '05:30', artist: 'Chris Lake', title: 'Operator', label: 'Black Book Records' },
+                    { time: '10:45', artist: 'Walker & Royce', title: 'Take Me to Your Leader', label: 'Dirtybird' },
+                    { time: '16:20', artist: 'Green Velvet', title: 'Flash', label: 'Relief Records' },
+                    { time: '21:15', artist: 'Claude VonStroke', title: 'All My People', label: 'Dirtybird' },
+                    { time: '26:40', artist: 'Solardo', title: 'XTC', label: 'Hot Creations' },
+                    { time: '32:10', artist: 'CamelPhat', title: 'Cola', label: 'Defected' },
+                    { time: '37:55', artist: 'Gorgon City', title: 'Burning', label: 'Positiva' },
+                    { time: '43:25', artist: 'Disclosure', title: 'Energy', label: 'Island Records' },
+                    { time: '48:50', artist: 'Tchami', title: 'Praise', label: 'Confession' },
+                    { time: '54:15', artist: 'Malaa', title: 'Bylina', label: 'Tchami Music' },
+                    { time: '59:30', artist: 'AC Slater', title: 'Take the Night', label: 'Night Bass' },
+                    { time: '64:45', artist: 'Dombresky', title: 'Soul Sacrifice', label: 'Sweat It Out' },
+                    { time: '70:00', artist: 'Noizu', title: 'Summer 91', label: 'Insomniac Records' }
+                ]
+            },
+            'sari-bari-2025': {
+                title: 'Sari Bari 2025',
+                subtitle: 'Un verano, una fiesta, una promesa de groove. En la arena de Granada, celebramos el ritmo con alma y un mar de abrazos. Sari Bari es calor, house y corazón.',
+                audioUrl: 'https://archive.org/download/saribari-20-25/Saribari%2020%2025.mp3',
+                downloadUrl: 'https://archive.org/details/saribari-20-25',
+                duration: '01:45:30',
+                cover: `
+                    <img class="session-cover-svg" src="attached_assets/Sari Bari - Vermu_1752514127352.png" alt="Carátula Sari Bari" style="width:100%;height:300px;object-fit:cover;display:block;border-radius:var(--radius);box-shadow:var(--shadow-hover);" />
+                `,
+                tracklist: [
+                    { time: '00:00', artist: 'Nomumbah', title: 'Like A Rainbow feat. Nadirah Shakoor', label: 'Deep House' },
+                    { time: '04:30', artist: 'Various', title: 'Caterpillar (Atjazz Instrumental Remix)', label: 'Deep House' },
+                    { time: '08:45', artist: 'Beatsbyhand x Kali Mija', title: 'Gypsy Woman', label: 'House' },
+                    { time: '12:20', artist: 'Maverick Sabre Feat Jorja Smith', title: 'Slow Down James Cole', label: 'Vocal House' },
+                    { time: '16:10', artist: 'Various', title: 'Wish I Didn\'t Miss You (feat. Billie Brown)', label: 'Vocal House' },
+                    { time: '19:45', artist: 'iO (Mulen)', title: 'Report (Original Mix)', label: 'Tech House' },
+                    { time: '23:30', artist: 'Soulsearcher', title: 'Can\'t Get Enough', label: 'Classic House' },
+                    { time: '27:15', artist: 'Ezel', title: 'Don\'t Know Yet', label: 'Deep House' },
+                    { time: '31:00', artist: 'RNDT feat. Kleophazz', title: 'Check One Two', label: 'House' },
+                    { time: '34:20', artist: 'Various', title: 'Suena el Sabor', label: 'Latin House' },
+                    { time: '38:10', artist: 'Moloko', title: 'Sing It Back (Boris Dlugosch Reprise)', label: 'Classic House' },
+                    { time: '42:45', artist: 'Spencer Morales feat Tasha Larae', title: 'I Need Your Lovin', label: 'Vocal House' },
+                    { time: '46:30', artist: 'LUZON', title: 'THE BAGIO TRACK (CHUS Y CEBALLOS RMX)', label: 'Tech House' },
+                    { time: '50:15', artist: 'Blue Six', title: 'Music & Wine (Speakeasy 3000!)', label: 'Deep House' },
+                    { time: '54:00', artist: 'Sam Ruffillo', title: 'House Tipo Cosi', label: 'House' },
+                    { time: '57:25', artist: 'Dirty Old Ann', title: 'Turn Me On', label: 'Tech House' },
+                    { time: '61:10', artist: 'Massiande', title: 'Dancing Stuff (I love the way)', label: 'House' },
+                    { time: '64:45', artist: 'Julien Jabre', title: 'Swimming Places', label: 'Deep House' },
+                    { time: '68:20', artist: 'DJ Rolando', title: 'Jaguar (Golan Zocher & Kai Vice Remix)', label: 'Tech House' },
+                    { time: '72:00', artist: 'Master Le Funk', title: 'Believe (Ministers Vocal Mix)', label: 'Vocal House' },
+                    { time: '75:40', artist: 'Jaykill, Linda Lovatón', title: 'Cure Me (Vocal Mix)', label: 'Vocal House' },
+                    { time: '79:15', artist: 'Droog', title: 'Lucent', label: 'Deep House' },
+                    { time: '82:50', artist: 'Fingers Inc', title: 'My House Acapella', label: 'Classic House' },
+                    { time: '86:30', artist: 'Sparrow & Barbossa, Cee ElAssaad', title: 'Libre', label: 'Afro House' },
+                    { time: '90:10', artist: '&ME', title: 'The Rapture Pt.II (Coco Vocal Edit)', label: 'Deep House' },
+                    { time: '93:45', artist: 'Franky Rizardo', title: 'Revoke', label: 'Tech House' },
+                    { time: '97:20', artist: 'Octave One', title: 'Black Water (Full Strings) - TMR', label: 'Deep House' },
+                    { time: '101:00', artist: 'Berin, Mana Project', title: 'Many Times (Original Mix)', label: 'Deep House' }
+                ]
+            },
+            'plastic': {
+                title: 'Plastic',
+                subtitle: 'Homenaje a la mítica discoteca Plastic de Madrid',
+                audioUrl: 'https://archive.org/download/plastic_202507/Plastic.mp3',
+                downloadUrl: 'https://archive.org/details/plastic_202507',
+                duration: '55:40',
+                cover: `
+                    <img class="session-cover-svg" src="attached_assets/Plastic_1752516636118.png" alt="Carátula Plastic" style="width:100%;height:300px;object-fit:cover;display:block;border-radius:var(--radius);box-shadow:var(--shadow-hover);" />
+                `,
+                tracklist: [
+                    { time: '00:00', artist: 'Fragma', title: 'Man On The Moon', label: 'Trance' },
+                    { time: '04:15', artist: 'Mauro Picotto', title: 'Komodo', label: 'Hard Trance' },
+                    { time: '08:30', artist: 'Kai Tracid', title: 'Your Own Reality', label: 'Progressive Trance' },
+                    { time: '12:45', artist: 'Virtualmismo', title: 'I Try To Find', label: 'Euro Trance' },
+                    { time: '16:20', artist: 'Joy Kitikonti', title: 'Joyenergizer', label: 'Uplifting Trance' },
+                    { time: '20:10', artist: 'Aqualords', title: 'Children of the Demon', label: 'Classic Trance' },
+                    { time: '24:25', artist: 'Cosmicman', title: 'I Love You (Shane 54 Remix)', label: 'Vocal Trance' },
+                    { time: '28:40', artist: 'Basic Dawn', title: 'Pure Thrust (Nu NRG Remix)', label: 'Tech Trance' },
+                    { time: '32:55', artist: 'Abel Ramos', title: 'Das Spiegel', label: 'Progressive Trance' },
+                    { time: '36:30', artist: 'Miguel Serna', title: 'In My Dreams', label: 'Uplifting Trance' },
+                    { time: '40:15', artist: 'Elastica', title: 'The Test', label: 'Electronic' },
+                    { time: '44:20', artist: 'AND ONE', title: 'Metalhammer', label: 'EBM/Trance' },
+                    { time: '48:35', artist: 'Tyna Saez', title: 'Tupakamaru', label: 'Progressive Trance' },
+                    { time: '52:10', artist: 'Iguana', title: 'Mauro Picotto', label: 'Hard Trance' }
+                ]
+            },
+            'los-ninos-del-parque': {
+                title: 'Los niños del parque',
+                subtitle: 'Crecimos entre bajos, máquinas y parques que ardían de noche. Esta sesión es para los que nunca dejaron de bailar a oscuras.',
+                audioUrl: 'https://archive.org/download/los-ninos-del-parque/Los%20ni%C3%B1os%20del%20parque.mp3',
+                downloadUrl: 'https://archive.org/details/los-ninos-del-parque',
+                duration: '64:32',
+                cover: `
+                    <img class="session-cover-svg" src="attached_assets/Los niños del parque.png" alt="Carátula Los niños del parque" style="width:100%;height:300px;object-fit:cover;display:block;border-radius:var(--radius);box-shadow:var(--shadow-hover);" />
+                `,
+                tracklist: [
+                    { time: '00:00', artist: 'Oisel', title: 'Nucleo', label: 'Industrial' },
+                    { time: '04:12', artist: 'Torsten Kanzler & Robert Egenolf', title: 'Void Trip', label: 'Berlin Techno' },
+                    { time: '08:35', artist: 'Kreisel, Dok&Martin', title: 'Railroader', label: 'Underground' },
+                    { time: '12:48', artist: 'Mount Kimbie', title: 'T.A.M.E.D', label: 'Minimal' },
+                    { time: '16:22', artist: 'Bastinov', title: 'Wormhole', label: 'Acid' },
+                    { time: '20:15', artist: 'Oliver Lieb', title: 'Field Of View', label: 'Tech House' },
+                    { time: '24:33', artist: 'Hackler & Kuch', title: 'Z6', label: 'Industrial' },
+                    { time: '28:07', artist: 'Andres Campo', title: 'Rola', label: 'Minimal' },
+                    { time: '31:45', artist: 'Uto Karem, Gaston Zani', title: 'Disorientation', label: 'Underground' },
+                    { time: '35:28', artist: 'KASE.O feat Najwa', title: 'MITAD Y MITAD (ANDRÉS CAMPO)', label: 'Tech House' },
+                    { time: '39:10', artist: 'Hackler & Kuch', title: 'Duck & Cover', label: 'Industrial' },
+                    { time: '42:55', artist: 'Arjun Vagale & Ramiro López', title: 'Oddball', label: 'Berlin Techno' },
+                    { time: '46:20', artist: 'Vanjee', title: 'Jackin', label: 'Acid' },
+                    { time: '50:12', artist: 'Control Movement', title: 'Gesaffelstein', label: 'Underground' },
+                    { time: '54:38', artist: 'Green Velvet, Prok & Fitch', title: 'Sheeple', label: 'Tech House' },
+                    { time: '58:25', artist: 'Vedou', title: 'Paprika', label: 'Minimal' }
+                ]
+            },
+            'aero-red': {
+                title: 'Aero-Red',
+                subtitle: 'Síntomas: sudor, euforia y acidez mental. Tratamiento: Aerored — ácido en vena, rave sin receta',
+                audioUrl: 'https://archive.org/download/aero-red/Aero-Red.mp3',
+                downloadUrl: 'https://archive.org/details/aero-red',
+                duration: '68:45',
+                cover: `
+                    <img class="session-cover-svg" src="attached_assets/Aero-Red.png" alt="Carátula Aero-Red" style="width:100%;height:300px;object-fit:cover;display:block;border-radius:var(--radius);box-shadow:var(--shadow-hover);" />
+                `,
+                tracklist: [
+                    { time: '00:00', artist: 'Teik Arô', title: 'Acid Resurrection', label: 'Acid' },
+                    { time: '03:25', artist: 'Three State Logic', title: 'Chromium Dioxide', label: 'Hard' },
+                    { time: '06:50', artist: 'DJ Jordan', title: 'Acid Delight', label: 'Acid' },
+                    { time: '10:15', artist: 'T78 & ROBPM', title: 'Acid Lick', label: 'Hard' },
+                    { time: '13:40', artist: 'Acid', title: 'Techno', label: 'Old School' },
+                    { time: '17:05', artist: 'ASYS', title: 'Dark Acid', label: 'Underground' },
+                    { time: '20:30', artist: 'x', title: 'Rave On', label: 'Old School' },
+                    { time: '23:55', artist: 'ASYS, Kai Tracid & Tom Wax', title: 'Freedom Of Expression', label: 'Acid' },
+                    { time: '27:20', artist: 'Pan-Pot', title: 'Funke', label: 'Hard' },
+                    { time: '30:45', artist: 'The Plant Worker & DIAPO', title: 'Plexiglas', label: 'Underground' },
+                    { time: '34:10', artist: 'OC & Verde', title: 'Mondoshawan', label: 'Acid' },
+                    { time: '37:35', artist: 'The Adventist', title: 'Destination', label: 'Hard' },
+                    { time: '41:00', artist: 'Superstrobe, Dominik Vaillant, Torsten Kanzler', title: 'SuSizzle', label: 'Underground' },
+                    { time: '44:25', artist: 'Hackler & Kuch', title: 'Duck & Cover', label: 'Old School' },
+                    { time: '47:50', artist: 'Andres Campo', title: '2 Late', label: 'Acid' },
+                    { time: '51:15', artist: 'Coyu', title: 'Fear Is Gonna Be A Player In Your Life', label: 'Hard' },
+                    { time: '54:40', artist: 'Andres Campo', title: 'Rola', label: 'Underground' },
+                    { time: '58:05', artist: 'Union Jack', title: 'Cockroach', label: 'Old School' },
+                    { time: '61:30', artist: 'The Infinity Project', title: 'Stimuli (Astral Projection)', label: 'Acid' },
+                    { time: '65:20', artist: 'Popof', title: 'Popof', label: 'Hard' }
+                ]
+            },
+            'nati-nati': {
+                title: 'Nati Nati',
+                subtitle: 'Una oda al groove fino y la emoción en loop. Así suena Nati Nati: femenina, profunda, inolvidable',
+                audioUrl: 'https://archive.org/download/nati-nati/Nati%20Nati.mp3',
+                downloadUrl: 'https://archive.org/details/nati-nati',
+                duration: '35:20',
+                cover: `
+                    <img class="session-cover-svg" src="attached_assets/Nati Nati_1752569294098.png" alt="Carátula Nati Nati" style="width:100%;height:300px;object-fit:cover;display:block;border-radius:var(--radius);box-shadow:var(--shadow-hover);" />
+                `,
+                tracklist: [
+                    { time: '00:00', artist: 'Rampa', title: '2000', label: 'Melodic' },
+                    { time: '03:30', artist: 'Sergio Fernández', title: 'Jade', label: 'Deep' },
+                    { time: '07:15', artist: 'Cioz', title: 'Burning Soul', label: 'Groovy' },
+                    { time: '10:45', artist: 'Cioz ft. Eleonora', title: 'Dancing In The Night', label: 'Melodic' },
+                    { time: '14:20', artist: 'Keinemusik', title: 'Discoteca feat. Sofie', label: 'Deep' },
+                    { time: '18:00', artist: 'Rampa', title: 'The Church', label: 'Groovy' },
+                    { time: '21:35', artist: 'Clemente', title: 'The Captain Of Her Heart', label: 'Melodic' },
+                    { time: '25:10', artist: 'Cioz', title: 'A Funky Peacock and a Tiger', label: 'Groovy' },
+                    { time: '28:45', artist: 'Eli & Fur', title: 'Coming Back', label: 'Deep' },
+                    { time: '32:20', artist: 'Spektre', title: 'Another Life', label: 'Melodic' }
+                ]
+            },
+            'into-the-wild': {
+                title: 'Into the Wild',
+                subtitle: 'Una sesión para perderse sin miedo. Ritmos cálidos, melodías nómadas y pulsos que parecen venir desde lo más profundo del bosque. Aquí la brújula es el corazón.',
+                audioUrl: 'http://dn721206.ca.archive.org/0/items/into-the-wild_202507/Into%20the%20Wild.flac',
+                downloadUrl: 'https://ia601409.us.archive.org/0/items/into-the-wild_202507/Into%20the%20Wild.flac',
+                duration: '--:--',
+                cover: `
+                    <img class="session-cover-svg" src="attached_assets/Into_the_wild.jpg" alt="Carátula Into the Wild" style="width:100%;height:300px;object-fit:cover;display:block;border-radius:var(--radius);box-shadow:var(--shadow-hover);" />
+                `,
+                tracklist: [
+                    { artist: 'AnanÃ', title: 'Our Love' },
+                    { artist: 'Dmitry Molosh', title: 'Distant Land' },
+                    { artist: 'Double Touch', title: 'Woolfie' },
+                    { artist: 'ItaloBros', title: 'La Via En Rose' },
+                    { artist: 'Audiojack', title: 'Reverie' },
+                    { artist: 'Squire & Dead-Tones', title: 'Pretty Little Lies' },
+                    { artist: 'RüFüS DU SOL', title: 'Next To Me (Adana Twins Remix)' },
+                    { artist: 'Understanding', title: 'Alejandro Mosso Remix' },
+                    { artist: 'Helsloot feat. Boy Wolf', title: 'Killing Time' },
+                    { artist: 'Fabio Fuso', title: 'Obscurity' },
+                    { artist: 'Nandu', title: 'Interference Inside feat. Emily Simbi' },
+                    { artist: 'Angels', title: 'Dapayk Solo' }
+                ]
+            },
+            'rituales-del-sur': {
+                title: 'Rituales del Sur',
+                subtitle: 'Ritmos ancestrales, melodías profundas y voces que acarician el alma. Esta sesión es un ritual sonoro para conectar con lo más terrenal... y elevarte.',
+                audioUrl: 'https://ia601808.us.archive.org/8/items/rituales-del-sur/Rituales%20del%20Sur.wav',
+                downloadUrl: 'https://ia601808.us.archive.org/8/items/rituales-del-sur/Rituales%20del%20Sur.flac',
+                duration: '--:--',
+                cover: `
+                    <img class="session-cover-svg" src="attached_assets/Rituales del Sur.png" alt="Carátula Rituales del Sur" style="width:100%;height:300px;object-fit:cover;display:block;border-radius:var(--radius);box-shadow:var(--shadow-hover);" />
+                `,
+                tracklist: [
+                    { artist: 'Black Coffee', title: 'You Need Me feat. Maxine Ashley & Sun El Musician' },
+                    { artist: 'DJ Beekay Feat. Lyrik Shoxen', title: 'Far Away' },
+                    { artist: 'Boddhi Satva, LOV, Sifa', title: 'Fading To Silence' },
+                    { artist: 'Nico de Andrea & Andrew Pololos', title: 'Woman' },
+                    { artist: 'Roman Kyn', title: 'Backwards' },
+                    { artist: 'Notre Dame', title: 'Timeless' },
+                    { artist: 'Sashseen & Jacob Acosta', title: 'Falling' },
+                    { artist: 'Safar', title: 'Hoshiana' },
+                    { artist: 'Manati', title: 'Soundahesh' },
+                    { artist: 'Voyeur', title: 'Nina' },
+                    { artist: 'Rocha', title: 'Rocha' },
+                    { artist: 'Kon Faber', title: 'Øresund' },
+                    { artist: 'Bomba Estéreo', title: 'Algo Está Cambiando En Mí' }
+                ]
+            },
+            'primavera-sound': {
+                title: 'Primavera Sound',
+                subtitle: 'Esta sesión es un viaje sonoro desde una terraza al atardecer hasta un club al borde del amanecer.',
+                audioUrl: 'https://dn721908.ca.archive.org/0/items/primavera-sound/Primavera%20Sound.flac',
+                downloadUrl: 'https://dn721908.ca.archive.org/0/items/primavera-sound/Primavera%20Sound.flac',
+                duration: '--:--',
+                cover: `
+                    <img class="session-cover-svg" src="attached_assets/primavera-sound.jpg" alt="Carátula Primavera Sound" style="width:100%;height:300px;object-fit:cover;display:block;border-radius:var(--radius);box-shadow:var(--shadow-hover);" />
+                `,
+                tracklist: [
+                    { time: '00:00', artist: 'WhoMadeWho', title: 'Abu Simbel', label: 'House' },
+                    { time: '04:30', artist: 'The bianca Story', title: 'Dancing People Are Never Wrong', label: 'House' },
+                    { time: '08:45', artist: 'Kon Faber', title: 'Øresund', label: 'House' },
+                    { time: '12:20', artist: 'Steve Paradise', title: 'Zultan (Pablo Fierro Remix)', label: 'House' },
+                    { time: '16:40', artist: 'Jan Blomqvist', title: "I Don't Think About You", label: 'House' },
+                    { time: '20:15', artist: 'Yotto', title: 'Another Riff For The Good Times', label: 'House' },
+                    { time: '24:30', artist: 'Sparrow & Barbossa, Cee ElAssaad', title: 'Libre', label: 'House' },
+                    { time: '28:50', artist: '&ME (Coco Vocal Edit)', title: 'The Rapture Pt.II', label: 'House' },
+                    { time: '32:10', artist: 'Franky Rizardo', title: 'Revoke', label: 'House' },
+                    { time: '35:45', artist: 'Phuture', title: 'Acid Track (Paco Osuna Remix)', label: 'House' },
+                    { time: '39:20', artist: 'Hector Couto', title: 'Sweet Times', label: 'House' },
+                    { time: '42:55', artist: 'Coyu', title: 'La Coincidencia', label: 'House' },
+                    { time: '46:30', artist: 'Edu Imbernon', title: 'Crystalised', label: 'House' },
+                    { time: '50:05', artist: 'Andrea Oliva', title: 'Rio', label: 'House' },
+                    { time: '53:40', artist: 'D Loop', title: 'P.O.T', label: 'House' },
+                    { time: '57:15', artist: 'Maga, Sean Doron', title: 'Starlight', label: 'House' },
+                    { time: '60:50', artist: 'Andrea Oliva', title: 'Alley RavE', label: 'House' },
+                    { time: '64:25', artist: 'Fur Coat', title: 'Ephemera', label: 'House' },
+                    { time: '68:00', artist: 'Facundo Mohr & Baunder', title: 'Margarita', label: 'House' }
+                ]
+            },
+            'elrow': {
+                title: 'ElROW',
+                subtitle: 'Un delirio; confeti, techno y fantasía en estado puro.',
+                audioUrl: 'https://dn721207.ca.archive.org/0/items/ro-wllaz-o/RoWllazO.flac',
+                downloadUrl: 'https://dn721207.ca.archive.org/0/items/ro-wllaz-o/RoWllazO.flac',
+                duration: '--:--',
+                cover: `
+                    <img class="session-cover-svg" src="attached_assets/maxresdefault_1752569874084.jpg" alt="Carátula ElRow" style="width:100%;height:300px;object-fit:cover;display:block;border-radius:var(--radius);box-shadow:var(--shadow-hover);" />
+                `,
+                tracklist: [
+                    { time: '00:00', artist: 'DJ Fronter', title: 'Chitown', label: 'House' },
+                    { time: '04:30', artist: 'Raul Mezcolanza', title: 'Two Senses', label: 'House' },
+                    { time: '08:45', artist: 'Sergio Fernandez', title: 'Paraiso', label: 'House' },
+                    { time: '12:20', artist: 'Leland McWilliams', title: 'All I Need', label: 'House' },
+                    { time: '16:40', artist: 'Guille Plasencia', title: 'Disa', label: 'House' },
+                    { time: '20:15', artist: 'Oscar Aguilera, George Privatti', title: 'The Morning Kids', label: 'House' },
+                    { time: '24:30', artist: 'George Privatti', title: 'Papantas', label: 'House' },
+                    { time: '28:50', artist: 'George Privatti', title: 'Mousy', label: 'House' },
+                    { time: '32:10', artist: 'Guille Plasencia', title: 'Hurry Up', label: 'House' },
+                    { time: '35:45', artist: 'Jay Lumen', title: 'Not Like That', label: 'House' },
+                    { time: '39:20', artist: 'Jay Lumen', title: 'Get Ya!', label: 'House' },
+                    { time: '42:55', artist: 'Jay Lumen', title: 'Strange Fruit', label: 'House' },
+                    { time: '46:30', artist: 'Jay Lumen', title: 'As One', label: 'House' },
+                    { time: '50:05', artist: 'Jay Lumen', title: 'Femme Fatale', label: 'House' },
+                    { time: '53:40', artist: 'Nikola Gala', title: 'Rock Steady', label: 'House' },
+                    { time: '57:15', artist: 'Umek & Jay Lumen', title: 'Sinful Ladies', label: 'House' },
+                    { time: '60:50', artist: 'Joshiwa', title: 'La Vida', label: 'House' },
+                    { time: '64:25', artist: 'Sabb', title: 'Percomaniac', label: 'House' },
+                    { time: '68:00', artist: 'Reboot', title: 'Hermano', label: 'House' },
+                    { time: '71:35', artist: 'Joeski feat. Héctor Lavoe', title: 'Dia De Ayer', label: 'House' }
+                ]
+            },
+            'ros-in-da-house': {
+                title: 'Ros In Da House',
+                subtitle: 'Ritmos profundos y mínimos, texturas orgánicas y matices afro unidos por pulsos melódicos y grooves implacables.',
+                audioUrl: 'https://dn721404.ca.archive.org/0/items/ros-in-da-house/Ros%20in%20da%20House.flac',
+                downloadUrl: 'https://dn721404.ca.archive.org/0/items/ros-in-da-house/Ros%20in%20da%20House.flac',
+                duration: '--:--',
+                cover: `
+                    <img class="session-cover-svg" src="attached_assets/ROS.png" alt="Carátula Ros In Da House" style="width:100%;height:300px;object-fit:cover;display:block;border-radius:var(--radius);box-shadow:var(--shadow-hover);" />
+                `,
+                tracklist: [
+                    { time: '00:00', artist: 'ANOTR, Abel Balder', title: 'Relax My Eyes', label: 'House' },
+                    { time: '04:30', artist: 'Sidney Charles', title: 'Ruffline', label: 'House' },
+                    { time: '08:45', artist: 'Sebastian Manuel & Honey Dijon', title: 'The Mixologist', label: 'House' },
+                    { time: '12:20', artist: 'Junior Jack, Tube & Berger', title: 'E Samba 2018', label: 'House' },
+                    { time: '16:40', artist: 'Dario D\'Attis', title: 'Solera', label: 'House' },
+                    { time: '20:15', artist: 'Joris Voorn', title: 'The Deep', label: 'House' },
+                    { time: '24:30', artist: 'Acid Pauli', title: 'Nana', label: 'House' },
+                    { time: '28:50', artist: 'Sparrow & Barbossa, Nomvula SA', title: 'Amore Profondo', label: 'House' },
+                    { time: '32:10', artist: 'Marek Hemmann', title: 'Gemini', label: 'House' },
+                    { time: '35:45', artist: 'Elias Dorá & Acado', title: 'Asura (Mollono)', label: 'House' },
+                    { time: '39:20', artist: 'Dam Swindle feat Jitwam', title: 'Coffee in the Morning', label: 'House' },
+                    { time: '42:55', artist: 'Cape Town', title: 'Sides', label: 'House' },
+                    { time: '46:30', artist: 'Sorry I Am Late', title: 'Kollektiv Turmstrasse', label: 'House' },
+                    { time: '50:05', artist: 'DENNIS CRUZ FEAT LEO WOOD', title: 'WHAT YOU DOING', label: 'House' },
+                    { time: '53:40', artist: 'Makebo & Amonita', title: 'Back To The Roots', label: 'House' },
+                    { time: '57:15', artist: 'Adam Port & Me', title: 'Muye', label: 'House' },
+                    { time: '60:50', artist: 'Daniel Steinberg', title: 'Get Ya', label: 'House' }
+                ]
+            },
+            'terraceo-en-grana': {
+                title: 'Terraceo en Graná',
+                subtitle: 'Sol, groove y buen rollo servido en copa larga. Esta sesión huele a tarde de vermú, palmas discretas y cuerpos bailando sin mirar el reloj.',
+                audioUrl: 'https://ia903103.us.archive.org/29/items/terraceo-en-grana/Terraceo%20en%20Gran%C3%A1.flac',
+                downloadUrl: 'https://ia903103.us.archive.org/29/items/terraceo-en-grana/Terraceo%20en%20Gran%C3%A1.flac',
+                duration: '--:--',
+                cover: `
+                    <img class="session-cover-svg" src="attached_assets/Terraceo_en_Grana.jpg" alt="Carátula Terraceo en Graná" style="width:100%;height:300px;object-fit:cover;display:block;border-radius:var(--radius);box-shadow:var(--shadow-hover);" />
+                `,
+                tracklist: [
+                    { time: '00:00', artist: 'Diivded Souls feat Kwame Remy', title: 'Feel Like Heaven', label: 'House' },
+                    { time: '04:30', artist: 'Deetron', title: 'Starblazer', label: 'House' },
+                    { time: '08:45', artist: 'Joeski', title: 'Tierra Linda', label: 'House' },
+                    { time: '12:20', artist: 'Joshwa', title: 'La Vida', label: 'House' },
+                    { time: '16:40', artist: 'Monkey Safari', title: 'Nava', label: 'House' },
+                    { time: '20:15', artist: 'Audiojack', title: 'Reverie', label: 'House' },
+                    { time: '24:30', artist: 'DJ Chus & David Penn feat. Caterina', title: 'Baila', label: 'House' },
+                    { time: '28:50', artist: 'Astor', title: 'Shur I Kan', label: 'House' },
+                    { time: '32:10', artist: 'Jesse Perez', title: 'Carol City Susy', label: 'House' },
+                    { time: '35:45', artist: 'Wh0', title: 'You Got Me', label: 'House' },
+                    { time: '39:20', artist: 'DJ Chus', title: '1984', label: 'House' },
+                    { time: '42:55', artist: 'Sparrow & Barbossa', title: 'Yeke', label: 'House' },
+                    { time: '46:30', artist: 'Peter Gelderblom', title: 'Feel The Sunrise', label: 'House' },
+                    { time: '50:05', artist: 'Miss Kittin feat Golden Boy', title: 'Rippin Kittin', label: 'House' },
+                    { time: '53:40', artist: 'Westworld', title: 'Nic Fanciulli & Andy Chatterley\'s', label: 'House' },
+                    { time: '57:15', artist: 'Cloaked', title: 'Villanova', label: 'House' },
+                    { time: '60:50', artist: 'Shakedown', title: 'At Night', label: 'House' }
+                ]
+            },
+            'tributo-sps': {
+                title: 'Tributo SpS',
+                subtitle: 'Grooves oscuros, vocales embriagadores y esencia tribal con aroma a domingo en Madrid. Revive la magia del templo sonoro que marcó a toda una generación.',
+                audioUrl: 'https://dn720705.ca.archive.org/0/items/tributo-sp-s/Tributo%20SpS.mp3',
+                downloadUrl: 'https://dn720705.ca.archive.org/0/items/tributo-sp-s/Tributo%20SpS.mp3',
+                duration: '--:--',
+                cover: `
+                    <img class="session-cover-svg" src="attached_assets/Tributo_SpS.jpg" alt="Carátula Tributo SpS" style="width:100%;height:300px;object-fit:cover;display:block;border-radius:var(--radius);box-shadow:var(--shadow-hover);" />
+                `,
+                tracklist: [
+                    { time: '00:00', artist: 'Ismael Rivas & Javier Gonzalez', title: 'Sula', label: 'House' },
+                    { time: '04:30', artist: 'Montilla', title: 'Plastic People', label: 'House' },
+                    { time: '08:45', artist: 'Chus & Ceballos', title: 'Magnifique', label: 'House' },
+                    { time: '12:20', artist: 'Dominic Plaza', title: 'Sundown', label: 'House' },
+                    { time: '16:40', artist: 'Silicone Soul feat. Louise Clare Marshall', title: 'Right On!', label: 'House' },
+                    { time: '20:15', artist: 'Julian Poker', title: 'Re2 One', label: 'House' },
+                    { time: '24:30', artist: 'Matthew Dekay', title: 'Clearing The Mind', label: 'House' },
+                    { time: '28:50', artist: 'Deux', title: 'Same Way', label: 'House' },
+                    { time: '32:10', artist: 'Juanjo Martin & Javi Reina', title: 'Illusion', label: 'House' },
+                    { time: '35:45', artist: 'Magan', title: 'With You', label: 'House' },
+                    { time: '39:20', artist: 'Juanjo Martin & Javi Reina', title: 'First Time', label: 'House' },
+                    { time: '42:55', artist: 'Toby Holguin & Ariel Baund', title: 'Wicked Fortress', label: 'House' },
+                    { time: '46:30', artist: 'Hoxton Whores', title: 'Lost In Ibiza', label: 'House' },
+                    { time: '50:05', artist: 'Criss Source', title: 'Hugs \'n\' Kisses', label: 'House' },
+                    { time: '53:40', artist: 'Rui Da Silva', title: 'Touch Me', label: 'House' },
+                    { time: '57:15', artist: 'Tool', title: 'the first rebirth', label: 'House' }
+                ]
+            },
+            'jaus-musik': {
+                title: 'Jaus Musik',
+                subtitle: 'El título no es solo un juego de palabras, es una declaración de intenciones. Una sesión que celebra los himnos que hicieron historia en la pista, voces icónicas y beats que no envejecen. Ponte cómodo... o mejor, ¡ponte a bailar!',
+                audioUrl: 'https://ia601702.us.archive.org/27/items/jaus-musik/Jaus%20Musik.flac',
+                downloadUrl: 'https://ia601702.us.archive.org/27/items/jaus-musik/Jaus%20Musik.flac',
+                duration: '--:--',
+                cover: `
+                    <img class="session-cover-svg" src="attached_assets/Jaus Musik.jpg" alt="Carátula Jaus Musik" style="width:100%;height:300px;object-fit:cover;display:block;border-radius:var(--radius);box-shadow:var(--shadow-hover);" />
+                `,
+                tracklist: [
+                    { time: '00:00', artist: 'Tim Deluxe', title: 'It Just Won\'t Do', label: 'House' },
+                    { time: '04:30', artist: 'Negrocan', title: 'CADA VEZ', label: 'House' },
+                    { time: '08:45', artist: 'Afro Medusa', title: 'Pasilda', label: 'House' },
+                    { time: '12:20', artist: 'ALEX GAUDINO VS MASTERS AT WORK', title: 'CALABRIA', label: 'House' },
+                    { time: '16:40', artist: 'Todd Terry', title: 'Babarabatiri (David Penn Remix)', label: 'House' },
+                    { time: '20:15', artist: 'Alessio Caforio', title: 'Back To My House', label: 'House' },
+                    { time: '24:30', artist: 'Bob Sinclar', title: 'I Feel For You', label: 'House' },
+                    { time: '28:50', artist: 'Fedde Le Grand Funkerman', title: '3 Minutes to Explain', label: 'House' },
+                    { time: '32:10', artist: 'EBTG vs. Soul Vision', title: 'Tracey In My Room', label: 'House' },
+                    { time: '35:45', artist: 'M&S Presents The Girl Next Door', title: 'Salsoul Nugget', label: 'House' },
+                    { time: '39:20', artist: 'Armand Van Helden feat. Duane Harden', title: 'You Don\'t Know Me', label: 'House' },
+                    { time: '42:55', artist: 'Alessio Caforio', title: 'Back To My House', label: 'House' },
+                    { time: '46:30', artist: 'Fingers Inc', title: 'My House Acapella', label: 'House' },
+                    { time: '50:05', artist: 'Modjo', title: 'Lady', label: 'House' },
+                    { time: '53:40', artist: 'Goodfellas', title: 'Soul Heaven', label: 'House' },
+                    { time: '57:15', artist: 'Octave One', title: 'Black Water (Full Strings)', label: 'House' },
+                    { time: '60:50', artist: 'Celeda', title: 'The Underground', label: 'House' },
+                    { time: '64:25', artist: 'Juanjo Martin & Javi Reina', title: 'Eisbaer', label: 'House' },
+                    { time: '68:00', artist: 'Julian Jeweil', title: 'Air Conditionné', label: 'House' },
+                    { time: '71:35', artist: 'Maceo Plex vs Faithless', title: 'Insomnia', label: 'House' },
+                    { time: '75:10', artist: 'Oxia', title: 'Domino', label: 'House' },
+                    { time: '78:45', artist: 'Baby D', title: 'Let Me Be Your Fantasy', label: 'House' },
+                    { time: '82:20', artist: 'DJ Rolando', title: 'Knights of the Jaguar', label: 'House' }
+                ]
+            },
+            'tributo-ma': {
+                title: 'Tributo MA',
+                subtitle: 'No se hace música como antes, pero se puede pinchar como antes. Es un remember con corazón noventero.',
+                audioUrl: 'https://dn721606.ca.archive.org/0/items/tributo-ma/Tributo%20MA.mp3',
+                downloadUrl: 'https://dn721606.ca.archive.org/0/items/tributo-ma/Tributo%20MA.mp3',
+                cover: `<img class="session-cover-svg" src="attached_assets/Tributo_MA.jpg" alt="Carátula Tributo MA" style="width:100%;height:300px;object-fit:cover;display:block;border-radius:var(--radius);box-shadow:var(--shadow-hover);" />`,
+                tracklist: [
+                    { time: '00:00', artist: 'Dunne', title: 'Espiral (1991)' },
+                    { time: '04:30', artist: 'Jam & Spoon', title: 'The Age Of Love' },
+                    { time: '08:45', artist: 'Candy Girls', title: 'Bom Ba De' },
+                    { time: '12:20', artist: 'Niels Van Gogh', title: 'Pulverturm' },
+                    { time: '16:40', artist: 'Synth DJ Tool', title: 'The First Rebirth' },
+                    { time: '20:15', artist: 'The Mackenzie feat. Jessy', title: 'Arpeggia (Vocal Version)' },
+                    { time: '24:30', artist: 'Yves Deruyter', title: 'Back to Earth' },
+                    { time: '28:50', artist: 'Steam System', title: 'Barraca Destroy' },
+                    { time: '32:10', artist: 'DJ Sammy feat. Carisma', title: 'In 2 Eternity' },
+                    { time: '35:45', artist: 'Kaycee', title: 'Millennium Stringz' },
+                    { time: '39:20', artist: 'Gouryella', title: 'Gouryella (Extended Mix)' },
+                    { time: '42:55', artist: 'Elastica', title: 'Tashure' },
+                    { time: '46:30', artist: 'Clublanders', title: 'World of Love x' },
+                    { time: '50:05', artist: 'Cosmicman', title: 'I Love You (Shane 54 Remix)' },
+                    { time: '53:40', artist: 'DJ Jam X', title: 'Keep it that Way' },
+                    { time: '57:15', artist: 'Tina Cousins', title: 'Forever (W.I.P. Manana Mix)' },
+                    { time: '60:50', artist: 'Clublanders', title: 'World Of Love' },
+                    { time: '64:25', artist: 'Hale Bopp', title: 'Der Dritte Raum' },
+                    { time: '68:00', artist: 'B.B.E', title: 'Seven Days & One Week' },
+                    { time: '71:35', artist: 'Fragma feat. Maria Rubia', title: 'Everytime You Need Me' },
+                    { time: '75:10', artist: 'ARE AM EYE', title: 'Commander Tom' },
+                    { time: '78:45', artist: 'Cherry Moon', title: 'The House of House' },
+                    { time: '82:20', artist: 'Nikolsi', title: 'Ready To Flow' }
+                ]
+            },
+            'insane': {
+                title: 'Insane',
+                subtitle: 'Imagina a Alicia cayendo, pero esta vez con un bombo hipnótico y pads melódicos. Sigue al conejo.',
+                audioUrl: 'https://dn720700.ca.archive.org/0/items/in-sane/InSANE.flac',
+                downloadUrl: 'https://dn720700.ca.archive.org/0/items/in-sane/InSANE.flac',
+                duration: '01:18:42',
+                cover: `<img class="session-cover-svg" src="attached_assets/insane.jpg" alt="Carátula Insane" style="width:100%;height:300px;object-fit:cover;display:block;border-radius:var(--radius);box-shadow:var(--shadow-hover);" />`,
+                tracklist: [
+                    { time: '00:00', artist: 'Kate Bush', title: 'RUNNING UP THAT HILL' },
+                    { time: '04:30', artist: 'Anyma', title: 'Running feat. Meg Myers' },
+                    { time: '08:45', artist: 'Anyma', title: 'Reminding feat. Rosa Anschütz' },
+                    { time: '12:20', artist: 'Monolink', title: 'Return To Oz (Artbat Remix)' },
+                    { time: '16:40', artist: 'Rampa & WhoMadeWho', title: 'Tell Me Are We' },
+                    { time: '20:15', artist: 'Mathame', title: 'Skywalking' },
+                    { time: '24:30', artist: 'ARTBAT & Pete Tong', title: 'Age Of Love' },
+                    { time: '28:50', artist: 'Anyma', title: 'A True Connection' },
+                    { time: '32:10', artist: 'Rampa', title: 'They Will' },
+                    { time: '35:45', artist: 'Nicolas Duvoisin', title: 'Blue Turtle' },
+                    { time: '39:20', artist: 'Pan-Pot feat. Cari Golden', title: 'Captain My Captain' },
+                    { time: '42:55', artist: 'Ed Ed feat. Chasing Kurt', title: 'Naked Walls' },
+                    { time: '46:30', artist: 'Hot Since 82', title: 'You Are The Light' },
+                    { time: '50:05', artist: 'KMLN', title: 'The Stand' },
+                    { time: '53:40', artist: 'CamelPhat & Cristoph', title: 'Breathe' },
+                    { time: '57:15', artist: 'Chelsea Wolfe', title: 'The Warden' },
+                    { time: '60:50', artist: 'Guy Gerber Dixon', title: 'No Distance' },
+                    { time: '64:25', artist: 'Maceo Plex', title: 'Blade Runner' },
+                    { time: '68:00', artist: 'Ost & Kjex', title: 'Kaputt' }
+                ]
+            }
+        };
+
+        // Get session ID from URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const sessionId = urlParams.get('session') || 'first-date-vol-ii';
+        const session = sessionData[sessionId] || sessionData['first-date-vol-ii'];
+
+        // Initialize player with session data
+        function initializePlayer() {
+            // Set the correct titles based on session
+            if (sessionId === 'nature-tech-house') {
+                document.getElementById('mainSessionTitle').textContent = 'Nature';
+                document.getElementById('sessionSubtitle').textContent = 'Una selección potente de Tech House con beats profundos y grooves hipnóticos';
+            } else if (sessionId === 'sari-bari-2025') {
+                document.getElementById('mainSessionTitle').textContent = 'Sari Bari 2025';
+                document.getElementById('sessionSubtitle').textContent = 'Un verano, una fiesta, una promesa de groove. En la arena de Granada, celebramos el ritmo con alma y un mar de abrazos. Sari Bari es calor, house y corazón.';
+            } else if (sessionId === 'plastic') {
+                document.getElementById('mainSessionTitle').textContent = 'Plastic';
+                document.getElementById('sessionSubtitle').textContent = 'Homenaje a la mítica discoteca Plastic de Madrid';
+            } else if (sessionId === 'los-ninos-del-parque') {
+                document.getElementById('mainSessionTitle').textContent = 'Los niños del parque';
+                document.getElementById('sessionSubtitle').textContent = 'Crecimos entre bajos, máquinas y parques que ardían de noche. Esta sesión es para los que nunca dejaron de bailar a oscuras.';
+            } else if (sessionId === 'aero-red') {
+                document.getElementById('mainSessionTitle').textContent = 'Aero-Red';
+                document.getElementById('sessionSubtitle').textContent = 'Síntomas: sudor, euforia y acidez mental. Tratamiento: Aerored — ácido en vena, rave sin receta';
+            } else if (sessionId === 'nati-nati') {
+                document.getElementById('mainSessionTitle').textContent = 'Nati Nati';
+                document.getElementById('sessionSubtitle').textContent = 'Organic House';
+            } else if (sessionId === 'into-the-wild') {
+                document.getElementById('mainSessionTitle').textContent = 'Into the Wild';
+                document.getElementById('sessionSubtitle').textContent = 'Organic House';
+            } else if (sessionId === 'rituales-del-sur') {
+                document.getElementById('mainSessionTitle').textContent = 'Rituales del Sur';
+                document.getElementById('sessionSubtitle').textContent = 'Ritmos ancestrales';
+            } else if (sessionId === 'primavera-sound') {
+                document.getElementById('mainSessionTitle').textContent = 'Primavera Sound';
+                document.getElementById('sessionSubtitle').textContent = 'Esta sesión es un viaje sonoro desde una terraza al atardecer hasta un club al borde del amanecer.';
+            } else if (sessionId === 'elrow') {
+                document.getElementById('mainSessionTitle').textContent = 'ElROW';
+                document.getElementById('sessionSubtitle').textContent = 'Un delirio; confeti, techno y fantasía en estado puro.';
+            } else if (sessionId === 'ros-in-da-house') {
+                document.getElementById('mainSessionTitle').textContent = 'Ros In Da House';
+                document.getElementById('sessionSubtitle').textContent = 'Ritmos profundos y mínimos, texturas orgánicas y matices afro unidos por pulsos melódicos y grooves implacables.';
+            } else if (sessionId === 'terraceo-en-grana') {
+                document.getElementById('mainSessionTitle').textContent = 'Terraceo en Graná';
+                document.getElementById('sessionSubtitle').textContent = 'Sol, groove y buen rollo servido en copa larga. Esta sesión huele a tarde de vermú, palmas discretas y cuerpos bailando sin mirar el reloj.';
+            } else if (sessionId === 'tributo-sps') {
+                document.getElementById('mainSessionTitle').textContent = 'Tributo SpS';
+                document.getElementById('sessionSubtitle').textContent = 'Grooves oscuros, vocales embriagadores y esencia tribal con aroma a domingo en Madrid. Revive la magia del templo sonoro que marcó a toda una generación.';
+            } else if (sessionId === 'jaus-musik') {
+                document.getElementById('mainSessionTitle').textContent = 'Jaus Musik';
+                document.getElementById('sessionSubtitle').textContent = 'El título no es solo un juego de palabras, es una declaración de intenciones. Una sesión que celebra los himnos que hicieron historia en la pista, voces icónicas y beats que no envejecen. Ponte cómodo... o mejor, ¡ponte a bailar!';
+            } else if (sessionId === 'tributo-ma') {
+                document.getElementById('mainSessionTitle').textContent = 'Tributo MA';
+                document.getElementById('sessionSubtitle').textContent = 'No se hace música como antes, pero se puede pinchar como antes. Es un remember con corazón noventero.';
+            } else if (sessionId === 'insane') {
+                document.getElementById('mainSessionTitle').textContent = 'Insane';
+                document.getElementById('sessionSubtitle').textContent = 'Imagina a Alicia cayendo, pero esta vez con un bombo hipnótico y pads melódicos. Sigue al conejo.';
+            } else {
+                document.getElementById('mainSessionTitle').textContent = 'First Date Vol.II';
+                document.getElementById('sessionSubtitle').textContent = 'La primera cita que nadie vio venir. Sin aviso, sin Vol. I. Solo música para desnudarse sin palabras';
+            }
+            
+            document.getElementById('duration').textContent = session.duration;
+            document.getElementById('sessionCover').innerHTML = session.cover;
+            
+            // --- AUDIO PLAYER LOGIC ---
+            const audioContainer = document.querySelector('.audio-player-container');
+            audioContainer.innerHTML = '';
+            if (sessionId === 'improvi-station') {
+                // Mostrar reproductor Mixcloud embebido
+                audioContainer.innerHTML = `
+                    <iframe width="100%" height="120" src="https://www.mixcloud.com/widget/iframe/?hide_cover=1&feed=${encodeURIComponent(session.audioUrl)}" frameborder="0" allow="autoplay"></iframe>
+                `;
+            } else {
+                // Reproductor estándar
+                audioContainer.innerHTML = `
+                    <audio preload="none" id="mainAudioPlayer" aria-label="Reproductor principal de audio" crossorigin="anonymous">
+                        <source id="audioSource" src="${session.audioUrl}" type="audio/mpeg">
+                        Tu navegador no soporta el elemento de audio.
+                    </audio>
+                    <!-- Custom Player Controls -->
+                    <div class="custom-player">
+                        <div class="player-controls-row">
+                            <button class="control-btn" id="rewindBtn" title="Rebobinar 10s">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12,5V1L7,6L12,11V7A6,6 0 0,1 18,13A6,6 0 0,1 12,19A6,6 0 0,1 6,13H4A8,8 0 0,0 12,21A8,8 0 0,0 20,13A8,8 0 0,0 12,5Z"/>
+                                    <text x="12" y="15" text-anchor="middle" font-size="8" fill="currentColor">10</text>
+                                </svg>
+                            </button>
+                            <button class="control-btn" id="stopBtn" title="Parar">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                    <rect x="6" y="6" width="12" height="12"/>
+                                </svg>
+                            </button>
+                            <button class="control-btn play-pause-btn" id="playPauseBtn" title="Reproducir/Pausar">
+                                <svg class="play-icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M8,5.14V19.14L19,12.14L8,5.14Z"/>
+                                </svg>
+                                <svg class="pause-icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" style="display: none;">
+                                    <path d="M14,19H18V5H14M6,19H10V5H6V19Z"/>
+                                </svg>
+                            </button>
+                            <button class="control-btn" id="forwardBtn" title="Adelantar 10s">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12,5V1L17,6L12,11V7A6,6 0 0,0 6,13A6,6 0 0,0 12,19A6,6 0 0,0 18,13H20A8,8 0 0,1 12,21A8,8 0 0,1 4,13A8,8 0 0,1 12,5Z"/>
+                                    <text x="12" y="15" text-anchor="middle" font-size="8" fill="currentColor">10</text>
+                                </svg>
+                            </button>
+                            <button class="control-btn" id="volumeBtn" title="Volumen">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M14,3.23V5.29C16.89,6.15 19,8.83 19,12C19,15.17 16.89,17.85 14,18.71V20.77C18.01,19.86 21,16.28 21,12C21,7.72 18.01,4.14 14,3.23M16.5,12C16.5,10.23 15.5,8.71 14,7.97V16C15.5,15.29 16.5,13.76 16.5,12M3,9V15H7L12,20V4L7,9H3Z"/>
+                                </svg>
+                            </button>
+                            <div class="time-display">
+                                <span id="currentTime">00:00</span> / <span id="totalTime">00:00</span>
+                            </div>
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress-bar" id="progressBar">
+                                <div class="progress-fill" id="progressFill"></div>
+                                <div class="progress-handle" id="progressHandle"></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            // --- FIN AUDIO PLAYER LOGIC ---
+
+            // Botón de descarga solo si hay downloadUrl
+            const playerActions = document.querySelector('.player-actions');
+            if (session.downloadUrl) {
+                playerActions.innerHTML = `<button class="download-btn" id="downloadBtn">
+                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+                    </svg>
+                    Descargar
+                </button>`;
+            } else {
+                playerActions.innerHTML = '';
+            }
+            
+            // Load audio
+            const audio = document.getElementById('mainAudioPlayer');
+            
+            // Add error handling for audio loading
+            audio.addEventListener('error', function(e) {
+                console.error('Error loading audio:', e);
+                console.log('Trying alternative URL...');
+                // Try alternative URL format
+                if (sessionId === 'nature-tech-house') {
+                    audio.src = 'https://archive.org/download/nature-club/Nature Club.mp3';
+                    audio.load();
+                }
+            });
+            
+            audio.addEventListener('canplay', function() {
+                console.log('Audio loaded successfully');
+            });
+            
+            // Prevent auto-pause when window loses focus or is minimized
+            audio.addEventListener('pause', function(e) {
+                // Only auto-resume if not manually paused by user
+                if (!window.userPausedAudio && document.visibilityState === 'hidden') {
+                    setTimeout(() => {
+                        if (!window.userPausedAudio) {
+                            audio.play().catch(e => console.log('Auto-resume prevented by browser policy'));
+                        }
+                    }, 100);
+                }
+            });
+            
+            // Track user-initiated pause/play
+            window.userPausedAudio = false;
+            
+            audio.load();
+            
+            // Generate tracklist
+            generateTracklist();
+            
+            // Setup custom player
+            setupCustomPlayer();
+            
+            // Setup download button
+            setupDownload();
+        }
+
+        function generateTracklist() {
+            const tracklistContainer = document.getElementById('tracklist');
+            tracklistContainer.innerHTML = '';
+            
+            const tracklist = session.tracklist || session.tracks || [];
+            tracklist.forEach((track, index) => {
+                const trackElement = document.createElement('div');
+                trackElement.className = 'track-item';
+                trackElement.innerHTML = `
+                    <div class="track-number">${String(index + 1).padStart(2, '0')}</div>
+                    <div class="track-time">${track.time || '--:--'}</div>
+                    <div class="track-info">
+                        <div class="track-artist">${track.artist || track.split(' - ')[0] || 'Unknown Artist'}</div>
+                        <div class="track-title">${track.title || track.split(' - ')[1] || track}</div>
+                        <div class="track-label">${track.label || 'Trance'}</div>
+                    </div>
+                `;
+                tracklistContainer.appendChild(trackElement);
+            });
+        }
+
+        function setupCustomPlayer() {
+            const audio = document.getElementById('mainAudioPlayer');
+            const playPauseBtn = document.getElementById('playPauseBtn');
+            const stopBtn = document.getElementById('stopBtn');
+            const rewindBtn = document.getElementById('rewindBtn');
+            const forwardBtn = document.getElementById('forwardBtn');
+            const progressBar = document.getElementById('progressBar');
+            const progressFill = document.getElementById('progressFill');
+            const progressHandle = document.getElementById('progressHandle');
+            const currentTimeEl = document.getElementById('currentTime');
+            const totalTimeEl = document.getElementById('totalTime');
+            const playIcon = document.querySelector('.play-icon');
+            const pauseIcon = document.querySelector('.pause-icon');
+
+            let isPlaying = false;
+            let isDragging = false;
+
+            // Store current session data for global player
+            window.currentSessionData = {
+                title: session.title,
+                subtitle: session.subtitle,
+                audioUrl: session.audioUrl
+            };
+
+            // Variable para controlar la sincronización
+            let isSyncingWithGlobal = false;
+
+            // Auto-start global player when page loads
+            if (window.globalAudioPlayer) {
+                window.globalAudioPlayer.startSession(window.currentSessionData);
+                
+                // Set up bidirectional sync
+                setTimeout(() => {
+                    if (window.globalAudioPlayer && window.globalAudioPlayer.audio) {
+                        const globalAudio = window.globalAudioPlayer.audio;
+                        
+                        // Sync global player time updates to main player
+                        globalAudio.addEventListener('timeupdate', () => {
+                            if (!isSyncingWithGlobal && Math.abs(globalAudio.currentTime - audio.currentTime) > 0.5) {
+                                isSyncingWithGlobal = true;
+                                audio.currentTime = globalAudio.currentTime;
+                                setTimeout(() => isSyncingWithGlobal = false, 100);
+                            }
+                        });
+                        
+                        // Sync global player play/pause to main player
+                        globalAudio.addEventListener('play', () => {
+                            if (audio.paused && !window.userPausedAudio) {
+                                audio.play().catch(e => console.log('Sync play failed:', e));
+                            }
+                        });
+                        
+                        globalAudio.addEventListener('pause', () => {
+                            if (!audio.paused && !window.userPausedAudio) {
+                                audio.pause();
+                            }
+                        });
+                    }
+                }, 500);
+            }
+
+            // Play/Pause functionality with improved sync
+            playPauseBtn.addEventListener('click', () => {
+                if (isPlaying) {
+                    audio.pause();
+                    window.userPausedAudio = true;
+                    
+                    // Sync pause to global player
+                    if (window.globalAudioPlayer && window.globalAudioPlayer.audio) {
+                        window.globalAudioPlayer.audio.pause();
+                    }
+                } else {
+                    audio.play().then(() => {
+                        window.userPausedAudio = false;
+                        
+                        // Sync play to global player
+                        if (window.globalAudioPlayer && window.globalAudioPlayer.audio) {
+                            window.globalAudioPlayer.audio.currentTime = audio.currentTime;
+                            window.globalAudioPlayer.audio.play().catch(e => console.log('Global sync play failed:', e));
+                        }
+                    }).catch(e => console.log('Main play failed:', e));
+                }
+            });
+
+            // Stop functionality
+            stopBtn.addEventListener('click', () => {
+                audio.pause();
+                audio.currentTime = 0;
+                window.userPausedAudio = true;
+                
+                // Stop global player too
+                if (window.globalAudioPlayer && window.globalAudioPlayer.audio) {
+                    window.globalAudioPlayer.audio.pause();
+                    window.globalAudioPlayer.audio.currentTime = 0;
+                }
+            });
+
+            // Rewind 10 seconds with improved sync
+            rewindBtn.addEventListener('click', () => {
+                if (!isNaN(audio.duration) && audio.currentTime >= 0) {
+                    const newTime = Math.max(0, audio.currentTime - 10);
+                    audio.currentTime = newTime;
+                    
+                    // Sync with global player
+                    if (window.globalAudioPlayer && window.globalAudioPlayer.audio) {
+                        window.globalAudioPlayer.audio.currentTime = newTime;
+                    }
+                }
+            });
+
+            // Forward 10 seconds with improved sync
+            forwardBtn.addEventListener('click', () => {
+                if (!isNaN(audio.duration) && audio.currentTime >= 0) {
+                    const newTime = Math.min(audio.duration, audio.currentTime + 10);
+                    audio.currentTime = newTime;
+                    
+                    // Sync with global player
+                    if (window.globalAudioPlayer && window.globalAudioPlayer.audio) {
+                        window.globalAudioPlayer.audio.currentTime = newTime;
+                    }
+                }
+            });
+
+            // Update play/pause button state
+            audio.addEventListener('play', () => {
+                isPlaying = true;
+                playIcon.style.display = 'none';
+                pauseIcon.style.display = 'block';
+            });
+
+            audio.addEventListener('pause', () => {
+                isPlaying = false;
+                playIcon.style.display = 'block';
+                pauseIcon.style.display = 'none';
+            });
+
+            // Update progress and time with sync protection
+            audio.addEventListener('timeupdate', () => {
+                if (!isDragging && !isSyncingWithGlobal && !isNaN(audio.duration) && audio.duration > 0) {
+                    const progress = (audio.currentTime / audio.duration) * 100;
+                    progressFill.style.width = progress + '%';
+                    progressHandle.style.left = progress + '%';
+                }
+                if (!isNaN(audio.currentTime)) {
+                    currentTimeEl.textContent = formatTime(audio.currentTime);
+                }
+            });
+
+            // Set total time when metadata loads
+            audio.addEventListener('loadedmetadata', () => {
+                if (!isNaN(audio.duration)) {
+                    totalTimeEl.textContent = formatTime(audio.duration);
+                }
+            });
+
+            // Progress bar click and drag with improved sync
+            progressBar.addEventListener('click', (e) => {
+                if (!isNaN(audio.duration) && audio.duration > 0) {
+                    const rect = progressBar.getBoundingClientRect();
+                    const percent = (e.clientX - rect.left) / rect.width;
+                    const newTime = percent * audio.duration;
+                    audio.currentTime = newTime;
+                    
+                    // Sync with global player
+                    if (window.globalAudioPlayer && window.globalAudioPlayer.audio) {
+                        window.globalAudioPlayer.audio.currentTime = newTime;
+                    }
+                }
+            });
+
+            // Drag functionality for progress handle
+            progressHandle.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                e.preventDefault();
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (isDragging) {
+                    const rect = progressBar.getBoundingClientRect();
+                    const percent = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+                    progressFill.style.width = (percent * 100) + '%';
+                    progressHandle.style.left = (percent * 100) + '%';
+                }
+            });
+
+            document.addEventListener('mouseup', () => {
+                if (isDragging && !isNaN(audio.duration) && audio.duration > 0) {
+                    const rect = progressBar.getBoundingClientRect();
+                    const percent = parseFloat(progressHandle.style.left) / 100;
+                    const newTime = percent * audio.duration;
+                    audio.currentTime = newTime;
+                    
+                    // Sync with global player
+                    if (window.globalAudioPlayer && window.globalAudioPlayer.audio) {
+                        window.globalAudioPlayer.audio.currentTime = newTime;
+                    }
+                    
+                    isDragging = false;
+                }
+            });
+
+            function formatTime(seconds) {
+                const mins = Math.floor(seconds / 60);
+                const secs = Math.floor(seconds % 60);
+                return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            }
+        }
+
+        function setupDownload() {
+            const downloadBtn = document.getElementById('downloadBtn');
+            downloadBtn.addEventListener('click', () => {
+                const link = document.createElement('a');
+                link.href = session.downloadUrl;
+                link.download = `${session.title}.mp3`;
+                link.click();
+            });
+        }
+
+        // Scroll Progress Indicator
+        window.addEventListener('scroll', () => {
+            const scrolled = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+            document.querySelector('.scroll-progress').style.width = scrolled + '%';
+        });
+
+        // Parallax Effect for Background Particles
+        window.addEventListener('scroll', () => {
+            const scrolled = window.scrollY;
+            const particles = document.querySelectorAll('.particle');
+            
+            particles.forEach((particle, index) => {
+                const speed = (index + 1) * 0.2;
+                particle.style.transform = `translateY(${scrolled * speed}px) rotate(${scrolled * 0.1}deg)`;
+            });
+        });
+
+        // Handle visibility changes to keep audio playing when minimized
+        document.addEventListener('visibilitychange', function() {
+            const audio = document.getElementById('mainAudioPlayer');
+            
+            if (document.visibilityState === 'hidden') {
+                // Page is hidden (minimized, tab switched, etc.)
+                console.log('Page hidden, audio should continue playing');
+                // Don't pause the audio automatically
+            } else if (document.visibilityState === 'visible') {
+                // Page is visible again
+                console.log('Page visible again');
+                // If audio was playing before hiding and user didn't manually pause it, resume
+                if (!window.userPausedAudio && audio.paused) {
+                    audio.play().catch(e => console.log('Auto-resume prevented by browser'));
+                }
+            }
+        });
+
+        // Prevent audio from pausing when window loses focus
+        window.addEventListener('blur', function() {
+            console.log('Window lost focus - keeping audio playing');
+        });
+
+        window.addEventListener('focus', function() {
+            console.log('Window gained focus');
+        });
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', initializePlayer);
+    </script>
+</body>
+</html>

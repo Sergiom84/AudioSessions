@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Progressive Sessions Archive</title>
+    <meta name="description" content="Progressive music sessions collection">
+    <link rel="stylesheet" href="style.css">
+    <script src="global-player.js"></script>
+</head>
+<body data-genre="progressive">
+    <!-- Scroll Progress Indicator -->
+    <div class="scroll-progress"></div>
+    
+    <!-- Navigation -->
+    <nav class="genre-nav">
+        <a href="index.html" class="nav-back">← Volver</a>
+        <h1 class="nav-title">PROGRESSIVE</h1>
+    </nav>
+    
+    <!-- Parallax Background Elements -->
+    <div class="bg-particles">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+    
+    <div class="viewport">
+        <main class="container sessions-container">
+            <article class="session-preview-card" data-session="insane">
+                <div class="session-image-container">
+                    <img class="session-image" src="attached_assets/insane.jpg" alt="Carátula Insane" />
+                    <div class="session-overlay">
+                        <span class="session-cta">Reproducir →</span>
+                    </div>
+                </div>
+                <div class="session-meta">
+                    <h2 style="text-align:left;">
+                        <span style="color:#181818; user-select:none; display:block;">Invisible</span>
+                        <span style="color:#181818; user-select:none; display:block;">Invisible</span>
+                        Insane
+                    </h2>
+                    <div style="text-align:center;">
+                        <p class="session-description">
+                            <span style="color:#181818; user-select:none; display:block;">Invisible</span>
+                            Imagina a Alicia cayendo, pero esta vez con un bombo hipnótico y pads melódicos. Sigue al conejo.
+                        </p>
+                    </div>
+                </div>
+            </article>
+        </main>
+    </div>
+
+<script>
+// Scroll Progress Indicator
+window.addEventListener('scroll', () => {
+    const scrolled = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+    document.querySelector('.scroll-progress').style.width = scrolled + '%';
+});
+
+// Parallax Effect for Background Particles
+window.addEventListener('scroll', () => {
+    const scrolled = window.scrollY;
+    const particles = document.querySelectorAll('.particle');
+    particles.forEach((particle, index) => {
+        const speed = (index + 1) * 0.2;
+        particle.style.transform = `translateY(${scrolled * speed}px) rotate(${scrolled * 0.1}deg)`;
+    });
+});
+
+// Navegación mejorada al player con reproductor global
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.session-preview-card').forEach(card => {
+        card.addEventListener('click', (e) => {
+            e.preventDefault();
+            const sessionId = card.getAttribute('data-session');
+            
+            if (sessionId && window.globalAudioPlayer) {
+                // Obtener datos de la sesión
+                const sessionData = {
+                    'insane': {
+                        title: 'Insane',
+                        subtitle: 'Progressive House',
+                        artist: 'Unknown Artist',
+                        audioUrl: 'https://dn720700.ca.archive.org/0/items/in-sane/InSANE.flac'
+                    }
+                };
+                
+                const session = sessionData[sessionId];
+                if (session) {
+                    // Iniciar reproductor global
+                    window.globalAudioPlayer.startSession(session);
+                }
+                
+                // Navegar al player después de un breve delay
+                setTimeout(() => {
+                    window.location.href = `player.html?session=${sessionId}`;
+                }, 500);
+            } else if (sessionId) {
+                // Fallback directo al player si no hay reproductor global
+                window.location.href = `player.html?session=${sessionId}`;
+            }
+        });
+        
+        card.style.cursor = 'pointer';
+        
+        // Añadir atributos de accesibilidad
+        card.setAttribute('role', 'button');
+        card.setAttribute('tabindex', '0');
+        card.setAttribute('aria-label', `Reproducir sesión ${card.querySelector('h2').textContent.trim()}`);
+        
+        // Soporte para navegación por teclado
+        card.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                card.click();
+            }
+        });
+    });
+    
+    // Scroll-triggered animations for session cards
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('in-view');
+            }
+        });
+    }, observerOptions);
+
+    document.querySelectorAll('.session-preview-card').forEach(card => {
+        observer.observe(card);
+    });
+});
+</script>
+
+</body>
+</html> 
