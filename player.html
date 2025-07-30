@@ -976,6 +976,64 @@
 
             // Setup download button
             setupDownload();
+
+            // Diagnóstico específico para iOS - detectar elementos que bloquean eventos
+            if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                setTimeout(() => {
+                    window.globalAudioPlayer.logger.log('INFO', 'Iniciando diagnóstico de elementos bloqueantes en iOS');
+                    
+                    // Verificar z-index de elementos
+                    const elementsWithHighZIndex = [];
+                    const allElements = document.querySelectorAll('*');
+                    
+                    allElements.forEach(el => {
+                        const computedStyle = window.getComputedStyle(el);
+                        const zIndex = parseInt(computedStyle.zIndex);
+                        if (zIndex > 1000) {
+                            elementsWithHighZIndex.push({
+                                tag: el.tagName,
+                                id: el.id || 'sin-id',
+                                class: el.className || 'sin-class',
+                                zIndex: zIndex,
+                                position: computedStyle.position
+                            });
+                        }
+                    });
+
+                    window.globalAudioPlayer.logger.log('INFO', 'Elementos con z-index alto detectados', elementsWithHighZIndex);
+
+                    // Verificar elementos con pointer-events
+                    const elementsWithPointerEvents = [];
+                    allElements.forEach(el => {
+                        const computedStyle = window.getComputedStyle(el);
+                        if (computedStyle.pointerEvents === 'none') {
+                            elementsWithPointerEvents.push({
+                                tag: el.tagName,
+                                id: el.id || 'sin-id',
+                                class: el.className || 'sin-class'
+                            });
+                        }
+                    });
+
+                    window.globalAudioPlayer.logger.log('INFO', 'Elementos con pointer-events: none', elementsWithPointerEvents);
+
+                    // Test de hit-testing en botones principales
+                    const playBtn = document.getElementById('playPauseBtn');
+                    if (playBtn) {
+                        const rect = playBtn.getBoundingClientRect();
+                        const centerX = rect.left + rect.width / 2;
+                        const centerY = rect.top + rect.height / 2;
+                        const elementAtPoint = document.elementFromPoint(centerX, centerY);
+                        
+                        window.globalAudioPlayer.logger.log('INFO', 'Hit test en botón play', {
+                            expectedElement: 'playPauseBtn',
+                            actualElement: elementAtPoint ? elementAtPoint.id || elementAtPoint.tagName : 'null',
+                            isCorrect: elementAtPoint === playBtn || playBtn.contains(elementAtPoint),
+                            rect: { x: centerX, y: centerY, width: rect.width, height: rect.height }
+                        });
+                    }
+                }, 2000);
+            }
         }
 
         function generateTracklist() {
@@ -1173,6 +1231,85 @@
                             e.target.style.transform = 'scale(1)';
                             e.preventDefault();
                         });
+                    }
+                });
+            }
+
+            // Solución temporal para iOS - Event delegation y force touch events
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+                          (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 0);
+            
+            if (isIOS) {
+                if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                    window.globalAudioPlayer.logger.log('INFO', 'Aplicando fix temporal para iOS - event delegation');
+                }
+
+                // Event delegation desde el document para asegurar que funcione
+                document.addEventListener('touchend', (e) => {
+                    const target = e.target.closest('#playPauseBtn, #stopBtn, #rewindBtn, #forwardBtn, #downloadBtn');
+                    if (target) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
+                        if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                            window.globalAudioPlayer.logger.log('SUCCESS', `Event delegation activó ${target.id} via touchend`);
+                        }
+
+                        // Simular click manualmente
+                        switch(target.id) {
+                            case 'playPauseBtn':
+                                if (isPlaying) {
+                                    audio.pause();
+                                    window.userPausedAudio = true;
+                                } else {
+                                    audio.play().catch(err => {
+                                        if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                                            window.globalAudioPlayer.logger.log('ERROR', 'Error en play manual desde delegation', { error: err.message });
+                                        }
+                                    });
+                                }
+                                break;
+                            case 'stopBtn':
+                                audio.pause();
+                                audio.currentTime = 0;
+                                window.userPausedAudio = true;
+                                break;
+                            case 'rewindBtn':
+                                if (!isNaN(audio.duration) && audio.currentTime >= 0) {
+                                    audio.currentTime = Math.max(0, audio.currentTime - 10);
+                                }
+                                break;
+                            case 'forwardBtn':
+                                if (!isNaN(audio.duration) && audio.currentTime >= 0) {
+                                    audio.currentTime = Math.min(audio.duration, audio.currentTime + 10);
+                                }
+                                break;
+                            case 'downloadBtn':
+                                const link = document.createElement('a');
+                                link.href = session.downloadUrl;
+                                link.download = `${session.title}.mp3`;
+                                document.body.appendChild(link);
+                                link.click();
+                                document.body.removeChild(link);
+                                break;
+                        }
+                    }
+                }, { passive: false });
+
+                // También añadir feedback visual
+                document.addEventListener('touchstart', (e) => {
+                    const target = e.target.closest('#playPauseBtn, #stopBtn, #rewindBtn, #forwardBtn, #downloadBtn');
+                    if (target) {
+                        target.style.transform = 'scale(0.95)';
+                        target.style.opacity = '0.8';
+                    }
+                });
+
+                document.addEventListener('touchend', (e) => {
+                    const target = e.target.closest('#playPauseBtn, #stopBtn, #rewindBtn, #forwardBtn, #downloadBtn');
+                    if (target) {
+                        target.style.transform = 'scale(1)';
+                        target.style.opacity = '1';
                     }
                 });
             }

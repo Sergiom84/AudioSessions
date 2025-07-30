@@ -51,17 +51,93 @@ class DebugLogger {
 
         document.body.insertAdjacentHTML('beforeend', loggerHTML);
 
-        // Bind events
-        document.getElementById('debugToggle').addEventListener('click', () => {
-            this.toggle();
+        // Detectar iOS y auto-abrir debug si estamos en player.html
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+                      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 0);
+        const isPlayerPage = window.location.pathname.includes('player.html') || 
+                             document.body.getAttribute('data-page') === 'player';
+
+        if (isIOS && isPlayerPage) {
+            this.log('INFO', 'iOS detectado en player.html - auto-abriendo debug');
+            setTimeout(() => {
+                this.isVisible = true;
+                const logger = document.getElementById('debugLogger');
+                if (logger) {
+                    logger.style.transform = 'translateX(0)';
+                }
+            }, 1000);
+        }
+
+        // Bind events con múltiples métodos para iOS
+        this.bindDebugEvents();
+    }
+
+    bindDebugEvents() {
+        const debugToggle = document.getElementById('debugToggle');
+        const debugClear = document.getElementById('debugClear');
+        const debugExport = document.getElementById('debugExport');
+
+        // Múltiples event listeners para asegurar que funcionen en iOS
+        const events = ['click', 'touchend', 'touchstart'];
+        
+        events.forEach(eventType => {
+            if (debugToggle) {
+                debugToggle.addEventListener(eventType, (e) => {
+                    if (eventType === 'touchstart') return; // Solo procesar en touchend o click
+                    e.preventDefault();
+                    e.stopPropagation();
+                    this.toggle();
+                    this.log('INFO', `Debug toggle activado via ${eventType}`);
+                }, { passive: false });
+            }
+
+            if (debugClear) {
+                debugClear.addEventListener(eventType, (e) => {
+                    if (eventType === 'touchstart') return;
+                    e.preventDefault();
+                    e.stopPropagation();
+                    this.clear();
+                    this.log('INFO', `Debug clear activado via ${eventType}`);
+                }, { passive: false });
+            }
+
+            if (debugExport) {
+                debugExport.addEventListener(eventType, (e) => {
+                    if (eventType === 'touchstart') return;
+                    e.preventDefault();
+                    e.stopPropagation();
+                    this.export();
+                    this.log('INFO', `Debug export activado via ${eventType}`);
+                }, { passive: false });
+            }
         });
 
-        document.getElementById('debugClear').addEventListener('click', () => {
-            this.clear();
-        });
+        // Test de eventos en toda la página para diagnosticar problemas
+        this.setupEventDiagnostics();
+    }
 
-        document.getElementById('debugExport').addEventListener('click', () => {
-            this.export();
+    setupEventDiagnostics() {
+        // Interceptar todos los eventos de clic en la página
+        ['click', 'touchstart', 'touchend', 'mousedown', 'mouseup'].forEach(eventType => {
+            document.addEventListener(eventType, (e) => {
+                const elementInfo = {
+                    tag: e.target.tagName,
+                    id: e.target.id || 'sin-id',
+                    class: e.target.className || 'sin-class',
+                    position: { x: e.clientX || 0, y: e.clientY || 0 }
+                };
+
+                this.log('CLICK', `Evento ${eventType} detectado`, elementInfo);
+                
+                // Si es un botón importante, log adicional
+                if (e.target.id === 'playPauseBtn' || e.target.id === 'downloadBtn') {
+                    this.log('WARN', `Evento en botón crítico: ${e.target.id}`, {
+                        eventType: eventType,
+                        prevented: e.defaultPrevented,
+                        propagationStopped: e.cancelBubble
+                    });
+                }
+            }, true); // Usar capture para interceptar antes que otros handlers
         });
     }
 
