@@ -900,8 +900,18 @@
                 console.warn('Could not load session progress:', e);
             }
             
-            // Add error handling for audio loading
+            // Add error handling for audio loading with detailed logging
             audio.addEventListener('error', function(e) {
+                if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                    window.globalAudioPlayer.logger.log('ERROR', 'Error cargando audio en player.html', {
+                        sessionId: sessionId,
+                        audioSrc: audio.src,
+                        errorCode: audio.error ? audio.error.code : 'desconocido',
+                        errorMessage: audio.error ? audio.error.message : 'sin mensaje',
+                        networkState: audio.networkState,
+                        readyState: audio.readyState
+                    });
+                }
                 console.error('Error loading audio:', e);
                 console.log('Trying alternative URL...');
                 // Try alternative URL format
@@ -912,7 +922,29 @@
             });
             
             audio.addEventListener('canplay', function() {
+                if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                    window.globalAudioPlayer.logger.log('SUCCESS', 'Audio cargado correctamente en player.html', {
+                        sessionId: sessionId,
+                        duration: audio.duration,
+                        readyState: audio.readyState
+                    });
+                }
                 console.log('Audio loaded successfully');
+            });
+
+            audio.addEventListener('loadstart', function() {
+                if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                    window.globalAudioPlayer.logger.log('INFO', 'Iniciando carga de audio en player.html', {
+                        sessionId: sessionId,
+                        audioSrc: audio.src
+                    });
+                }
+            });
+
+            audio.addEventListener('loadeddata', function() {
+                if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                    window.globalAudioPlayer.logger.log('INFO', 'Datos de audio cargados en player.html');
+                }
             });
             
             // Prevent auto-pause when window loses focus or is minimized
@@ -968,6 +1000,13 @@
         }
 
         function setupCustomPlayer() {
+            if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                window.globalAudioPlayer.logger.log('INFO', 'Configurando controles personalizados en player.html', {
+                    sessionId: sessionId,
+                    sessionTitle: session ? session.title : 'desconocido'
+                });
+            }
+
             const audio = document.getElementById('mainAudioPlayer');
             const playPauseBtn = document.getElementById('playPauseBtn');
             const stopBtn = document.getElementById('stopBtn');
@@ -980,6 +1019,17 @@
             const totalTimeEl = document.getElementById('totalTime');
             const playIcon = document.querySelector('.play-icon');
             const pauseIcon = document.querySelector('.pause-icon');
+
+            // Log de elementos encontrados
+            if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                window.globalAudioPlayer.logger.log('INFO', 'Elementos de control encontrados', {
+                    hasAudio: !!audio,
+                    hasPlayBtn: !!playPauseBtn,
+                    hasStopBtn: !!stopBtn,
+                    hasProgressBar: !!progressBar,
+                    audioSrc: audio ? audio.src : null
+                });
+            }
 
             let isPlaying = false;
             let isDragging = false;
@@ -1079,6 +1129,53 @@
                     }
                 }
             });
+
+            // Eventos táctiles específicos para iOS/móvil
+            if ('ontouchstart' in window) {
+                if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                    window.globalAudioPlayer.logger.log('INFO', 'Configurando eventos táctiles para iOS en player.html');
+                }
+
+                // Touch events para play/pause button
+                playPauseBtn.addEventListener('touchstart', (e) => {
+                    if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                        window.globalAudioPlayer.logger.log('CLICK', 'Touchstart en botón play/pause principal', {
+                            touches: e.touches.length,
+                            target: e.target.tagName,
+                            isPlaying: isPlaying
+                        });
+                    }
+                    e.target.style.transform = 'scale(0.95)';
+                });
+
+                playPauseBtn.addEventListener('touchend', (e) => {
+                    if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                        window.globalAudioPlayer.logger.log('CLICK', 'Touchend en botón play/pause principal');
+                    }
+                    e.target.style.transform = 'scale(1)';
+                    e.preventDefault(); // Evitar doble evento
+                });
+
+                // Touch events para otros botones
+                [stopBtn, rewindBtn, forwardBtn].forEach(btn => {
+                    if (btn) {
+                        btn.addEventListener('touchstart', (e) => {
+                            if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                                window.globalAudioPlayer.logger.log('CLICK', `Touchstart en ${btn.id}`, {
+                                    buttonId: btn.id,
+                                    touches: e.touches.length
+                                });
+                            }
+                            e.target.style.transform = 'scale(0.95)';
+                        });
+
+                        btn.addEventListener('touchend', (e) => {
+                            e.target.style.transform = 'scale(1)';
+                            e.preventDefault();
+                        });
+                    }
+                });
+            }
 
             // Update play/pause button state
             audio.addEventListener('play', () => {

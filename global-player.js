@@ -9,7 +9,10 @@ class DebugLogger {
 
     log(type, message, data = null) {
         const timestamp = new Date().toLocaleTimeString();
-        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        // Detección mejorada de móvil incluyendo iOS específicamente
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|CriOS|FxiOS|EdgiOS/i.test(navigator.userAgent) ||
+                         (navigator.maxTouchPoints && navigator.maxTouchPoints > 0) ||
+                         'ontouchstart' in window;
         
         const logEntry = {
             timestamp,
@@ -17,6 +20,7 @@ class DebugLogger {
             message,
             data,
             isMobile,
+            isIOS: /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 0),
             userAgent: navigator.userAgent.substring(0, 50) + '...'
         };
 
@@ -145,33 +149,70 @@ class GlobalAudioPlayer {
     }
 
     performMobileDiagnostics() {
-        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        // Detección mejorada de móvil e iOS
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|CriOS|FxiOS|EdgiOS/i.test(navigator.userAgent) ||
+                         (navigator.maxTouchPoints && navigator.maxTouchPoints > 0) ||
+                         'ontouchstart' in window;
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+                      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 0);
         
         this.logger.log('INFO', 'Diagnóstico móvil iniciado', {
             isMobile: isMobile,
+            isIOS: isIOS,
             platform: navigator.platform,
             maxTouchPoints: navigator.maxTouchPoints || 0,
             orientation: screen.orientation ? screen.orientation.type : 'desconocido',
             connection: navigator.connection ? {
                 effectiveType: navigator.connection.effectiveType,
                 downlink: navigator.connection.downlink
-            } : 'no disponible'
+            } : 'no disponible',
+            userAgent: navigator.userAgent
         });
 
-        // Test de capacidades de audio
+        // Test de capacidades de audio específico para iOS
         if (window.Audio) {
             const testAudio = new Audio();
-            this.logger.log('INFO', 'Capacidades de audio', {
+            const audioCapabilities = {
                 canPlayMP3: testAudio.canPlayType('audio/mpeg'),
                 canPlayAAC: testAudio.canPlayType('audio/aac'),
                 canPlayFLAC: testAudio.canPlayType('audio/flac'),
-                autoplaySupported: testAudio.autoplay !== undefined
-            });
+                canPlayM4A: testAudio.canPlayType('audio/mp4'),
+                autoplaySupported: testAudio.autoplay !== undefined,
+                volume: testAudio.volume,
+                muted: testAudio.muted
+            };
+
+            this.logger.log('INFO', 'Capacidades de audio', audioCapabilities);
+
+            // Test específico para iOS autoplay
+            if (isIOS) {
+                this.logger.log('INFO', 'Dispositivo iOS detectado - testing autoplay restrictions');
+                this.testIOSAutoplay(testAudio);
+            }
         }
 
         // Test de eventos táctiles
         if (isMobile) {
             this.testTouchEvents();
+        }
+    }
+
+    testIOSAutoplay(audio) {
+        // Test de autoplay en iOS
+        audio.src = 'data:audio/wav;base64,UklGRjIAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQ4AAAC6u7u7u7u7u7u7u7u7';
+        audio.load();
+        
+        const playPromise = audio.play();
+        if (playPromise) {
+            playPromise.then(() => {
+                this.logger.log('SUCCESS', 'iOS: Autoplay permitido');
+                audio.pause();
+            }).catch(err => {
+                this.logger.log('WARN', 'iOS: Autoplay bloqueado (normal)', {
+                    error: err.name,
+                    message: err.message
+                });
+            });
         }
     }
 
