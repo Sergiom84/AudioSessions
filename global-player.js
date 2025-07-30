@@ -22,8 +22,16 @@ class GlobalAudioPlayer {
     setAudioElement(audioEl) {
         if (!audioEl) return;
 
-        // Stop and detach any previous audio element
+        // Preserve state of previous element
+        let wasPlaying = false;
+        let currentTime = 0;
+        let volume = 1;
+
         if (this.audio && this.audio !== audioEl) {
+            wasPlaying = !this.audio.paused;
+            currentTime = this.audio.currentTime;
+            volume = this.audio.volume;
+
             try {
                 this.audio.pause();
             } catch (e) {
@@ -32,7 +40,13 @@ class GlobalAudioPlayer {
         }
 
         this.audio = audioEl;
+        this.audio.currentTime = currentTime;
+        this.audio.volume = volume;
         this.setupAudioEventListeners();
+
+        if (wasPlaying) {
+            this.audio.play().catch(e => console.warn('Sync play failed', e));
+        }
 
         this.updateMediaSession();
     }
