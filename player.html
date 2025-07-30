@@ -1096,7 +1096,7 @@
                     const percent = (e.clientX - rect.left) / rect.width;
                     const newTime = percent * audio.duration;
                     audio.currentTime = newTime;
-                    
+
                     // Sync with global player
                     if (window.globalAudioPlayer && window.globalAudioPlayer.audio) {
                         window.globalAudioPlayer.audio.currentTime = newTime;
@@ -1104,11 +1104,55 @@
                 }
             });
 
+            // Touch events for progress bar
+            progressBar.addEventListener('touchstart', (e) => {
+                if (!isNaN(audio.duration) && audio.duration > 0) {
+                    isDragging = true;
+                    const touch = e.touches[0];
+                    const rect = progressBar.getBoundingClientRect();
+                    const percent = Math.max(0, Math.min(1, (touch.clientX - rect.left) / rect.width));
+                    progressFill.style.width = (percent * 100) + '%';
+                    progressHandle.style.left = (percent * 100) + '%';
+                }
+                e.preventDefault();
+            }, { passive: false });
+
+            progressBar.addEventListener('touchmove', (e) => {
+                if (isDragging) {
+                    const touch = e.touches[0];
+                    const rect = progressBar.getBoundingClientRect();
+                    const percent = Math.max(0, Math.min(1, (touch.clientX - rect.left) / rect.width));
+                    progressFill.style.width = (percent * 100) + '%';
+                    progressHandle.style.left = (percent * 100) + '%';
+                }
+                e.preventDefault();
+            }, { passive: false });
+
+            progressBar.addEventListener('touchend', (e) => {
+                if (isDragging && !isNaN(audio.duration) && audio.duration > 0) {
+                    const rect = progressBar.getBoundingClientRect();
+                    const percent = parseFloat(progressHandle.style.left) / 100;
+                    const newTime = percent * audio.duration;
+                    audio.currentTime = newTime;
+
+                    if (window.globalAudioPlayer && window.globalAudioPlayer.audio) {
+                        window.globalAudioPlayer.audio.currentTime = newTime;
+                    }
+                }
+                isDragging = false;
+                e.preventDefault();
+            }, { passive: false });
+
             // Drag functionality for progress handle
             progressHandle.addEventListener('mousedown', (e) => {
                 isDragging = true;
                 e.preventDefault();
             });
+
+            progressHandle.addEventListener('touchstart', (e) => {
+                isDragging = true;
+                e.preventDefault();
+            }, { passive: false });
 
             document.addEventListener('mousemove', (e) => {
                 if (isDragging) {
@@ -1119,21 +1163,34 @@
                 }
             });
 
-            document.addEventListener('mouseup', () => {
-                if (isDragging && !isNaN(audio.duration) && audio.duration > 0) {
+            document.addEventListener('touchmove', (e) => {
+                if (isDragging) {
+                    const touch = e.touches[0];
                     const rect = progressBar.getBoundingClientRect();
+                    const percent = Math.max(0, Math.min(1, (touch.clientX - rect.left) / rect.width));
+                    progressFill.style.width = (percent * 100) + '%';
+                    progressHandle.style.left = (percent * 100) + '%';
+                }
+                if (isDragging) e.preventDefault();
+            }, { passive: false });
+
+            const finishDrag = () => {
+                if (isDragging && !isNaN(audio.duration) && audio.duration > 0) {
                     const percent = parseFloat(progressHandle.style.left) / 100;
                     const newTime = percent * audio.duration;
                     audio.currentTime = newTime;
-                    
+
                     // Sync with global player
                     if (window.globalAudioPlayer && window.globalAudioPlayer.audio) {
                         window.globalAudioPlayer.audio.currentTime = newTime;
                     }
-                    
+
                     isDragging = false;
                 }
-            });
+            };
+
+            document.addEventListener('mouseup', finishDrag);
+            document.addEventListener('touchend', (e) => { finishDrag(); e.preventDefault(); }, { passive: false });
 
             function formatTime(seconds) {
                 const mins = Math.floor(seconds / 60);
