@@ -12,6 +12,7 @@ class GlobalAudioPlayer {
         this.titleEl = null;
         this.subtitleEl = null;
         this.volumeControl = null;
+        this.volumeContainer = null;
         this.isLoading = false;
         this.retryCount = 0;
         this.maxRetries = 3;
@@ -50,9 +51,9 @@ class GlobalAudioPlayer {
                     </div>
                     <div class="global-player-controls">
                         <button class="global-control-btn" id="globalPlayBtn" disabled>▶</button>
-                        <div class="volume-control">
+                        <div class="volume-control" id="volumeControl">
                             <button class="volume-btn" id="volumeBtn">🔊</button>
-                            <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="100">
+                            <input type="range" class="volume-slider volume-slider-vertical" id="volumeSlider" min="0" max="100" value="100" orient="vertical">
                         </div>
                     </div>
                     <div class="global-player-progress">
@@ -85,6 +86,7 @@ class GlobalAudioPlayer {
         this.playBtn = document.getElementById('globalPlayBtn');
         this.titleEl = document.getElementById('globalPlayerTitle');
         this.volumeControl = document.getElementById('volumeSlider');
+        this.volumeContainer = document.getElementById('volumeControl');
         this.volumeBtn = document.getElementById('volumeBtn');
         this.statusEl = document.getElementById('playerStatus');
         this.loadingEl = document.getElementById('loadingIndicator');
@@ -118,7 +120,9 @@ class GlobalAudioPlayer {
         });
 
         this.volumeBtn.addEventListener('click', () => {
-            this.toggleMute();
+            if (this.volumeContainer) {
+                this.volumeContainer.classList.toggle('vertical');
+            }
         });
 
         // Close button

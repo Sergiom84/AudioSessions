@@ -1631,6 +1631,11 @@ body[data-genre="private"] {
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    position: relative;
+}
+
+.volume-control.vertical {
+    flex-direction: column-reverse;
 }
 
 .volume-btn {
@@ -1678,6 +1683,22 @@ body[data-genre="private"] {
     border-radius: 50%;
     border: none;
     cursor: pointer;
+}
+
+.volume-slider-vertical {
+    display: none;
+    width: 4px;
+    height: 120px;
+    position: absolute;
+    bottom: 45px;
+    left: 50%;
+    transform: translateX(-50%) rotate(270deg);
+    transform-origin: center;
+    background: var(--border-color);
+}
+
+.volume-control.vertical .volume-slider-vertical {
+    display: block;
 }
 
 .global-player-progress {
@@ -1900,9 +1921,13 @@ body[data-genre="private"] {
     .volume-control {
         justify-content: center;
     }
-    
+
     .volume-slider {
         width: 120px;
+    }
+
+    .volume-slider-vertical {
+        height: 120px;
     }
     
     .player-status {
