@@ -11,8 +11,6 @@ class GlobalAudioPlayer {
         this.playBtn = null;
         this.titleEl = null;
         this.subtitleEl = null;
-        this.volumeControl = null;
-        this.volumeContainer = null;
         this.isLoading = false;
         this.retryCount = 0;
         this.maxRetries = 3;
@@ -25,12 +23,10 @@ class GlobalAudioPlayer {
         // Preserve state of previous element
         let wasPlaying = false;
         let currentTime = 0;
-        let volume = 1;
 
         if (this.audio && this.audio !== audioEl) {
             wasPlaying = !this.audio.paused;
             currentTime = this.audio.currentTime;
-            volume = this.audio.volume;
 
             try {
                 this.audio.pause();
@@ -41,7 +37,7 @@ class GlobalAudioPlayer {
 
         this.audio = audioEl;
         this.audio.currentTime = currentTime;
-        this.audio.volume = volume;
+        this.audio.volume = 1;
         this.setupAudioEventListeners();
 
         if (wasPlaying) {
@@ -67,10 +63,6 @@ class GlobalAudioPlayer {
                     </div>
                     <div class="global-player-controls">
                         <button class="global-control-btn" id="globalPlayBtn" disabled>▶</button>
-                        <div class="volume-control" id="volumeControl">
-                            <button class="volume-btn" id="volumeBtn">🔊</button>
-                            <input type="range" class="volume-slider volume-slider-vertical" id="volumeSlider" min="0" max="100" value="100" orient="vertical">
-                        </div>
                     </div>
                     <div class="global-player-progress">
                         <span class="global-time" id="globalCurrentTime">0:00</span>
@@ -101,9 +93,6 @@ class GlobalAudioPlayer {
         this.totalTimeEl = document.getElementById('globalTotalTime');
         this.playBtn = document.getElementById('globalPlayBtn');
         this.titleEl = document.getElementById('globalPlayerTitle');
-        this.volumeControl = document.getElementById('volumeSlider');
-        this.volumeContainer = document.getElementById('volumeControl');
-        this.volumeBtn = document.getElementById('volumeBtn');
         this.statusEl = document.getElementById('playerStatus');
         this.loadingEl = document.getElementById('loadingIndicator');
     }
@@ -130,16 +119,7 @@ class GlobalAudioPlayer {
             }
         });
 
-        // Volume controls
-        this.volumeControl.addEventListener('input', (e) => {
-            this.setVolume(e.target.value / 100);
-        });
 
-        this.volumeBtn.addEventListener('click', () => {
-            if (this.volumeContainer) {
-                this.volumeContainer.classList.toggle('vertical');
-            }
-        });
 
         // Close button
         document.getElementById('globalPlayerClose').addEventListener('click', () => {
@@ -181,14 +161,6 @@ class GlobalAudioPlayer {
                         e.preventDefault();
                         this.seekRelative(10);
                         break;
-                    case 'ArrowUp':
-                        e.preventDefault();
-                        this.adjustVolume(0.1);
-                        break;
-                    case 'ArrowDown':
-                        e.preventDefault();
-                        this.adjustVolume(-0.1);
-                        break;
                 }
             }
         });
@@ -219,7 +191,16 @@ class GlobalAudioPlayer {
 
         // Create new audio element
         this.audio = new Audio();
+        this.audio.volume = 1;
         this.setupAudioEventListeners();
+
+        // Restore progress if same session stored
+        if (this.savedState && this.savedState.session && this.savedState.session.title === sessionData.title) {
+            const savedTime = this.savedState.currentTime || 0;
+            this.audio.addEventListener('loadedmetadata', () => {
+                this.seekTo(Math.min(savedTime, this.audio.duration || savedTime));
+            }, { once: true });
+        }
         
         // Update UI immediately
         this.titleEl.textContent = sessionData.title;
@@ -466,33 +447,7 @@ class GlobalAudioPlayer {
         }
     }
 
-    setVolume(volume) {
-        if (this.audio) {
-            this.audio.volume = Math.max(0, Math.min(1, volume));
-            this.updateVolumeUI();
-        }
-    }
 
-    adjustVolume(delta) {
-        if (this.audio) {
-            this.setVolume(this.audio.volume + delta);
-        }
-    }
-
-    toggleMute() {
-        if (this.audio) {
-            this.audio.muted = !this.audio.muted;
-            this.updateVolumeUI();
-        }
-    }
-
-    updateVolumeUI() {
-        if (this.audio && this.volumeControl && this.volumeBtn) {
-            this.volumeControl.value = this.audio.volume * 100;
-            this.volumeBtn.textContent = this.audio.muted || this.audio.volume === 0 ? '🔇' : 
-                                       this.audio.volume < 0.5 ? '🔉' : '🔊';
-        }
-    }
 
     updateProgress() {
         if (this.audio && this.audio.duration) {
@@ -632,9 +587,7 @@ class GlobalAudioPlayer {
         try {
             const saved = localStorage.getItem('globalPlayer');
             if (saved) {
-                const data = JSON.parse(saved);
-                // Auto-resume is disabled to avoid unexpected audio playback
-                console.log('Saved session found but auto-resume disabled for better UX');
+                this.savedState = JSON.parse(saved);
             }
         } catch (e) {
             console.error('Error loading saved session:', e);
@@ -657,6 +610,17 @@ class GlobalAudioPlayer {
 document.addEventListener('DOMContentLoaded', () => {
     window.globalAudioPlayer = new GlobalAudioPlayer();
     console.log('Global audio player initialized');
+
+    document.querySelectorAll('.nav-back').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (history.length > 1) {
+                history.back();
+            } else {
+                window.location.href = btn.getAttribute('href') || 'index.html';
+            }
+        });
+    });
 });
 
 // Function to start global player from any page
