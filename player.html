@@ -892,12 +892,13 @@
             
             // Prevent auto-pause when window loses focus or is minimized
             audio.addEventListener('pause', function(e) {
-                // Only auto-resume if not manually paused by user
+                if (e.isTrusted) {
+                    window.userPausedAudio = true;
+                }
+
                 if (!window.userPausedAudio && document.visibilityState === 'hidden') {
                     setTimeout(() => {
-                        if (!window.userPausedAudio) {
-                            audio.play().catch(e => console.log('Auto-resume prevented by browser policy'));
-                        }
+                        audio.play().catch(e => console.log('Auto-resume prevented by browser policy'));
                     }, 100);
                 }
             });
@@ -1031,6 +1032,7 @@
             // Update play/pause button state
             audio.addEventListener('play', () => {
                 isPlaying = true;
+                window.userPausedAudio = false;
                 playIcon.style.display = 'none';
                 pauseIcon.style.display = 'block';
             });
