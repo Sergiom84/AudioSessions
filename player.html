@@ -962,41 +962,8 @@
                 audioUrl: session.audioUrl
             };
 
-            // Variable para controlar la sincronización
-            let isSyncingWithGlobal = false;
-
-            // Auto-start global player when page loads
             if (window.globalAudioPlayer) {
-                window.globalAudioPlayer.startSession(window.currentSessionData);
-                
-                // Set up bidirectional sync
-                setTimeout(() => {
-                    if (window.globalAudioPlayer && window.globalAudioPlayer.audio) {
-                        const globalAudio = window.globalAudioPlayer.audio;
-                        
-                        // Sync global player time updates to main player
-                        globalAudio.addEventListener('timeupdate', () => {
-                            if (!isSyncingWithGlobal && Math.abs(globalAudio.currentTime - audio.currentTime) > 0.5) {
-                                isSyncingWithGlobal = true;
-                                audio.currentTime = globalAudio.currentTime;
-                                setTimeout(() => isSyncingWithGlobal = false, 100);
-                            }
-                        });
-                        
-                        // Sync global player play/pause to main player
-                        globalAudio.addEventListener('play', () => {
-                            if (audio.paused && !window.userPausedAudio) {
-                                audio.play().catch(e => console.log('Sync play failed:', e));
-                            }
-                        });
-                        
-                        globalAudio.addEventListener('pause', () => {
-                            if (!audio.paused && !window.userPausedAudio) {
-                                audio.pause();
-                            }
-                        });
-                    }
-                }, 500);
+                window.globalAudioPlayer.setAudioElement(audio);
             }
 
             // Play/Pause functionality with improved sync
@@ -1074,9 +1041,9 @@
                 pauseIcon.style.display = 'none';
             });
 
-            // Update progress and time with sync protection
+            // Update progress and time
             audio.addEventListener('timeupdate', () => {
-                if (!isDragging && !isSyncingWithGlobal && !isNaN(audio.duration) && audio.duration > 0) {
+                if (!isDragging && !isNaN(audio.duration) && audio.duration > 0) {
                     const progress = (audio.currentTime / audio.duration) * 100;
                     progressFill.style.width = progress + '%';
                     progressHandle.style.left = progress + '%';

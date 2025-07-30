@@ -18,6 +18,22 @@ class GlobalAudioPlayer {
         this.init();
     }
 
+    setAudioElement(audioEl) {
+        if (!audioEl) return;
+
+        // Stop and detach any previous audio element
+        if (this.audio && this.audio !== audioEl) {
+            try {
+                this.audio.pause();
+            } catch (e) {
+                console.warn('Could not pause previous audio element', e);
+            }
+        }
+
+        this.audio = audioEl;
+        this.setupAudioEventListeners();
+    }
+
     init() {
         this.createPlayer();
         this.bindEvents();
