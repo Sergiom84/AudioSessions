@@ -14,7 +14,7 @@
     
     <!-- Navigation -->
     <nav class="player-nav">
-        <a href="javascript:history.back()" class="nav-back">← Volver</a>
+        <a href="#" onclick="history.back(); return false;" class="nav-back">← Volver</a>
     </nav>
     
     <!-- Parallax Background Elements -->
@@ -77,11 +77,6 @@
                                     </svg>
                                 </button>
                                 
-                                <button class="control-btn" id="volumeBtn" title="Volumen">
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                                        <path d="M14,3.23V5.29C16.89,6.15 19,8.83 19,12C19,15.17 16.89,17.85 14,18.71V20.77C18.01,19.86 21,16.28 21,12C21,7.72 18.01,4.14 14,3.23M16.5,12C16.5,10.23 15.5,8.71 14,7.97V16C15.5,15.29 16.5,13.76 16.5,12M3,9V15H7L12,20V4L7,9H3Z"/>
-                                    </svg>
-                                </button>
                                 
                                 <div class="time-display">
                                     <span id="currentTime">00:00</span> / <span id="totalTime">00:00</span>
@@ -806,9 +801,25 @@
                 `;
             } else {
                 // Reproductor estándar
+                const getMimeType = (url) => {
+                    if (!url) return 'audio/mpeg';
+                    const ext = url.split('.').pop().toLowerCase().split('?')[0];
+                    switch (ext) {
+                        case 'flac':
+                            return 'audio/flac';
+                        case 'wav':
+                            return 'audio/wav';
+                        default:
+                            return 'audio/mpeg';
+                    }
+                };
+                const mimeType = getMimeType(session.audioUrl);
+                const mp3Fallback = session.audioUrl.replace(/\.(flac|wav)(\?.*)?$/i, '.mp3');
+                const fallbackSource = mimeType !== 'audio/mpeg' ? `<source src="${mp3Fallback}" type="audio/mpeg">` : '';
                 audioContainer.innerHTML = `
                     <audio preload="none" id="mainAudioPlayer" aria-label="Reproductor principal de audio" crossorigin="anonymous">
-                        <source id="audioSource" src="${session.audioUrl}" type="audio/mpeg">
+                        <source id="audioSource" src="${session.audioUrl}" type="${mimeType}">
+                        ${fallbackSource}
                         Tu navegador no soporta el elemento de audio.
                     </audio>
                     <!-- Custom Player Controls -->
@@ -837,11 +848,6 @@
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
                                     <path d="M12,5V1L17,6L12,11V7A6,6 0 0,0 6,13A6,6 0 0,0 12,19A6,6 0 0,0 18,13H20A8,8 0 0,1 12,21A8,8 0 0,1 4,13A8,8 0 0,1 12,5Z"/>
                                     <text x="12" y="15" text-anchor="middle" font-size="8" fill="currentColor">10</text>
-                                </svg>
-                            </button>
-                            <button class="control-btn" id="volumeBtn" title="Volumen">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M14,3.23V5.29C16.89,6.15 19,8.83 19,12C19,15.17 16.89,17.85 14,18.71V20.77C18.01,19.86 21,16.28 21,12C21,7.72 18.01,4.14 14,3.23M16.5,12C16.5,10.23 15.5,8.71 14,7.97V16C15.5,15.29 16.5,13.76 16.5,12M3,9V15H7L12,20V4L7,9H3Z"/>
                                 </svg>
                             </button>
                             <div class="time-display">
@@ -874,6 +880,25 @@
             
             // Load audio
             const audio = document.getElementById('mainAudioPlayer');
+            audio.volume = 1;
+
+            // Restore progress from localStorage if available
+            try {
+                const saved = JSON.parse(localStorage.getItem('sessionProgress') || '{}');
+                if (saved.id === sessionId) {
+                    audio.addEventListener('loadedmetadata', () => {
+                        if (!isNaN(audio.duration)) {
+                            audio.currentTime = Math.min(saved.currentTime || 0, audio.duration);
+                            const progress = (audio.currentTime / audio.duration) * 100;
+                            progressFill.style.width = progress + '%';
+                            progressHandle.style.left = progress + '%';
+                            currentTimeEl.textContent = formatTime(audio.currentTime);
+                        }
+                    });
+                }
+            } catch (e) {
+                console.warn('Could not load session progress:', e);
+            }
             
             // Add error handling for audio loading
             audio.addEventListener('error', function(e) {
@@ -892,12 +917,13 @@
             
             // Prevent auto-pause when window loses focus or is minimized
             audio.addEventListener('pause', function(e) {
-                // Only auto-resume if not manually paused by user
+                if (e.isTrusted) {
+                    window.userPausedAudio = true;
+                }
+
                 if (!window.userPausedAudio && document.visibilityState === 'hidden') {
                     setTimeout(() => {
-                        if (!window.userPausedAudio) {
-                            audio.play().catch(e => console.log('Auto-resume prevented by browser policy'));
-                        }
+                        audio.play().catch(e => console.log('Auto-resume prevented by browser policy'));
                     }, 100);
                 }
             });
@@ -912,7 +938,10 @@
             
             // Setup custom player
             setupCustomPlayer();
-            
+
+            // Setup Media Session metadata
+            setupMediaSession();
+
             // Setup download button
             setupDownload();
         }
@@ -962,42 +991,12 @@
                 audioUrl: session.audioUrl
             };
 
-            // Variable para controlar la sincronización
-            let isSyncingWithGlobal = false;
-
-            // Auto-start global player when page loads
             if (window.globalAudioPlayer) {
-                window.globalAudioPlayer.startSession(window.currentSessionData);
-                
-                // Set up bidirectional sync
-                setTimeout(() => {
-                    if (window.globalAudioPlayer && window.globalAudioPlayer.audio) {
-                        const globalAudio = window.globalAudioPlayer.audio;
-                        
-                        // Sync global player time updates to main player
-                        globalAudio.addEventListener('timeupdate', () => {
-                            if (!isSyncingWithGlobal && Math.abs(globalAudio.currentTime - audio.currentTime) > 0.5) {
-                                isSyncingWithGlobal = true;
-                                audio.currentTime = globalAudio.currentTime;
-                                setTimeout(() => isSyncingWithGlobal = false, 100);
-                            }
-                        });
-                        
-                        // Sync global player play/pause to main player
-                        globalAudio.addEventListener('play', () => {
-                            if (audio.paused && !window.userPausedAudio) {
-                                audio.play().catch(e => console.log('Sync play failed:', e));
-                            }
-                        });
-                        
-                        globalAudio.addEventListener('pause', () => {
-                            if (!audio.paused && !window.userPausedAudio) {
-                                audio.pause();
-                            }
-                        });
-                    }
-                }, 500);
+                window.globalAudioPlayer.currentSession = window.currentSessionData;
+                window.globalAudioPlayer.setAudioElement(audio);
+                window.globalAudioPlayer.updateMediaSession();
             }
+
 
             // Play/Pause functionality with improved sync
             playPauseBtn.addEventListener('click', () => {
@@ -1064,6 +1063,7 @@
             // Update play/pause button state
             audio.addEventListener('play', () => {
                 isPlaying = true;
+                window.userPausedAudio = false;
                 playIcon.style.display = 'none';
                 pauseIcon.style.display = 'block';
             });
@@ -1074,15 +1074,25 @@
                 pauseIcon.style.display = 'none';
             });
 
-            // Update progress and time with sync protection
+            // Update progress and time
             audio.addEventListener('timeupdate', () => {
-                if (!isDragging && !isSyncingWithGlobal && !isNaN(audio.duration) && audio.duration > 0) {
+                if (!isDragging && !isNaN(audio.duration) && audio.duration > 0) {
                     const progress = (audio.currentTime / audio.duration) * 100;
                     progressFill.style.width = progress + '%';
                     progressHandle.style.left = progress + '%';
                 }
                 if (!isNaN(audio.currentTime)) {
                     currentTimeEl.textContent = formatTime(audio.currentTime);
+                }
+
+                // Save progress to localStorage
+                try {
+                    localStorage.setItem('sessionProgress', JSON.stringify({
+                        id: sessionId,
+                        currentTime: audio.currentTime
+                    }));
+                } catch (e) {
+                    console.warn('Could not save session progress:', e);
                 }
             });
 
@@ -1100,7 +1110,7 @@
                     const percent = (e.clientX - rect.left) / rect.width;
                     const newTime = percent * audio.duration;
                     audio.currentTime = newTime;
-                    
+
                     // Sync with global player
                     if (window.globalAudioPlayer && window.globalAudioPlayer.audio) {
                         window.globalAudioPlayer.audio.currentTime = newTime;
@@ -1108,11 +1118,55 @@
                 }
             });
 
+            // Touch events for progress bar
+            progressBar.addEventListener('touchstart', (e) => {
+                if (!isNaN(audio.duration) && audio.duration > 0) {
+                    isDragging = true;
+                    const touch = e.touches[0];
+                    const rect = progressBar.getBoundingClientRect();
+                    const percent = Math.max(0, Math.min(1, (touch.clientX - rect.left) / rect.width));
+                    progressFill.style.width = (percent * 100) + '%';
+                    progressHandle.style.left = (percent * 100) + '%';
+                }
+                e.preventDefault();
+            }, { passive: false });
+
+            progressBar.addEventListener('touchmove', (e) => {
+                if (isDragging) {
+                    const touch = e.touches[0];
+                    const rect = progressBar.getBoundingClientRect();
+                    const percent = Math.max(0, Math.min(1, (touch.clientX - rect.left) / rect.width));
+                    progressFill.style.width = (percent * 100) + '%';
+                    progressHandle.style.left = (percent * 100) + '%';
+                }
+                e.preventDefault();
+            }, { passive: false });
+
+            progressBar.addEventListener('touchend', (e) => {
+                if (isDragging && !isNaN(audio.duration) && audio.duration > 0) {
+                    const rect = progressBar.getBoundingClientRect();
+                    const percent = parseFloat(progressHandle.style.left) / 100;
+                    const newTime = percent * audio.duration;
+                    audio.currentTime = newTime;
+
+                    if (window.globalAudioPlayer && window.globalAudioPlayer.audio) {
+                        window.globalAudioPlayer.audio.currentTime = newTime;
+                    }
+                }
+                isDragging = false;
+                e.preventDefault();
+            }, { passive: false });
+
             // Drag functionality for progress handle
             progressHandle.addEventListener('mousedown', (e) => {
                 isDragging = true;
                 e.preventDefault();
             });
+
+            progressHandle.addEventListener('touchstart', (e) => {
+                isDragging = true;
+                e.preventDefault();
+            }, { passive: false });
 
             document.addEventListener('mousemove', (e) => {
                 if (isDragging) {
@@ -1123,21 +1177,34 @@
                 }
             });
 
-            document.addEventListener('mouseup', () => {
-                if (isDragging && !isNaN(audio.duration) && audio.duration > 0) {
+            document.addEventListener('touchmove', (e) => {
+                if (isDragging) {
+                    const touch = e.touches[0];
                     const rect = progressBar.getBoundingClientRect();
+                    const percent = Math.max(0, Math.min(1, (touch.clientX - rect.left) / rect.width));
+                    progressFill.style.width = (percent * 100) + '%';
+                    progressHandle.style.left = (percent * 100) + '%';
+                }
+                if (isDragging) e.preventDefault();
+            }, { passive: false });
+
+            const finishDrag = () => {
+                if (isDragging && !isNaN(audio.duration) && audio.duration > 0) {
                     const percent = parseFloat(progressHandle.style.left) / 100;
                     const newTime = percent * audio.duration;
                     audio.currentTime = newTime;
-                    
+
                     // Sync with global player
                     if (window.globalAudioPlayer && window.globalAudioPlayer.audio) {
                         window.globalAudioPlayer.audio.currentTime = newTime;
                     }
-                    
+
                     isDragging = false;
                 }
-            });
+            };
+
+            document.addEventListener('mouseup', finishDrag);
+            document.addEventListener('touchend', (e) => { finishDrag(); e.preventDefault(); }, { passive: false });
 
             function formatTime(seconds) {
                 const mins = Math.floor(seconds / 60);
@@ -1153,6 +1220,37 @@
                 link.href = session.downloadUrl;
                 link.download = `${session.title}.mp3`;
                 link.click();
+            });
+        }
+
+        function setupMediaSession() {
+            if (!('mediaSession' in navigator)) return;
+
+            const extractImage = (html) => {
+                if (!html) return '';
+                const match = html.match(/src="([^"]+)"/i);
+                return match ? match[1] : '';
+            };
+
+            const artworkUrl = session.artworkUrl || extractImage(session.cover);
+
+            navigator.mediaSession.metadata = new MediaMetadata({
+                title: session.title,
+                artist: session.artist || '',
+                album: session.subtitle || '',
+                artwork: artworkUrl ? [{ src: artworkUrl, sizes: '512x512', type: 'image/png' }] : []
+            });
+
+            const audio = document.getElementById('mainAudioPlayer');
+            navigator.mediaSession.setActionHandler('play', () => audio.play());
+            navigator.mediaSession.setActionHandler('pause', () => audio.pause());
+            navigator.mediaSession.setActionHandler('seekbackward', (details) => {
+                const skip = details.seekOffset || 10;
+                audio.currentTime = Math.max(0, audio.currentTime - skip);
+            });
+            navigator.mediaSession.setActionHandler('seekforward', (details) => {
+                const skip = details.seekOffset || 10;
+                audio.currentTime = Math.min(audio.duration, audio.currentTime + skip);
             });
         }
 
