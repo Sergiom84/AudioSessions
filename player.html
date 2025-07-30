@@ -913,7 +913,10 @@
             
             // Setup custom player
             setupCustomPlayer();
-            
+
+            // Setup Media Session metadata
+            setupMediaSession();
+
             // Setup download button
             setupDownload();
         }
@@ -1122,6 +1125,37 @@
                 link.href = session.downloadUrl;
                 link.download = `${session.title}.mp3`;
                 link.click();
+            });
+        }
+
+        function setupMediaSession() {
+            if (!('mediaSession' in navigator)) return;
+
+            const extractImage = (html) => {
+                if (!html) return '';
+                const match = html.match(/src="([^"]+)"/i);
+                return match ? match[1] : '';
+            };
+
+            const artworkUrl = session.artworkUrl || extractImage(session.cover);
+
+            navigator.mediaSession.metadata = new MediaMetadata({
+                title: session.title,
+                artist: session.artist || '',
+                album: session.subtitle || '',
+                artwork: artworkUrl ? [{ src: artworkUrl, sizes: '512x512', type: 'image/png' }] : []
+            });
+
+            const audio = document.getElementById('mainAudioPlayer');
+            navigator.mediaSession.setActionHandler('play', () => audio.play());
+            navigator.mediaSession.setActionHandler('pause', () => audio.pause());
+            navigator.mediaSession.setActionHandler('seekbackward', (details) => {
+                const skip = details.seekOffset || 10;
+                audio.currentTime = Math.max(0, audio.currentTime - skip);
+            });
+            navigator.mediaSession.setActionHandler('seekforward', (details) => {
+                const skip = details.seekOffset || 10;
+                audio.currentTime = Math.min(audio.duration, audio.currentTime + skip);
             });
         }
 

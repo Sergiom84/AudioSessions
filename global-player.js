@@ -32,6 +32,8 @@ class GlobalAudioPlayer {
 
         this.audio = audioEl;
         this.setupAudioEventListeners();
+
+        this.updateMediaSession();
     }
 
     init() {
@@ -194,6 +196,8 @@ class GlobalAudioPlayer {
 
         this.showLoading(true);
         this.currentSession = sessionData;
+
+        this.updateMediaSession();
 
         // Create new audio element
         this.audio = new Audio();
@@ -550,10 +554,42 @@ class GlobalAudioPlayer {
     isInputFocused() {
         const activeElement = document.activeElement;
         return activeElement && (
-            activeElement.tagName === 'INPUT' || 
-            activeElement.tagName === 'TEXTAREA' || 
+            activeElement.tagName === 'INPUT' ||
+            activeElement.tagName === 'TEXTAREA' ||
             activeElement.contentEditable === 'true'
         );
+    }
+
+    updateMediaSession() {
+        if (!('mediaSession' in navigator) || !this.currentSession) return;
+
+        const extractImage = (html) => {
+            if (!html) return '';
+            const match = html.match(/src="([^"]+)"/i);
+            return match ? match[1] : '';
+        };
+
+        const artworkUrl = this.currentSession.artworkUrl || extractImage(this.currentSession.cover);
+
+        navigator.mediaSession.metadata = new MediaMetadata({
+            title: this.currentSession.title || '',
+            artist: this.currentSession.artist || '',
+            album: this.currentSession.subtitle || '',
+            artwork: artworkUrl ? [{ src: artworkUrl, sizes: '512x512', type: 'image/png' }] : []
+        });
+
+        if (this.audio) {
+            navigator.mediaSession.setActionHandler('play', () => this.play());
+            navigator.mediaSession.setActionHandler('pause', () => this.pause());
+            navigator.mediaSession.setActionHandler('seekbackward', (details) => {
+                const skip = details.seekOffset || 10;
+                this.seekRelative(-skip);
+            });
+            navigator.mediaSession.setActionHandler('seekforward', (details) => {
+                const skip = details.seekOffset || 10;
+                this.seekRelative(skip);
+            });
+        }
     }
 
     saveToStorage() {
