@@ -882,17 +882,38 @@
             const audio = document.getElementById('mainAudioPlayer');
             audio.volume = 1;
 
-            // Restore progress from localStorage if available
+            // Restaurar posición usando el sistema mejorado del GlobalAudioPlayer
+            if (window.globalAudioPlayer) {
+                const savedPosition = window.globalAudioPlayer.loadAudioPosition(sessionId);
+                
+                if (savedPosition) {
+                    audio.addEventListener('loadedmetadata', () => {
+                        if (!isNaN(audio.duration) && savedPosition.currentTime > 0) {
+                            // Solo restaurar si la duración coincide aproximadamente
+                            const durationDiff = Math.abs(audio.duration - savedPosition.duration);
+                            if (durationDiff < 10) { // Tolerancia de 10 segundos
+                                audio.currentTime = Math.min(savedPosition.currentTime, audio.duration);
+                                
+                                if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                                    window.globalAudioPlayer.logger.log('SUCCESS', 'Posición de audio restaurada automáticamente', {
+                                        sessionId: sessionId,
+                                        restoredTime: audio.currentTime,
+                                        percentage: savedPosition.percentage
+                                    });
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+
+            // Fallback al sistema anterior si globalAudioPlayer no está disponible
             try {
                 const saved = JSON.parse(localStorage.getItem('sessionProgress') || '{}');
-                if (saved.id === sessionId) {
+                if (saved.id === sessionId && !window.globalAudioPlayer) {
                     audio.addEventListener('loadedmetadata', () => {
                         if (!isNaN(audio.duration)) {
                             audio.currentTime = Math.min(saved.currentTime || 0, audio.duration);
-                            const progress = (audio.currentTime / audio.duration) * 100;
-                            progressFill.style.width = progress + '%';
-                            progressHandle.style.left = progress + '%';
-                            currentTimeEl.textContent = formatTime(audio.currentTime);
                         }
                     });
                 }
@@ -1092,17 +1113,30 @@
             let isPlaying = false;
             let isDragging = false;
 
-            // Store current session data for global player
+            // Store current session data for global player with artwork
+            const sessionCover = document.querySelector('.session-cover img');
+            const artworkUrl = sessionCover ? new URL(sessionCover.src, window.location.origin).href : null;
+            
             window.currentSessionData = {
                 title: session.title,
                 subtitle: session.subtitle,
-                audioUrl: session.audioUrl
+                audioUrl: session.audioUrl,
+                artwork: artworkUrl
             };
 
             if (window.globalAudioPlayer) {
                 window.globalAudioPlayer.currentSession = window.currentSessionData;
                 window.globalAudioPlayer.setAudioElement(audio);
-                window.globalAudioPlayer.updateMediaSession();
+                
+                // Configurar Media Session para pantalla de bloqueo
+                window.globalAudioPlayer.setupMediaSession(window.currentSessionData);
+                
+                if (window.globalAudioPlayer.logger) {
+                    window.globalAudioPlayer.logger.log('SUCCESS', 'Media Session configurado', {
+                        title: session.title,
+                        artwork: artworkUrl ? 'disponible' : 'no disponible'
+                    });
+                }
             }
 
 
@@ -1320,40 +1354,66 @@
                 window.userPausedAudio = false;
                 playIcon.style.display = 'none';
                 pauseIcon.style.display = 'block';
+                
+                // Actualizar Media Session
+                if (window.globalAudioPlayer) {
+                    window.globalAudioPlayer.updateMediaSessionPosition();
+                }
             });
 
             audio.addEventListener('pause', () => {
                 isPlaying = false;
                 playIcon.style.display = 'block';
                 pauseIcon.style.display = 'none';
+                
+                // Guardar posición cuando se pausa
+                if (window.globalAudioPlayer && !isNaN(audio.duration) && audio.currentTime > 0) {
+                    window.globalAudioPlayer.saveAudioPosition(sessionId, audio.currentTime, audio.duration);
+                }
             });
 
-            // Update progress and time
+            // Update progress and time with position saving
             audio.addEventListener('timeupdate', () => {
                 if (!isDragging && !isNaN(audio.duration) && audio.duration > 0) {
                     const progress = (audio.currentTime / audio.duration) * 100;
                     progressFill.style.width = progress + '%';
                     progressHandle.style.left = progress + '%';
-                }
-                if (!isNaN(audio.currentTime)) {
                     currentTimeEl.textContent = formatTime(audio.currentTime);
-                }
-
-                // Save progress to localStorage
-                try {
-                    localStorage.setItem('sessionProgress', JSON.stringify({
-                        id: sessionId,
-                        currentTime: audio.currentTime
-                    }));
-                } catch (e) {
-                    console.warn('Could not save session progress:', e);
+                    
+                    // Actualizar posición en Media Session cada 5 segundos
+                    if (Math.floor(audio.currentTime) % 5 === 0 && window.globalAudioPlayer) {
+                        window.globalAudioPlayer.updateMediaSessionPosition();
+                    }
+                    
+                    // Guardar posición cada 30 segundos
+                    if (Math.floor(audio.currentTime) % 30 === 0 && window.globalAudioPlayer) {
+                        window.globalAudioPlayer.saveAudioPosition(sessionId, audio.currentTime, audio.duration);
+                    }
                 }
             });
 
-            // Set total time when metadata loads
             audio.addEventListener('loadedmetadata', () => {
                 if (!isNaN(audio.duration)) {
                     totalTimeEl.textContent = formatTime(audio.duration);
+                    
+                    // Configurar posición inicial en Media Session
+                    if (window.globalAudioPlayer) {
+                        window.globalAudioPlayer.updateMediaSessionPosition();
+                    }
+                }
+            });
+
+            // Guardar posición al salir de la página
+            window.addEventListener('beforeunload', () => {
+                if (window.globalAudioPlayer && !isNaN(audio.duration) && audio.currentTime > 0) {
+                    window.globalAudioPlayer.saveAudioPosition(sessionId, audio.currentTime, audio.duration);
+                }
+            });
+
+            // Guardar posición cuando se oculta la página (cambio de pestaña, etc.)
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden && window.globalAudioPlayer && !isNaN(audio.duration) && audio.currentTime > 0) {
+                    window.globalAudioPlayer.saveAudioPosition(sessionId, audio.currentTime, audio.duration);
                 }
             });
 

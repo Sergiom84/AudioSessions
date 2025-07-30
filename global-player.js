@@ -224,6 +224,128 @@ class GlobalAudioPlayer {
         this.performMobileDiagnostics();
     }
 
+    // Persistencia de posición de audio
+    saveAudioPosition(sessionId, currentTime, duration) {
+        if (!sessionId || !currentTime || !duration) return;
+        
+        const position = {
+            sessionId: sessionId,
+            currentTime: currentTime,
+            duration: duration,
+            timestamp: Date.now(),
+            percentage: (currentTime / duration) * 100
+        };
+
+        try {
+            localStorage.setItem(`audioPosition_${sessionId}`, JSON.stringify(position));
+            this.logger.log('INFO', 'Posición de audio guardada', position);
+        } catch (e) {
+            this.logger.log('ERROR', 'Error guardando posición de audio', { error: e.message });
+        }
+    }
+
+    loadAudioPosition(sessionId) {
+        if (!sessionId) return null;
+
+        try {
+            const saved = localStorage.getItem(`audioPosition_${sessionId}`);
+            if (saved) {
+                const position = JSON.parse(saved);
+                // Solo restaurar si fue guardado en las últimas 24 horas
+                const isRecent = (Date.now() - position.timestamp) < (24 * 60 * 60 * 1000);
+                
+                if (isRecent) {
+                    this.logger.log('SUCCESS', 'Posición de audio restaurada', position);
+                    return position;
+                } else {
+                    localStorage.removeItem(`audioPosition_${sessionId}`);
+                    this.logger.log('INFO', 'Posición de audio expirada, eliminada');
+                }
+            }
+        } catch (e) {
+            this.logger.log('ERROR', 'Error cargando posición de audio', { error: e.message });
+        }
+        
+        return null;
+    }
+
+    // Media Session para pantalla de bloqueo
+    setupMediaSession(sessionData) {
+        if (!('mediaSession' in navigator)) {
+            this.logger.log('WARN', 'MediaSession no soportado en este navegador');
+            return;
+        }
+
+        try {
+            navigator.mediaSession.metadata = new MediaMetadata({
+                title: sessionData.title || 'Sesión de Audio',
+                artist: 'AudioSessions',
+                album: sessionData.subtitle || 'Colección Privada',
+                artwork: sessionData.artwork ? [
+                    { src: sessionData.artwork, sizes: '96x96', type: 'image/png' },
+                    { src: sessionData.artwork, sizes: '128x128', type: 'image/png' },
+                    { src: sessionData.artwork, sizes: '192x192', type: 'image/png' },
+                    { src: sessionData.artwork, sizes: '256x256', type: 'image/png' },
+                    { src: sessionData.artwork, sizes: '384x384', type: 'image/png' },
+                    { src: sessionData.artwork, sizes: '512x512', type: 'image/png' }
+                ] : []
+            });
+
+            // Configurar controles de media session
+            navigator.mediaSession.setActionHandler('play', () => {
+                this.logger.log('INFO', 'MediaSession: play solicitado');
+                this.play();
+            });
+
+            navigator.mediaSession.setActionHandler('pause', () => {
+                this.logger.log('INFO', 'MediaSession: pause solicitado');
+                this.pause();
+            });
+
+            navigator.mediaSession.setActionHandler('seekbackward', (details) => {
+                const skipTime = details.seekOffset || 10;
+                this.logger.log('INFO', 'MediaSession: seekbackward solicitado', { skipTime });
+                this.seekRelative(-skipTime);
+            });
+
+            navigator.mediaSession.setActionHandler('seekforward', (details) => {
+                const skipTime = details.seekOffset || 10;
+                this.logger.log('INFO', 'MediaSession: seekforward solicitado', { skipTime });
+                this.seekRelative(skipTime);
+            });
+
+            navigator.mediaSession.setActionHandler('seekto', (details) => {
+                if (details.seekTime) {
+                    this.logger.log('INFO', 'MediaSession: seekto solicitado', { seekTime: details.seekTime });
+                    this.seekTo(details.seekTime);
+                }
+            });
+
+            this.logger.log('SUCCESS', 'MediaSession configurado correctamente', {
+                title: sessionData.title,
+                hasArtwork: !!sessionData.artwork
+            });
+
+        } catch (error) {
+            this.logger.log('ERROR', 'Error configurando MediaSession', { error: error.message });
+        }
+    }
+
+    // Actualizar posición en MediaSession
+    updateMediaSessionPosition() {
+        if ('mediaSession' in navigator && this.audio && !isNaN(this.audio.duration)) {
+            try {
+                navigator.mediaSession.setPositionState({
+                    duration: this.audio.duration,
+                    playbackRate: this.audio.playbackRate,
+                    position: this.audio.currentTime
+                });
+            } catch (error) {
+                this.logger.log('WARN', 'Error actualizando posición en MediaSession', { error: error.message });
+            }
+        }
+    }
+
     performMobileDiagnostics() {
         // Detección mejorada de móvil e iOS
         const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|CriOS|FxiOS|EdgiOS/i.test(navigator.userAgent) ||
