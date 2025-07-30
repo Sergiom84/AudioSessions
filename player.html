@@ -861,9 +861,45 @@
                             </div>
                         </div>
                     </div>
+                    
+                    <!-- Test button for MediaSession (solo visible en debug) -->
+                    <div style="margin-top: 10px; text-align: center;" id="mediaSessionTest">
+                        <button onclick="testMediaSession()" style="background: #007acc; color: white; border: none; padding: 8px 16px; border-radius: 4px; font-size: 12px;">
+                            🧪 Test MediaSession
+                        </button>
+                    </div>
                 `;
             }
             // --- FIN AUDIO PLAYER LOGIC ---
+
+            // Función para probar MediaSession manualmente
+            function testMediaSession() {
+                if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                    window.globalAudioPlayer.logger.log('INFO', '🧪 TEST MANUAL MediaSession iniciado');
+                    
+                    // Forzar configuración de MediaSession
+                    const success = window.globalAudioPlayer.setupMediaSession(window.currentSessionData);
+                    
+                    // Mostrar estado actual
+                    const mediaSessionInfo = {
+                        supported: 'mediaSession' in navigator,
+                        hasMetadata: navigator.mediaSession?.metadata ? true : false,
+                        title: navigator.mediaSession?.metadata?.title || 'sin título',
+                        artworkCount: navigator.mediaSession?.metadata?.artwork?.length || 0,
+                        setupSuccess: success
+                    };
+                    
+                    window.globalAudioPlayer.logger.log('INFO', '🧪 Estado MediaSession:', mediaSessionInfo);
+                    
+                    // Intentar actualizar posición
+                    if (window.globalAudioPlayer.audio && !isNaN(window.globalAudioPlayer.audio.duration)) {
+                        window.globalAudioPlayer.updateMediaSessionPosition();
+                    }
+                    
+                    // Mostrar mensaje visual
+                    alert(`MediaSession Test:\n\nSoporte: ${mediaSessionInfo.supported ? 'SÍ' : 'NO'}\nTítulo: ${mediaSessionInfo.title}\nArtwork: ${mediaSessionInfo.artworkCount} imágenes\nÉxito: ${success ? 'SÍ' : 'NO'}\n\nAhora bloquea la pantalla para ver el resultado.`);
+                }
+            }
 
             // Botón de descarga solo si hay downloadUrl
             const playerActions = document.querySelector('.player-actions');
@@ -1114,8 +1150,26 @@
             let isDragging = false;
 
             // Store current session data for global player with artwork
-            const sessionCover = document.querySelector('.session-cover img');
-            const artworkUrl = sessionCover ? new URL(sessionCover.src, window.location.origin).href : null;
+            const sessionCover = document.querySelector('.session-cover img, .session-cover-svg');
+            let artworkUrl = null;
+            
+            if (sessionCover) {
+                // Obtener URL completa de la imagen
+                if (sessionCover.src) {
+                    artworkUrl = new URL(sessionCover.src, window.location.origin).href;
+                } else if (sessionCover.style.backgroundImage) {
+                    const bgImage = sessionCover.style.backgroundImage;
+                    const urlMatch = bgImage.match(/url\(['"]?(.*?)['"]?\)/);
+                    if (urlMatch) {
+                        artworkUrl = new URL(urlMatch[1], window.location.origin).href;
+                    }
+                }
+            }
+
+            // Si no encontramos artwork, intentar obtenerlo de los datos de sesión
+            if (!artworkUrl && session.coverImage) {
+                artworkUrl = new URL(session.coverImage, window.location.origin).href;
+            }
             
             window.currentSessionData = {
                 title: session.title,
@@ -1129,12 +1183,15 @@
                 window.globalAudioPlayer.setAudioElement(audio);
                 
                 // Configurar Media Session para pantalla de bloqueo
-                window.globalAudioPlayer.setupMediaSession(window.currentSessionData);
+                const mediaSessionSuccess = window.globalAudioPlayer.setupMediaSession(window.currentSessionData);
                 
                 if (window.globalAudioPlayer.logger) {
-                    window.globalAudioPlayer.logger.log('SUCCESS', 'Media Session configurado', {
+                    window.globalAudioPlayer.logger.log('INFO', 'Media Session setup completado', {
                         title: session.title,
-                        artwork: artworkUrl ? 'disponible' : 'no disponible'
+                        artworkUrl: artworkUrl,
+                        artworkFound: !!artworkUrl,
+                        mediaSessionSuccess: mediaSessionSuccess,
+                        sessionCoverFound: !!sessionCover
                     });
                 }
             }
@@ -1414,6 +1471,80 @@
             document.addEventListener('visibilitychange', () => {
                 if (document.hidden && window.globalAudioPlayer && !isNaN(audio.duration) && audio.currentTime > 0) {
                     window.globalAudioPlayer.saveAudioPosition(sessionId, audio.currentTime, audio.duration);
+                    
+                    // Log cuando se oculta la página (posible bloqueo de pantalla)
+                    if (window.globalAudioPlayer.logger) {
+                        window.globalAudioPlayer.logger.log('INFO', 'Página oculta - posible bloqueo de pantalla', {
+                            currentTime: audio.currentTime,
+                            isPlaying: !audio.paused,
+                            hasMediaSession: 'mediaSession' in navigator,
+                            mediaSessionTitle: navigator.mediaSession?.metadata?.title || 'sin título'
+                        });
+                        
+                        // Mostrar mensaje en pantalla
+                        showLockScreenMessage();
+                    }
+                }
+            });
+
+            // Función para mostrar mensaje cuando se bloquea la pantalla
+            function showLockScreenMessage() {
+                // Crear o actualizar el mensaje
+                let messageEl = document.getElementById('lockScreenMessage');
+                if (!messageEl) {
+                    messageEl = document.createElement('div');
+                    messageEl.id = 'lockScreenMessage';
+                    messageEl.style.cssText = `
+                        position: fixed;
+                        top: 20px;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        background: rgba(0, 255, 0, 0.9);
+                        color: white;
+                        padding: 10px 20px;
+                        border-radius: 20px;
+                        font-size: 14px;
+                        font-weight: bold;
+                        z-index: 9999;
+                        text-align: center;
+                        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                        display: none;
+                    `;
+                    document.body.appendChild(messageEl);
+                }
+
+                const hasMediaSession = 'mediaSession' in navigator;
+                const mediaTitle = navigator.mediaSession?.metadata?.title || 'No configurado';
+                const hasArtwork = navigator.mediaSession?.metadata?.artwork?.length > 0;
+
+                messageEl.innerHTML = `
+                    🔒 Pantalla Bloqueada Detectada<br>
+                    📱 MediaSession: ${hasMediaSession ? '✅' : '❌'}<br>
+                    🎵 Título: ${mediaTitle}<br>
+                    🖼️ Artwork: ${hasArtwork ? '✅' : '❌'}
+                `;
+                
+                messageEl.style.display = 'block';
+                
+                // Ocultar después de 5 segundos
+                setTimeout(() => {
+                    messageEl.style.display = 'none';
+                }, 5000);
+            }
+
+            // Detectar cuando vuelve la página (se desbloquea)
+            document.addEventListener('visibilitychange', () => {
+                if (!document.hidden) {
+                    const messageEl = document.getElementById('lockScreenMessage');
+                    if (messageEl) {
+                        messageEl.style.display = 'none';
+                    }
+                    
+                    if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                        window.globalAudioPlayer.logger.log('INFO', 'Página visible - pantalla desbloqueada', {
+                            audioStillPlaying: audio ? !audio.paused : false
+                        });
+                    }
                 }
             });
 

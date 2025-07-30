@@ -272,15 +272,21 @@ class GlobalAudioPlayer {
     // Media Session para pantalla de bloqueo
     setupMediaSession(sessionData) {
         if (!('mediaSession' in navigator)) {
-            this.logger.log('WARN', 'MediaSession no soportado en este navegador');
-            return;
+            this.logger.log('ERROR', 'MediaSession no soportado en este navegador');
+            return false;
         }
 
         try {
+            this.logger.log('INFO', 'Configurando MediaSession...', {
+                title: sessionData.title,
+                hasArtwork: !!sessionData.artwork,
+                artworkUrl: sessionData.artwork
+            });
+
             navigator.mediaSession.metadata = new MediaMetadata({
                 title: sessionData.title || 'Sesión de Audio',
-                artist: 'AudioSessions',
-                album: sessionData.subtitle || 'Colección Privada',
+                artist: '', // Eliminado como solicitaste
+                album: '', // También vacío para simplicidad
                 artwork: sessionData.artwork ? [
                     { src: sessionData.artwork, sizes: '96x96', type: 'image/png' },
                     { src: sessionData.artwork, sizes: '128x128', type: 'image/png' },
@@ -291,43 +297,55 @@ class GlobalAudioPlayer {
                 ] : []
             });
 
+            this.logger.log('SUCCESS', 'MediaMetadata configurado', {
+                metadataTitle: navigator.mediaSession.metadata.title,
+                artworkCount: navigator.mediaSession.metadata.artwork.length
+            });
+
             // Configurar controles de media session
             navigator.mediaSession.setActionHandler('play', () => {
-                this.logger.log('INFO', 'MediaSession: play solicitado');
+                this.logger.log('INFO', 'MediaSession: play solicitado desde pantalla de bloqueo');
                 this.play();
             });
 
             navigator.mediaSession.setActionHandler('pause', () => {
-                this.logger.log('INFO', 'MediaSession: pause solicitado');
+                this.logger.log('INFO', 'MediaSession: pause solicitado desde pantalla de bloqueo');
                 this.pause();
             });
 
             navigator.mediaSession.setActionHandler('seekbackward', (details) => {
                 const skipTime = details.seekOffset || 10;
-                this.logger.log('INFO', 'MediaSession: seekbackward solicitado', { skipTime });
+                this.logger.log('INFO', 'MediaSession: seekbackward solicitado desde pantalla de bloqueo', { skipTime });
                 this.seekRelative(-skipTime);
             });
 
             navigator.mediaSession.setActionHandler('seekforward', (details) => {
                 const skipTime = details.seekOffset || 10;
-                this.logger.log('INFO', 'MediaSession: seekforward solicitado', { skipTime });
+                this.logger.log('INFO', 'MediaSession: seekforward solicitado desde pantalla de bloqueo', { skipTime });
                 this.seekRelative(skipTime);
             });
 
             navigator.mediaSession.setActionHandler('seekto', (details) => {
                 if (details.seekTime) {
-                    this.logger.log('INFO', 'MediaSession: seekto solicitado', { seekTime: details.seekTime });
+                    this.logger.log('INFO', 'MediaSession: seekto solicitado desde pantalla de bloqueo', { seekTime: details.seekTime });
                     this.seekTo(details.seekTime);
                 }
             });
 
-            this.logger.log('SUCCESS', 'MediaSession configurado correctamente', {
+            this.logger.log('SUCCESS', 'MediaSession configurado completamente', {
                 title: sessionData.title,
-                hasArtwork: !!sessionData.artwork
+                hasArtwork: !!sessionData.artwork,
+                actionsConfigured: ['play', 'pause', 'seekbackward', 'seekforward', 'seekto']
             });
 
+            return true;
+
         } catch (error) {
-            this.logger.log('ERROR', 'Error configurando MediaSession', { error: error.message });
+            this.logger.log('ERROR', 'Error configurando MediaSession', { 
+                error: error.message,
+                stack: error.stack?.substring(0, 200) + '...'
+            });
+            return false;
         }
     }
 
@@ -335,14 +353,33 @@ class GlobalAudioPlayer {
     updateMediaSessionPosition() {
         if ('mediaSession' in navigator && this.audio && !isNaN(this.audio.duration)) {
             try {
-                navigator.mediaSession.setPositionState({
+                const positionData = {
                     duration: this.audio.duration,
                     playbackRate: this.audio.playbackRate,
                     position: this.audio.currentTime
+                };
+
+                navigator.mediaSession.setPositionState(positionData);
+                
+                this.logger.log('INFO', 'MediaSession posición actualizada', {
+                    currentTime: Math.floor(this.audio.currentTime),
+                    duration: Math.floor(this.audio.duration),
+                    percentage: Math.floor((this.audio.currentTime / this.audio.duration) * 100) + '%'
                 });
+
             } catch (error) {
-                this.logger.log('WARN', 'Error actualizando posición en MediaSession', { error: error.message });
+                this.logger.log('ERROR', 'Error actualizando posición en MediaSession', { 
+                    error: error.message,
+                    hasAudio: !!this.audio,
+                    audioDuration: this.audio ? this.audio.duration : 'no audio'
+                });
             }
+        } else {
+            this.logger.log('WARN', 'No se puede actualizar MediaSession posición', {
+                hasMediaSession: 'mediaSession' in navigator,
+                hasAudio: !!this.audio,
+                hasValidDuration: this.audio ? !isNaN(this.audio.duration) : false
+            });
         }
     }
 
