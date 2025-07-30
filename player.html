@@ -14,7 +14,7 @@
     
     <!-- Navigation -->
     <nav class="player-nav">
-        <a href="#" onclick="history.back(); return false;" class="nav-back">← Volver</a>
+        <a href="javascript:void(0)" onclick="navigateBack()" class="nav-back">← Volver</a>
     </nav>
     
     <!-- Parallax Background Elements -->
@@ -871,6 +871,46 @@
                 `;
             }
             // --- FIN AUDIO PLAYER LOGIC ---
+
+            // Función para navegación de regreso inteligente
+            function navigateBack() {
+                // Obtener el referrer de la sesión actual
+                const urlParams = new URLSearchParams(window.location.search);
+                const fromPage = urlParams.get('from') || document.referrer;
+                
+                if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                    window.globalAudioPlayer.logger.log('INFO', 'Navegación de regreso solicitada', {
+                        referrer: document.referrer,
+                        fromParam: urlParams.get('from'),
+                        historyLength: history.length
+                    });
+                }
+                
+                // Si vino de una página específica del sitio, ir a esa página
+                if (fromPage && fromPage.includes(window.location.hostname)) {
+                    try {
+                        // Extraer solo el nombre de la página
+                        const pageMatch = fromPage.match(/([^\/]+\.html)$/);
+                        if (pageMatch) {
+                            const pageName = pageMatch[1];
+                            if (['house.html', 'techno.html', 'progressive.html', 'private.html', 'remember.html'].includes(pageName)) {
+                                window.location.href = pageName;
+                                return;
+                            }
+                        }
+                    } catch (e) {
+                        console.warn('Error procesando referrer:', e);
+                    }
+                }
+                
+                // Si tiene historial previo en la misma sesión, usar history.back()
+                if (history.length > 1 && document.referrer.includes(window.location.hostname)) {
+                    history.back();
+                } else {
+                    // Fallback: ir a la página principal
+                    window.location.href = 'index.html';
+                }
+            }
 
             // Función para probar MediaSession manualmente
             function testMediaSession() {

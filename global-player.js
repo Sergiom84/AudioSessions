@@ -283,22 +283,53 @@ class GlobalAudioPlayer {
                 artworkUrl: sessionData.artwork
             });
 
+            // Configurar artwork con URLs absolutas y múltiples formatos para iOS
+            let artworkArray = [];
+            if (sessionData.artwork) {
+                // Asegurar URL absoluta
+                let artworkUrl = sessionData.artwork;
+                if (artworkUrl.startsWith('./') || artworkUrl.startsWith('attached_assets/')) {
+                    artworkUrl = `${window.location.origin}${window.location.pathname.replace(/\/[^/]*$/, '')}/${artworkUrl.replace(/^\.\//, '')}`;
+                } else if (artworkUrl.startsWith('/')) {
+                    artworkUrl = `${window.location.origin}${artworkUrl}`;
+                } else if (!artworkUrl.startsWith('http')) {
+                    artworkUrl = `${window.location.origin}/${artworkUrl}`;
+                }
+
+                // iOS específico: usar múltiples tamaños y tipos
+                const sizes = ['96x96', '128x128', '192x192', '256x256', '384x384', '512x512'];
+                sizes.forEach(size => {
+                    artworkArray.push({
+                        src: artworkUrl,
+                        sizes: size,
+                        type: 'image/png'
+                    });
+                    // Añadir también como JPEG para mayor compatibilidad
+                    artworkArray.push({
+                        src: artworkUrl,
+                        sizes: size,
+                        type: 'image/jpeg'
+                    });
+                });
+
+                this.logger.log('INFO', 'Artwork configurado', {
+                    originalUrl: sessionData.artwork,
+                    absoluteUrl: artworkUrl,
+                    artworkCount: artworkArray.length
+                });
+            }
+
+            // Configurar metadata con más información para iOS
             navigator.mediaSession.metadata = new MediaMetadata({
                 title: sessionData.title || 'Sesión de Audio',
-                artist: '', // Eliminado como solicitaste
-                album: '', // También vacío para simplicidad
-                artwork: sessionData.artwork ? [
-                    { src: sessionData.artwork, sizes: '96x96', type: 'image/png' },
-                    { src: sessionData.artwork, sizes: '128x128', type: 'image/png' },
-                    { src: sessionData.artwork, sizes: '192x192', type: 'image/png' },
-                    { src: sessionData.artwork, sizes: '256x256', type: 'image/png' },
-                    { src: sessionData.artwork, sizes: '384x384', type: 'image/png' },
-                    { src: sessionData.artwork, sizes: '512x512', type: 'image/png' }
-                ] : []
+                artist: 'Audio Sessions', // iOS a veces necesita artist para mostrar datos
+                album: 'Mix Sessions',     // Album ayuda en algunos dispositivos
+                artwork: artworkArray
             });
 
             this.logger.log('SUCCESS', 'MediaMetadata configurado', {
                 metadataTitle: navigator.mediaSession.metadata.title,
+                metadataArtist: navigator.mediaSession.metadata.artist,
                 artworkCount: navigator.mediaSession.metadata.artwork.length
             });
 
@@ -332,9 +363,18 @@ class GlobalAudioPlayer {
                 }
             });
 
+            // Para iOS: forzar actualización del estado
+            if (this.audio && !this.audio.paused) {
+                navigator.mediaSession.playbackState = 'playing';
+            } else {
+                navigator.mediaSession.playbackState = 'paused';
+            }
+
             this.logger.log('SUCCESS', 'MediaSession configurado completamente', {
                 title: sessionData.title,
                 hasArtwork: !!sessionData.artwork,
+                artworkArrayLength: artworkArray.length,
+                playbackState: navigator.mediaSession.playbackState,
                 actionsConfigured: ['play', 'pause', 'seekbackward', 'seekforward', 'seekto']
             });
 
@@ -929,6 +969,13 @@ class GlobalAudioPlayer {
                     this.logger.log('SUCCESS', 'Audio global reproduciendo correctamente');
                     console.log('Global audio playing');
                     this.setStatus('');
+                    
+                    // Actualizar MediaSession state para iOS
+                    if ('mediaSession' in navigator) {
+                        navigator.mediaSession.playbackState = 'playing';
+                        this.updateMediaSessionPosition();
+                        this.logger.log('INFO', 'MediaSession playbackState actualizado a playing');
+                    }
                 })
                 .catch(error => {
                     this.logger.log('ERROR', 'Error al reproducir audio global', {
@@ -954,6 +1001,12 @@ class GlobalAudioPlayer {
             this.audio.pause();
             this.logger.log('SUCCESS', 'Audio global pausado');
             console.log('Global audio paused');
+            
+            // Actualizar MediaSession state para iOS
+            if ('mediaSession' in navigator) {
+                navigator.mediaSession.playbackState = 'paused';
+                this.logger.log('INFO', 'MediaSession playbackState actualizado a paused');
+            }
         } else {
             this.logger.log('WARN', 'pause(): No hay elemento de audio');
         }

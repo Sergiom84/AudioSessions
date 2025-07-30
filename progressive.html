@@ -96,11 +96,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 // Navegar al player después de un breve delay
                 setTimeout(() => {
-                    window.location.href = `player.html?session=${sessionId}`;
+                    window.location.href = `player.html?session=${sessionId}&from=progressive.html`;
                 }, 500);
             } else if (sessionId) {
                 // Fallback directo al player si no hay reproductor global
-                window.location.href = `player.html?session=${sessionId}`;
+                window.location.href = `player.html?session=${sessionId}&from=progressive.html`;
             }
         });
         
