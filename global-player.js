@@ -477,6 +477,9 @@ class GlobalAudioPlayer {
             const percent = (this.audio.currentTime / this.audio.duration) * 100;
             this.progressFill.style.width = percent + '%';
             this.currentTimeEl.textContent = this.formatTime(this.audio.currentTime);
+
+            // Persist progress
+            this.saveToStorage();
         }
     }
 
