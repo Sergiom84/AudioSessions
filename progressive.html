@@ -77,29 +77,8 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             const sessionId = card.getAttribute('data-session');
             
-            if (sessionId && window.globalAudioPlayer) {
-                // Obtener datos de la sesión
-                const sessionData = {
-                    'insane': {
-                        title: 'Insane',
-                        subtitle: 'Progressive House',
-                        artist: 'Unknown Artist',
-                        audioUrl: 'https://dn720700.ca.archive.org/0/items/in-sane/InSANE.flac'
-                    }
-                };
-                
-                const session = sessionData[sessionId];
-                if (session) {
-                    // Iniciar reproductor global
-                    window.globalAudioPlayer.startSession(session);
-                }
-                
-                // Navegar al player después de un breve delay
-                setTimeout(() => {
-                    window.location.href = `player.html?session=${sessionId}&from=progressive.html`;
-                }, 500);
-            } else if (sessionId) {
-                // Fallback directo al player si no hay reproductor global
+            // Navegación directa al player (sin global player automático)
+            if (sessionId) {
                 window.location.href = `player.html?session=${sessionId}&from=progressive.html`;
             }
         });

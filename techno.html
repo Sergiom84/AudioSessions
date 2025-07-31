@@ -177,16 +177,9 @@
                         console.log('DEBUG: Click en card techno', sessionId, 'pero no hay logger disponible');
                     }
                     
-                    // Start global player with session data
-                    if (sessionId && sessionData[sessionId] && window.startGlobalPlayer) {
-                        window.startGlobalPlayer(sessionData[sessionId]);
-                    }
-                    
-                    // Still navigate to player page for full experience after a short delay
+                    // Navigate to player page directly (sin global player automático)
                     if (sessionId) {
-                        setTimeout(() => {
-                            window.location.href = `player.html?session=${sessionId}&from=techno.html`;
-                        }, 300);
+                        window.location.href = `player.html?session=${sessionId}&from=techno.html`;
                     }
                 });
                 

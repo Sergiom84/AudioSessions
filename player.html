@@ -1038,7 +1038,8 @@
                 document.getElementById('sessionSubtitle').textContent = 'La primera cita que nadie vio venir. Sin aviso, sin Vol. I. Solo música para desnudarse sin palabras';
             }
             
-            document.getElementById('duration').textContent = session.duration;
+            // La duración se actualizará dinámicamente cuando se cargue el audio
+            document.getElementById('duration').textContent = '--:--';
             document.getElementById('sessionCover').innerHTML = session.cover;
             
             // --- AUDIO PLAYER LOGIC ---
@@ -1249,8 +1250,21 @@
 
             // Funciones para manejar los modales
 
+            // Variable para evitar modales duplicados
+            let resumeModalShown = false;
+
             // Modal de continuación de reproducción
             function showResumeModal(savedPosition, audio, sessionId) {
+                // Prevenir modales duplicados
+                if (resumeModalShown) {
+                    if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                        window.globalAudioPlayer.logger.log('WARN', 'Modal de reanudación ya mostrado - ignorando llamada duplicada');
+                    }
+                    return;
+                }
+
+                resumeModalShown = true;
+
                 if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
                     window.globalAudioPlayer.logger.log('INFO', 'showResumeModal ejecutándose', {
                         sessionId: sessionId,
@@ -1335,11 +1349,13 @@
                             window.globalAudioPlayer.logger.log('ERROR', 'No se encontró elemento de audio al reanudar');
                         }
                         modal.style.display = 'none';
+                        resumeModalShown = false; // Reset para permitir futuras llamadas
                         return;
                     }
 
                     // Cerrar modal inmediatamente
                     modal.style.display = 'none';
+                    resumeModalShown = false; // Reset para permitir futuras llamadas
 
                     // Establecer tiempo de reanudación
                     currentAudio.currentTime = Math.min(savedPosition.currentTime, currentAudio.duration || savedPosition.currentTime);
@@ -1396,6 +1412,7 @@
                         currentAudio.currentTime = 0;
                     }
                     modal.style.display = 'none';
+                    resumeModalShown = false; // Reset para permitir futuras llamadas
 
                     if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
                         window.globalAudioPlayer.logger.log('INFO', 'Usuario eligió empezar desde el principio', {
@@ -1491,6 +1508,7 @@
                 const handleEscape = (e) => {
                     if (e.key === 'Escape' || e.keyCode === 27) {
                         modal.style.display = 'none';
+                        resumeModalShown = false; // Reset para permitir futuras llamadas
                         document.removeEventListener('keydown', handleEscape);
                     }
                 };
@@ -1503,6 +1521,7 @@
                             window.globalAudioPlayer.logger.log('WARN', 'Modal de reanudación cerrado por timeout de seguridad');
                         }
                         modal.style.display = 'none';
+                        resumeModalShown = false; // Reset para permitir futuras llamadas
                         document.removeEventListener('keydown', handleEscape);
                     }
                 }, 30000); // 30 segundos de timeout
@@ -1562,6 +1581,14 @@
                 if (savedPosition && savedPosition.currentTime > 10) { // Reducido umbral para testing
                     // Función para mostrar modal con timeout como fallback
                     const showModalWithFallback = () => {
+                        // Protección adicional contra duplicados
+                        if (resumeModalShown) {
+                            if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                                window.globalAudioPlayer.logger.log('WARN', 'showModalWithFallback: Modal ya mostrado - ignorando');
+                            }
+                            return;
+                        }
+
                         if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
                             window.globalAudioPlayer.logger.log('INFO', 'Mostrando modal de reanudación', {
                                 currentTime: savedPosition.currentTime,
@@ -1573,10 +1600,29 @@
                     
                     // Intentar mostrar modal inmediatamente si el audio está listo
                     if (audio.readyState >= 1) {
+                        if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                            window.globalAudioPlayer.logger.log('INFO', 'Audio listo inmediatamente - mostrando modal', {
+                                readyState: audio.readyState,
+                                resumeModalShown: resumeModalShown
+                            });
+                        }
                         showModalWithFallback();
                     } else {
+                        if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                            window.globalAudioPlayer.logger.log('INFO', 'Audio no listo - esperando loadedmetadata', {
+                                readyState: audio.readyState
+                            });
+                        }
                         // Listener para cuando se carguen los metadatos
                         audio.addEventListener('loadedmetadata', () => {
+                            // Protección adicional: no ejecutar si ya se mostró el modal
+                            if (resumeModalShown) {
+                                if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                                    window.globalAudioPlayer.logger.log('WARN', 'loadedmetadata: Modal ya mostrado - ignorando');
+                                }
+                                return;
+                            }
+
                             if (!isNaN(audio.duration) && savedPosition.currentTime > 0) {
                                 const durationDiff = Math.abs(audio.duration - savedPosition.duration);
                                 if (durationDiff < 10) {
@@ -1587,7 +1633,7 @@
                         
                         // Fallback con timeout para iOS
                         setTimeout(() => {
-                            if (!document.getElementById('resumeModal') || document.getElementById('resumeModal').style.display === 'none') {
+                            if (!resumeModalShown && (!document.getElementById('resumeModal') || document.getElementById('resumeModal').style.display === 'none')) {
                                 if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
                                     window.globalAudioPlayer.logger.log('WARN', 'Modal no se mostró - usando fallback de timeout');
                                 }
@@ -1602,29 +1648,7 @@
             }
 
             // Fallback al sistema anterior solo si globalAudioPlayer no está disponible
-            if (!window.globalAudioPlayer) {
-                try {
-                    const saved = JSON.parse(localStorage.getItem('sessionProgress') || '{}');
-                    if (saved.id === sessionId && saved.currentTime > 30) {
-                        audio.addEventListener('loadedmetadata', () => {
-                            if (!isNaN(audio.duration)) {
-                                // Crear objeto compatible para el modal
-                                const savedPosition = {
-                                    currentTime: saved.currentTime || 0,
-                                    duration: audio.duration,
-                                    percentage: (saved.currentTime / audio.duration) * 100
-                                };
-                                showResumeModal(savedPosition, audio, sessionId);
-                            }
-                        });
-                    } else if (saved.id === sessionId) {
-                        // Si hay progreso pero es menor a 30 segundos, empezar desde el principio
-                        audio.currentTime = 0;
-                    }
-                } catch (e) {
-                    console.warn('Could not load session progress:', e);
-                }
-            }
+            // Sistema anterior eliminado - solo usar globalAudioPlayer para evitar modales duplicados
             
             // Add error handling for audio loading with detailed logging
             audio.addEventListener('error', function(e) {
@@ -2145,7 +2169,21 @@
             audio.addEventListener('loadedmetadata', () => {
                 if (!isNaN(audio.duration)) {
                     totalTimeEl.textContent = formatTime(audio.duration);
-                    
+
+                    // Actualizar también la duración en las estadísticas de la sesión
+                    const durationEl = document.getElementById('duration');
+                    if (durationEl) {
+                        durationEl.textContent = formatTime(audio.duration);
+
+                        if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                            window.globalAudioPlayer.logger.log('INFO', 'Duración real actualizada desde audio', {
+                                sessionId: sessionId,
+                                realDuration: formatTime(audio.duration),
+                                durationInSeconds: audio.duration
+                            });
+                        }
+                    }
+
                     // Configurar posición inicial en Media Session
                     if (window.globalAudioPlayer) {
                         window.globalAudioPlayer.updateMediaSessionPosition();
@@ -2345,9 +2383,10 @@
             document.addEventListener('touchend', (e) => { finishDrag(); e.preventDefault(); }, { passive: false });
 
             function formatTime(seconds) {
-                const mins = Math.floor(seconds / 60);
+                const hours = Math.floor(seconds / 3600);
+                const mins = Math.floor((seconds % 3600) / 60);
                 const secs = Math.floor(seconds % 60);
-                return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+                return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
             }
         }
 
