@@ -9,6 +9,28 @@
     <script src="global-player.js"></script>
 </head>
 <body data-genre="house">
+    <!-- Modal de descarga -->
+    <div id="download-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeDownloadModal()">&times;</span>
+            <h2>Descargar Nati Nati</h2>
+            <p>Para descargar esta sesión en alta calidad (FLAC):</p>
+            <ol>
+                <li>Haz clic en el enlace de descarga a continuación</li>
+                <li>Se abrirá una nueva pestaña con el archivo</li>
+                <li>Haz clic derecho y selecciona "Guardar como..."</li>
+                <li>Elige la ubicación donde quieres guardar el archivo</li>
+            </ol>
+            <div class="download-actions">
+                <a href="https://dn721608.ca.archive.org/0/items/nati-nati/Nati%20Nati.flac" 
+                   target="_blank" 
+                   class="download-link">
+                    ↓ Descargar Nati Nati (FLAC)
+                </a>
+            </div>
+        </div>
+    </div>
+
     <!-- Scroll Progress Indicator -->
     <div class="scroll-progress"></div>
     
@@ -212,7 +234,8 @@
             'nati-nati': {
                 title: 'Nati Nati',
                 subtitle: 'Una oda al groove fino y la emoción en loop. Así suena Nati Nati: femenina, profunda, inolvidable',
-                audioUrl: 'https://archive.org/download/nati-nati/Nati%20Nati.mp3'
+                audioUrl: 'https://archive.org/download/nati-nati/Nati%20Nati.mp3',
+                downloadUrl: 'https://dn721608.ca.archive.org/0/items/nati-nati/Nati%20Nati.flac'
             },
             'ros-in-da-house': {
                 title: 'Ros In Da House',
@@ -309,6 +332,44 @@
         } else {
             setupMobileNavigation();
         }
+
+        // Funciones para el modal de descarga
+        function showDownloadModal(sessionId) {
+            console.log('Mostrando modal de descarga para:', sessionId);
+            const modal = document.getElementById('download-modal');
+            if (modal) {
+                modal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+                console.log('Modal mostrado');
+            } else {
+                console.error('Modal no encontrado');
+            }
+        }
+
+        function closeDownloadModal() {
+            console.log('Cerrando modal de descarga');
+            const modal = document.getElementById('download-modal');
+            if (modal) {
+                modal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+                console.log('Modal cerrado');
+            }
+        }
+
+        // Cerrar modal al hacer clic fuera de él
+        window.addEventListener('click', function(event) {
+            const modal = document.getElementById('download-modal');
+            if (event.target === modal) {
+                closeDownloadModal();
+            }
+        });
+
+        // Cerrar modal con tecla Escape
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeDownloadModal();
+            }
+        });
     </script>
 </body>
 </html>

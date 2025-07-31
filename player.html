@@ -157,18 +157,18 @@
     <div id="downloadModal" class="modal-overlay" style="display: none;">
         <div class="modal-container download-modal">
             <div class="modal-header">
-                <h3>Instrucciones de descarga</h3>
+                <h3 id="downloadModalTitle">Instrucciones de descarga</h3>
                 <button id="closeDownloadModal" class="modal-close">×</button>
             </div>
             <div class="modal-content">
                 <div class="download-instructions">
-                    <img src="attached_assets/Download.jpg" alt="Instrucciones de descarga" class="download-preview">
                     <div class="instruction-text">
-                        <p>En la página que se abrirá, sigue estos pasos:</p>
-                        <ol>
-                            <li>Pulsa en los <strong>tres puntos</strong> (⋮) en la esquina superior derecha</li>
-                            <li>Selecciona <strong>"Download"</strong> del menú desplegable</li>
-                            <li>Tu descarga comenzará automáticamente</li>
+                        <p id="downloadModalText">Para descargar esta sesión en alta calidad:</p>
+                        <ol id="downloadInstructions">
+                            <li>Haz clic en el botón "Descargar archivo"</li>
+                            <li>Se abrirá una nueva pestaña con el archivo</li>
+                            <li>Haz clic derecho y selecciona "Guardar como..."</li>
+                            <li>Elige la ubicación donde quieres guardar el archivo</li>
                         </ol>
                     </div>
                 </div>
@@ -177,7 +177,7 @@
                         <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
                         </svg>
-                        Abrir página de descarga
+                        Descargar archivo
                     </button>
                     <button id="cancelDownload" class="modal-btn secondary">Cancelar</button>
                 </div>
@@ -674,7 +674,7 @@
                 title: 'Nati Nati',
                 subtitle: 'Una oda al groove fino y la emoción en loop. Así suena Nati Nati: femenina, profunda, inolvidable',
                 audioUrl: 'https://archive.org/download/nati-nati/Nati%20Nati.mp3',
-                downloadUrl: 'https://archive.org/download/nati-nati/Nati%20Nati.mp3',
+                downloadUrl: 'https://dn721608.ca.archive.org/0/items/nati-nati/Nati%20Nati.flac',
                 duration: '35:20',
                 cover: `
                     <img class="session-cover-svg" src="attached_assets/Nati Nati_1752569294098.png" alt="Carátula Nati Nati" style="width:100%;height:300px;object-fit:cover;display:block;border-radius:var(--radius);box-shadow:var(--shadow-hover);" />
@@ -1140,7 +1140,7 @@
                 const fromPage = urlParams.get('from') || document.referrer;
                 
                 if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
-                    window.globalAudioPlayer.logger.log('INFO', 'Navegación de regreso solicitada', {
+                    window.globalAudioPlayer.logger.log('INFO', 'Navegación de regreso ejecutándose', {
                         referrer: document.referrer,
                         fromParam: urlParams.get('from'),
                         historyLength: history.length,
@@ -1165,6 +1165,9 @@
                         const validPages = ['house.html', 'techno.html', 'progressive.html', 'private.html', 'remember.html'];
                         
                         if (validPages.includes(pageName)) {
+                            if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                                window.globalAudioPlayer.logger.log('SUCCESS', 'Navegando a página de género', { pageName });
+                            }
                             window.location.href = pageName;
                             return;
                         }
@@ -1189,11 +1192,36 @@
 
             // Modal de continuación de reproducción
             function showResumeModal(savedPosition, audio, sessionId) {
+                if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                    window.globalAudioPlayer.logger.log('INFO', 'showResumeModal ejecutándose', {
+                        sessionId: sessionId,
+                        currentTime: savedPosition.currentTime,
+                        duration: savedPosition.duration
+                    });
+                }
+                
                 const modal = document.getElementById('resumeModal');
                 const resumeBtn = document.getElementById('resumeBtn');
                 const restartBtn = document.getElementById('restartBtn');
                 
+                if (!modal || !resumeBtn || !restartBtn) {
+                    if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                        window.globalAudioPlayer.logger.log('ERROR', 'Elementos del modal no encontrados', {
+                            modalFound: !!modal,
+                            resumeBtnFound: !!resumeBtn,
+                            restartBtnFound: !!restartBtn
+                        });
+                    }
+                    return;
+                }
+                
                 modal.style.display = 'flex';
+                
+                if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                    window.globalAudioPlayer.logger.log('SUCCESS', 'Modal de reanudación mostrado', {
+                        modalDisplay: modal.style.display
+                    });
+                }
                 
                 // Formatear tiempo para mostrar en el botón
                 const minutes = Math.floor(savedPosition.currentTime / 60);
@@ -1201,6 +1229,10 @@
                 const timeString = `${minutes}:${seconds.toString().padStart(2, '0')}`;
                 
                 resumeBtn.querySelector('span').textContent = `Continuar desde ${timeString}`;
+                
+                // Clear any existing listeners to prevent duplicates
+                resumeBtn.onclick = null;
+                restartBtn.onclick = null;
                 
                 // Event listeners
                 resumeBtn.onclick = () => {
@@ -1298,6 +1330,8 @@
                 const proceedBtn = document.getElementById('proceedDownload');
                 const cancelBtn = document.getElementById('cancelDownload');
                 const closeBtn = document.getElementById('closeDownloadModal');
+                const modalTitle = document.getElementById('downloadModalTitle');
+                const modalText = document.getElementById('downloadModalText');
                 
                 if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
                     window.globalAudioPlayer.logger.log('INFO', 'Elementos del modal encontrados', {
@@ -1313,6 +1347,15 @@
                         window.globalAudioPlayer.logger.log('ERROR', 'Modal de descarga no encontrado en el DOM');
                     }
                     return;
+                }
+
+                // Personalizar contenido del modal según la sesión
+                if (modalTitle && sessionTitle) {
+                    modalTitle.textContent = `Descargar ${sessionTitle}`;
+                }
+                
+                if (modalText && sessionTitle === 'Nati Nati') {
+                    modalText.textContent = 'Para descargar esta sesión en alta calidad (FLAC):';
                 }
                 
                 modal.style.display = 'flex';
@@ -1419,44 +1462,79 @@
             if (window.globalAudioPlayer) {
                 const savedPosition = window.globalAudioPlayer.loadAudioPosition(sessionId);
                 
-                if (savedPosition && savedPosition.currentTime > 30) { // Solo mostrar si hay más de 30 segundos de progreso
-                    audio.addEventListener('loadedmetadata', () => {
-                        if (!isNaN(audio.duration) && savedPosition.currentTime > 0) {
-                            // Solo restaurar si la duración coincide aproximadamente
-                            const durationDiff = Math.abs(audio.duration - savedPosition.duration);
-                            if (durationDiff < 10) { // Tolerancia de 10 segundos
-                                // Mostrar modal de continuación en lugar de restaurar automáticamente
-                                showResumeModal(savedPosition, audio, sessionId);
-                            }
-                        }
+                if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                    window.globalAudioPlayer.logger.log('INFO', 'Verificando posición guardada', {
+                        sessionId: sessionId,
+                        savedPosition: savedPosition,
+                        hasProgress: !!(savedPosition && savedPosition.currentTime > 10) // Reducido a 10 segundos
                     });
+                }
+                
+                if (savedPosition && savedPosition.currentTime > 10) { // Reducido umbral para testing
+                    // Función para mostrar modal con timeout como fallback
+                    const showModalWithFallback = () => {
+                        if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                            window.globalAudioPlayer.logger.log('INFO', 'Mostrando modal de reanudación', {
+                                currentTime: savedPosition.currentTime,
+                                duration: savedPosition.duration || audio.duration
+                            });
+                        }
+                        showResumeModal(savedPosition, audio, sessionId);
+                    };
+                    
+                    // Intentar mostrar modal inmediatamente si el audio está listo
+                    if (audio.readyState >= 1) {
+                        showModalWithFallback();
+                    } else {
+                        // Listener para cuando se carguen los metadatos
+                        audio.addEventListener('loadedmetadata', () => {
+                            if (!isNaN(audio.duration) && savedPosition.currentTime > 0) {
+                                const durationDiff = Math.abs(audio.duration - savedPosition.duration);
+                                if (durationDiff < 10) {
+                                    showModalWithFallback();
+                                }
+                            }
+                        });
+                        
+                        // Fallback con timeout para iOS
+                        setTimeout(() => {
+                            if (!document.getElementById('resumeModal') || document.getElementById('resumeModal').style.display === 'none') {
+                                if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                                    window.globalAudioPlayer.logger.log('WARN', 'Modal no se mostró - usando fallback de timeout');
+                                }
+                                showModalWithFallback();
+                            }
+                        }, 2000);
+                    }
                 } else {
                     // Si no hay progreso significativo, empezar desde el principio
                     audio.currentTime = 0;
                 }
             }
 
-            // Fallback al sistema anterior si globalAudioPlayer no está disponible
-            try {
-                const saved = JSON.parse(localStorage.getItem('sessionProgress') || '{}');
-                if (saved.id === sessionId && saved.currentTime > 30 && !window.globalAudioPlayer) {
-                    audio.addEventListener('loadedmetadata', () => {
-                        if (!isNaN(audio.duration)) {
-                            // Crear objeto compatible para el modal
-                            const savedPosition = {
-                                currentTime: saved.currentTime || 0,
-                                duration: audio.duration,
-                                percentage: (saved.currentTime / audio.duration) * 100
-                            };
-                            showResumeModal(savedPosition, audio, sessionId);
-                        }
-                    });
-                } else if (saved.id === sessionId && !window.globalAudioPlayer) {
-                    // Si hay progreso pero es menor a 30 segundos, empezar desde el principio
-                    audio.currentTime = 0;
+            // Fallback al sistema anterior solo si globalAudioPlayer no está disponible
+            if (!window.globalAudioPlayer) {
+                try {
+                    const saved = JSON.parse(localStorage.getItem('sessionProgress') || '{}');
+                    if (saved.id === sessionId && saved.currentTime > 30) {
+                        audio.addEventListener('loadedmetadata', () => {
+                            if (!isNaN(audio.duration)) {
+                                // Crear objeto compatible para el modal
+                                const savedPosition = {
+                                    currentTime: saved.currentTime || 0,
+                                    duration: audio.duration,
+                                    percentage: (saved.currentTime / audio.duration) * 100
+                                };
+                                showResumeModal(savedPosition, audio, sessionId);
+                            }
+                        });
+                    } else if (saved.id === sessionId) {
+                        // Si hay progreso pero es menor a 30 segundos, empezar desde el principio
+                        audio.currentTime = 0;
+                    }
+                } catch (e) {
+                    console.warn('Could not load session progress:', e);
                 }
-            } catch (e) {
-                console.warn('Could not load session progress:', e);
             }
             
             // Add error handling for audio loading with detailed logging
@@ -2213,16 +2291,13 @@
                 return;
             }
             
-            // Remover any event listeners previos para evitar duplicaciones
-            const newDownloadBtn = downloadBtn.cloneNode(true);
-            downloadBtn.parentNode.replaceChild(newDownloadBtn, downloadBtn);
-            
-            newDownloadBtn.addEventListener('click', (e) => {
+            // Función para manejar la descarga
+            const handleDownload = (e) => {
                 e.preventDefault();
                 e.stopPropagation();
                 
                 if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
-                    window.globalAudioPlayer.logger.log('CLICK', 'Click en botón de descarga (setupDownload)', {
+                    window.globalAudioPlayer.logger.log('CLICK', 'Click en botón de descarga (handleDownload)', {
                         sessionTitle: session ? session.title : 'desconocida',
                         downloadUrl: session ? session.downloadUrl : null,
                         event: e.type,
@@ -2248,7 +2323,14 @@
                         });
                     }
                 }
-            }, { capture: true, passive: false }); // Usar capture para asegurar prioridad
+            };
+            
+            // Agregar múltiples listeners para asegurar compatibilidad
+            downloadBtn.addEventListener('click', handleDownload, { capture: true, passive: false });
+            downloadBtn.addEventListener('touchend', handleDownload, { capture: true, passive: false });
+            
+            // Para iOS - agregar también como onclick directo
+            downloadBtn.onclick = handleDownload;
         }
 
         // Media Session es manejado completamente por global-player.js
@@ -2302,21 +2384,44 @@
         function setupMobileNavigationPlayer() {
             const backButton = document.querySelector('.nav-back');
             if (backButton) {
+                if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                    window.globalAudioPlayer.logger.log('INFO', 'Configurando navegación móvil para botón volver');
+                }
+                
+                // Remover onclick existente para evitar conflictos
+                backButton.removeAttribute('onclick');
+                
                 // Mejorar eventos táctiles
                 backButton.addEventListener('touchstart', function(e) {
                     this.style.opacity = '0.7';
+                    if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                        window.globalAudioPlayer.logger.log('INFO', 'Touch start en botón volver');
+                    }
                 }, { passive: true });
 
                 backButton.addEventListener('touchend', function(e) {
                     this.style.opacity = '1';
-                }, { passive: true });
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                        window.globalAudioPlayer.logger.log('INFO', 'Touch end en botón volver - ejecutando navegateBack');
+                    }
+                    setTimeout(() => navigateBack(), 100); // Pequeño delay para iOS
+                }, { passive: false });
 
-                // Añadir evento de click adicional como backup
+                // Añadir evento de click adicional como backup para PC
                 backButton.addEventListener('click', function(e) {
                     e.preventDefault();
                     e.stopPropagation();
+                    if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                        window.globalAudioPlayer.logger.log('INFO', 'Click en botón volver - ejecutando navegateBack');
+                    }
                     navigateBack();
-                });
+                }, { passive: false });
+            } else {
+                if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                    window.globalAudioPlayer.logger.log('ERROR', 'Botón de navegación no encontrado');
+                }
             }
         }
 
