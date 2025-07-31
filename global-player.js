@@ -8,188 +8,43 @@ class DebugLogger {
     }
 
     log(type, message, data = null) {
-        const timestamp = new Date().toLocaleTimeString();
-        // Detección mejorada de móvil incluyendo iOS específicamente
-        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|CriOS|FxiOS|EdgiOS/i.test(navigator.userAgent) ||
-                         (navigator.maxTouchPoints && navigator.maxTouchPoints > 0) ||
-                         'ontouchstart' in window;
-        
-        const logEntry = {
-            timestamp,
-            type,
-            message,
-            data,
-            isMobile,
-            isIOS: /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 0),
-            userAgent: navigator.userAgent.substring(0, 50) + '...'
-        };
-
-        this.logs.unshift(logEntry);
-        if (this.logs.length > this.maxLogs) {
-            this.logs.pop();
-        }
-
-        // También log normal para debugging
+        // Solo console.log básico para producción
         console.log(`[${type.toUpperCase()}] ${message}`, data || '');
-        
-        this.updateLoggerUI();
     }
 
     createLoggerUI() {
-        const loggerHTML = `
-            <div id="debugLogger" style="position: fixed; top: 0; right: 0; width: 300px; height: 400px; background: rgba(0,0,0,0.9); color: white; z-index: 10000; transform: translateX(280px); transition: transform 0.3s; font-family: monospace; font-size: 11px;">
-                <div style="padding: 10px; border-bottom: 1px solid #333; background: #111;">
-                    <button id="debugToggle" style="background: #007acc; color: white; border: none; padding: 5px 10px; cursor: pointer; font-size: 12px;">📋 DEBUG</button>
-                    <button id="debugClear" style="background: #dc3545; color: white; border: none; padding: 5px 10px; cursor: pointer; margin-left: 5px; font-size: 10px;">CLEAR</button>
-                    <button id="debugExport" style="background: #28a745; color: white; border: none; padding: 5px 10px; cursor: pointer; margin-left: 5px; font-size: 10px;">EXPORT</button>
-                </div>
-                <div id="debugContent" style="padding: 10px; height: 350px; overflow-y: auto;">
-                    <div style="color: #28a745;">Debug Logger iniciado</div>
-                </div>
-            </div>
-        `;
-
-        document.body.insertAdjacentHTML('beforeend', loggerHTML);
-
-        // Detectar iOS y auto-abrir debug si estamos en player.html
-        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
-                      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 0);
-        const isPlayerPage = window.location.pathname.includes('player.html') || 
-                             document.body.getAttribute('data-page') === 'player';
-
-        if (isIOS && isPlayerPage) {
-            this.log('INFO', 'iOS detectado en player.html - auto-abriendo debug');
-            setTimeout(() => {
-                this.isVisible = true;
-                const logger = document.getElementById('debugLogger');
-                if (logger) {
-                    logger.style.transform = 'translateX(0)';
-                }
-            }, 1000);
-        }
-
-        // Bind events con múltiples métodos para iOS
-        this.bindDebugEvents();
+        // Debug UI deshabilitado para producción
+        return;
     }
 
     bindDebugEvents() {
-        const debugToggle = document.getElementById('debugToggle');
-        const debugClear = document.getElementById('debugClear');
-        const debugExport = document.getElementById('debugExport');
-
-        // Múltiples event listeners para asegurar que funcionen en iOS
-        const events = ['click', 'touchend', 'touchstart'];
-        
-        events.forEach(eventType => {
-            if (debugToggle) {
-                debugToggle.addEventListener(eventType, (e) => {
-                    if (eventType === 'touchstart') return; // Solo procesar en touchend o click
-                    e.preventDefault();
-                    e.stopPropagation();
-                    this.toggle();
-                    this.log('INFO', `Debug toggle activado via ${eventType}`);
-                }, { passive: false });
-            }
-
-            if (debugClear) {
-                debugClear.addEventListener(eventType, (e) => {
-                    if (eventType === 'touchstart') return;
-                    e.preventDefault();
-                    e.stopPropagation();
-                    this.clear();
-                    this.log('INFO', `Debug clear activado via ${eventType}`);
-                }, { passive: false });
-            }
-
-            if (debugExport) {
-                debugExport.addEventListener(eventType, (e) => {
-                    if (eventType === 'touchstart') return;
-                    e.preventDefault();
-                    e.stopPropagation();
-                    this.export();
-                    this.log('INFO', `Debug export activado via ${eventType}`);
-                }, { passive: false });
-            }
-        });
-
-        // Test de eventos en toda la página para diagnosticar problemas
-        this.setupEventDiagnostics();
+        // Debug events deshabilitados para producción
+        return;
     }
 
     setupEventDiagnostics() {
-        // Interceptar todos los eventos de clic en la página
-        ['click', 'touchstart', 'touchend', 'mousedown', 'mouseup'].forEach(eventType => {
-            document.addEventListener(eventType, (e) => {
-                const elementInfo = {
-                    tag: e.target.tagName,
-                    id: e.target.id || 'sin-id',
-                    class: e.target.className || 'sin-class',
-                    position: { x: e.clientX || 0, y: e.clientY || 0 }
-                };
-
-                this.log('CLICK', `Evento ${eventType} detectado`, elementInfo);
-                
-                // Si es un botón importante, log adicional
-                if (e.target.id === 'playPauseBtn' || e.target.id === 'downloadBtn') {
-                    this.log('WARN', `Evento en botón crítico: ${e.target.id}`, {
-                        eventType: eventType,
-                        prevented: e.defaultPrevented,
-                        propagationStopped: e.cancelBubble
-                    });
-                }
-            }, true); // Usar capture para interceptar antes que otros handlers
-        });
+        // Event diagnostics deshabilitado para producción
+        return;
     }
 
     toggle() {
-        this.isVisible = !this.isVisible;
-        const logger = document.getElementById('debugLogger');
-        logger.style.transform = this.isVisible ? 'translateX(0)' : 'translateX(280px)';
+        // Toggle deshabilitado para producción
+        return;
     }
 
     clear() {
-        this.logs = [];
-        this.updateLoggerUI();
+        // Clear deshabilitado para producción
+        return;
     }
 
     export() {
-        const logData = {
-            timestamp: new Date().toISOString(),
-            userAgent: navigator.userAgent,
-            logs: this.logs
-        };
-
-        const blob = new Blob([JSON.stringify(logData, null, 2)], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `audio-debug-${Date.now()}.json`;
-        a.click();
-        URL.revokeObjectURL(url);
+        // Export deshabilitado para producción
+        return;
     }
 
     updateLoggerUI() {
-        const content = document.getElementById('debugContent');
-        if (!content) return;
-
-        const html = this.logs.map(log => {
-            const color = {
-                'ERROR': '#dc3545',
-                'WARN': '#ffc107',
-                'INFO': '#17a2b8',
-                'SUCCESS': '#28a745',
-                'CLICK': '#007bff',
-                'AUDIO': '#6f42c1'
-            }[log.type] || '#fff';
-
-            return `<div style="margin-bottom: 8px; border-left: 3px solid ${color}; padding-left: 8px;">
-                <div style="color: ${color}; font-weight: bold;">[${log.timestamp}] ${log.type}</div>
-                <div style="color: #ccc;">${log.message}</div>
-                ${log.data ? `<div style="color: #888; font-size: 10px;">${JSON.stringify(log.data).substring(0, 100)}...</div>` : ''}
-            </div>`;
-        }).join('');
-
-        content.innerHTML = html;
+        // Logger UI deshabilitado para producción
+        return;
     }
 }
 
