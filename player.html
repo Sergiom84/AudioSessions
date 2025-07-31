@@ -5,8 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Audio Player - Sessions Archive</title>
     <meta name="description" content="Audio player with tracklist and download">
-    <link rel="stylesheet" href="style.css">
-    <script src="global-player.js"></script>
+    <link rel="stylesheet" href="style.css?v=20250731-1445">
+    <script src="global-player.js?v=20250731-1445"></script>
+    <!-- Cache buster: 2025-07-31 14:45 - Fixed download URL for Nati Nati FLAC -->
 </head>
 <body data-page="player">
     <!-- Scroll Progress Indicator -->
@@ -153,23 +154,51 @@
         </div>
     </div>
 
-    <!-- Modal para descarga -->
+    <!-- Modal para descarga mejorado -->
     <div id="downloadModal" class="modal-overlay" style="display: none;">
         <div class="modal-container download-modal">
             <div class="modal-header">
-                <h3 id="downloadModalTitle">Instrucciones de descarga</h3>
+                <h3 id="downloadModalTitle">Descargar Sesión</h3>
                 <button id="closeDownloadModal" class="modal-close">×</button>
             </div>
             <div class="modal-content">
                 <div class="download-instructions">
+                    <!-- Imagen de tutorial -->
+                    <div class="download-preview-container">
+                        <img src="attached_assets/Download.jpg" alt="Tutorial de descarga" class="download-preview" />
+                    </div>
+
                     <div class="instruction-text">
-                        <p id="downloadModalText">Para descargar esta sesión en alta calidad:</p>
-                        <ol id="downloadInstructions">
-                            <li>Haz clic en el botón "Descargar archivo"</li>
-                            <li>Se abrirá una nueva pestaña con el archivo</li>
-                            <li>Haz clic derecho y selecciona "Guardar como..."</li>
-                            <li>Elige la ubicación donde quieres guardar el archivo</li>
-                        </ol>
+                        <p id="downloadModalText">Para descargar la sesión, pulsa en los tres puntos que aparecerán a continuación y comenzará la descarga automáticamente.</p>
+                        <div class="download-steps">
+                            <div class="step">
+                                <div class="step-number">1</div>
+                                <div class="step-text">Se abrirá una nueva pestaña con el archivo de audio</div>
+                            </div>
+                            <div class="step">
+                                <div class="step-number">2</div>
+                                <div class="step-text">El navegador iniciará la descarga automáticamente</div>
+                            </div>
+                            <div class="step">
+                                <div class="step-number">3</div>
+                                <div class="step-text">Si no se descarga automáticamente, haz clic derecho y selecciona "Guardar como..."</div>
+                            </div>
+                        </div>
+
+                        <div class="download-info">
+                            <div class="info-item">
+                                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                                </svg>
+                                <span>Formato: MP3 Alta Calidad</span>
+                            </div>
+                            <div class="info-item">
+                                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+                                </svg>
+                                <span id="downloadFileSize">Tamaño: ~50MB</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-actions">
@@ -177,7 +206,7 @@
                         <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
                         </svg>
-                        Descargar archivo
+                        <span>Iniciar Descarga</span>
                     </button>
                     <button id="cancelDownload" class="modal-btn secondary">Cancelar</button>
                 </div>
@@ -347,24 +376,143 @@
             }
         }
 
+        /* Estilos para notificación de descarga */
+        .download-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, var(--accent-color), #00cc66);
+            color: var(--primary-bg);
+            padding: 16px 20px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 255, 136, 0.3);
+            z-index: 10002;
+            transform: translateX(400px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            max-width: 300px;
+        }
+
+        .download-notification.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .notification-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .notification-content svg {
+            flex-shrink: 0;
+        }
+
+        @media (max-width: 768px) {
+            .download-notification {
+                top: 10px;
+                right: 10px;
+                left: 10px;
+                max-width: none;
+                transform: translateY(-100px);
+            }
+
+            .download-notification.show {
+                transform: translateY(0);
+            }
+        }
+
         .download-modal .modal-container {
-            max-width: 600px;
+            max-width: 650px;
         }
 
         .download-instructions {
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 24px;
+        }
+
+        .download-preview-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
         }
 
         .download-preview {
             width: 100%;
-            max-width: 400px;
+            max-width: 300px;
             height: auto;
+            border-radius: 12px;
+            border: 2px solid var(--accent-color);
+            box-shadow: 0 8px 25px rgba(0, 255, 136, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .download-preview:hover {
+            transform: scale(1.02);
+        }
+
+        .download-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin: 20px 0;
+        }
+
+        .step {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 16px;
+            background: rgba(0, 255, 136, 0.05);
+            border-radius: 12px;
+            border-left: 4px solid var(--accent-color);
+        }
+
+        .step-number {
+            background: var(--accent-color);
+            color: var(--primary-bg);
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .step-text {
+            color: var(--text-primary);
+            line-height: 1.5;
+            font-size: 0.95rem;
+        }
+
+        .download-info {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 20px;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.02);
             border-radius: 8px;
             border: 1px solid var(--border-color);
-            margin: 0 auto;
-            display: block;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .info-item svg {
+            color: var(--accent-color);
+            flex-shrink: 0;
         }
 
         .instruction-text p {
@@ -1493,31 +1641,40 @@
                 }, 30000); // 30 segundos de timeout
             }
 
-            // Modal de instrucciones de descarga
-            function showDownloadModal(downloadUrl, sessionTitle) {
+            // Modal de instrucciones de descarga mejorado
+            function showDownloadModal(audioUrl, sessionTitle, sessionData = null) {
+                // URL específica para Nati Nati
+                const downloadUrl = sessionTitle === 'Nati Nati' ?
+                    'https://dn721608.ca.archive.org/0/items/nati-nati/Nati%20Nati.flac' :
+                    audioUrl;
+
                 if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
                     window.globalAudioPlayer.logger.log('INFO', 'showDownloadModal llamado', {
+                        audioUrl: audioUrl,
                         downloadUrl: downloadUrl,
-                        sessionTitle: sessionTitle
+                        sessionTitle: sessionTitle,
+                        sessionData: sessionData
                     });
                 }
-                
+
                 const modal = document.getElementById('downloadModal');
                 const proceedBtn = document.getElementById('proceedDownload');
                 const cancelBtn = document.getElementById('cancelDownload');
                 const closeBtn = document.getElementById('closeDownloadModal');
                 const modalTitle = document.getElementById('downloadModalTitle');
                 const modalText = document.getElementById('downloadModalText');
-                
+                const fileSizeEl = document.getElementById('downloadFileSize');
+
                 if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
                     window.globalAudioPlayer.logger.log('INFO', 'Elementos del modal encontrados', {
                         modalFound: !!modal,
                         proceedBtnFound: !!proceedBtn,
                         cancelBtnFound: !!cancelBtn,
-                        closeBtnFound: !!closeBtn
+                        closeBtnFound: !!closeBtn,
+                        fileSizeElFound: !!fileSizeEl
                     });
                 }
-                
+
                 if (!modal) {
                     if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
                         window.globalAudioPlayer.logger.log('ERROR', 'Modal de descarga no encontrado en el DOM');
@@ -1529,63 +1686,141 @@
                 if (modalTitle && sessionTitle) {
                     modalTitle.textContent = `Descargar ${sessionTitle}`;
                 }
-                
-                if (modalText && sessionTitle === 'Nati Nati') {
-                    modalText.textContent = 'Para descargar esta sesión en alta calidad (FLAC):';
+
+                // Actualizar información del archivo
+                if (fileSizeEl && sessionData) {
+                    const estimatedSize = estimateFileSize(sessionData.duration || 3600);
+                    fileSizeEl.innerHTML = `<svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+                    </svg>
+                    <span>Tamaño: ~${estimatedSize}</span>`;
                 }
-                
+
                 modal.style.display = 'flex';
-                
+
                 if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
                     window.globalAudioPlayer.logger.log('SUCCESS', 'Modal de descarga mostrado');
                 }
-                
-                // Event listeners
+
+                // Limpiar event listeners previos
                 if (proceedBtn) {
-                    proceedBtn.onclick = () => {
-                        modal.style.display = 'none';
-                        
-                        if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
-                            window.globalAudioPlayer.logger.log('INFO', 'Usuario hizo clic en proceder descarga', {
-                                downloadUrl: downloadUrl
-                            });
-                        }
-                        
-                        // Abrir la URL de descarga
-                        const link = document.createElement('a');
-                        link.href = downloadUrl;
-                        link.target = '_blank';
-                        link.rel = 'noopener noreferrer';
-                        document.body.appendChild(link);
-                        link.click();
-                        document.body.removeChild(link);
-                        
-                        if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
-                            window.globalAudioPlayer.logger.log('SUCCESS', 'Usuario procedió con la descarga', {
-                                sessionTitle: sessionTitle,
-                                downloadUrl: downloadUrl
-                            });
-                        }
-                    };
+                    proceedBtn.onclick = null;
+                    if (proceedBtn._downloadHandler) {
+                        proceedBtn.removeEventListener('click', proceedBtn._downloadHandler);
+                    }
+                    if (proceedBtn._downloadTouchHandler) {
+                        proceedBtn.removeEventListener('touchend', proceedBtn._downloadTouchHandler);
+                    }
                 }
-                
+
+                // Función para manejar la descarga
+                const handleDownload = (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    modal.style.display = 'none';
+
+                    if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                        window.globalAudioPlayer.logger.log('INFO', 'Usuario inició descarga', {
+                            audioUrl: audioUrl,
+                            downloadUrl: downloadUrl,
+                            sessionTitle: sessionTitle
+                        });
+                    }
+
+                    // Usar exactamente la misma URL del audio para la descarga
+                    const link = document.createElement('a');
+                    link.href = downloadUrl;
+                    link.target = '_blank';
+                    link.rel = 'noopener noreferrer';
+
+                    // Detectar extensión de archivo de la URL
+                    const fileExtension = downloadUrl.includes('.flac') ? 'flac' :
+                                        downloadUrl.includes('.wav') ? 'wav' : 'mp3';
+                    link.download = `${sessionTitle}.${fileExtension}`;
+
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+
+                    if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                        window.globalAudioPlayer.logger.log('SUCCESS', 'Descarga iniciada correctamente', {
+                            sessionTitle: sessionTitle,
+                            downloadUrl: downloadUrl,
+                            suggestedFilename: `${sessionTitle}.${fileExtension}`
+                        });
+                    }
+
+                    // Mostrar notificación de éxito
+                    showDownloadNotification(sessionTitle);
+                };
+
+                // Detectar dispositivo para event listeners apropiados
+                const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+                if (proceedBtn) {
+                    if (isMobile) {
+                        proceedBtn._downloadTouchHandler = handleDownload;
+                        proceedBtn.addEventListener('touchend', handleDownload, { passive: false });
+                    }
+                    proceedBtn._downloadHandler = handleDownload;
+                    proceedBtn.addEventListener('click', handleDownload);
+                    proceedBtn.onclick = handleDownload; // Fallback
+                }
+
                 function closeModal() {
                     modal.style.display = 'none';
-                    
+
                     if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
                         window.globalAudioPlayer.logger.log('INFO', 'Usuario canceló la descarga');
                     }
                 }
-                
+
                 if (cancelBtn) cancelBtn.onclick = closeModal;
                 if (closeBtn) closeBtn.onclick = closeModal;
-                
+
                 // Cerrar modal al hacer clic fuera
                 modal.onclick = (e) => {
                     if (e.target === modal) {
                         closeModal();
                     }
                 };
+            }
+
+            // Función auxiliar para estimar el tamaño del archivo
+            function estimateFileSize(durationInSeconds) {
+                // Estimación basada en MP3 320kbps: ~40KB por segundo
+                const sizeInMB = (durationInSeconds * 40) / 1024;
+                if (sizeInMB < 1) {
+                    return `${Math.round(sizeInMB * 1024)}KB`;
+                } else {
+                    return `${Math.round(sizeInMB)}MB`;
+                }
+            }
+
+            // Función para mostrar notificación de descarga
+            function showDownloadNotification(sessionTitle) {
+                const notification = document.createElement('div');
+                notification.className = 'download-notification';
+                notification.innerHTML = `
+                    <div class="notification-content">
+                        <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                        <span>Descarga de "${sessionTitle}" iniciada</span>
+                    </div>
+                `;
+
+                document.body.appendChild(notification);
+
+                // Mostrar notificación
+                setTimeout(() => notification.classList.add('show'), 100);
+
+                // Ocultar después de 3 segundos
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                    setTimeout(() => notification.remove(), 300);
+                }, 3000);
             }
 
             // Función para probar MediaSession manualmente
@@ -1617,9 +1852,9 @@
                 }
             }
 
-            // Botón de descarga solo si hay downloadUrl
+            // Botón de descarga siempre disponible si hay audioUrl
             const playerActions = document.querySelector('.player-actions');
-            if (session.downloadUrl) {
+            if (session.audioUrl) {
                 playerActions.innerHTML = `<button class="download-btn" id="downloadBtn">
                     <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
@@ -2481,20 +2716,24 @@
                     });
                 }
 
-                // Mostrar modal de instrucciones de descarga
-                if (session && session.downloadUrl) {
+                // Mostrar modal de instrucciones de descarga usando audioUrl del player
+                if (session && session.audioUrl) {
                     if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
                         window.globalAudioPlayer.logger.log('INFO', 'Abriendo modal de descarga', {
-                            downloadUrl: session.downloadUrl,
-                            sessionTitle: session.title
+                            audioUrl: session.audioUrl,
+                            sessionTitle: session.title,
+                            sessionData: session
                         });
                     }
-                    showDownloadModal(session.downloadUrl, session.title);
+                    // Usar audioUrl (URL del player) en lugar de downloadUrl específica
+                    showDownloadModal(session.audioUrl, session.title, session);
                 } else {
                     // Fallback en caso de error
                     if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
-                        window.globalAudioPlayer.logger.log('ERROR', 'No se encontró URL de descarga para la sesión', {
+                        window.globalAudioPlayer.logger.log('ERROR', 'No se encontró URL de audio para la sesión', {
                             sessionExists: !!session,
+                            hasAudioUrl: !!(session && session.audioUrl),
+                            hasDownloadUrl: !!(session && session.downloadUrl),
                             sessionData: session ? JSON.stringify(session) : null
                         });
                     }
