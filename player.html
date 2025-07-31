@@ -126,7 +126,7 @@
     <div id="resumeModal" class="modal-overlay" style="display: none;">
         <div class="modal-container">
             <div class="modal-header">
-                <h3>¿Continuar reproducción?</h3>
+                <h3>¿Continuar con la reproducción?</h3>
                 <p>Detectamos que ya habías comenzado a escuchar esta sesión</p>
             </div>
             <div class="modal-content">
@@ -1332,8 +1332,15 @@
                     e.preventDefault();
                     e.stopPropagation();
 
+                    // Limpiar listeners y timeouts para evitar duplicados
+                    if (window.modalCleanupRefs) {
+                        clearTimeout(window.modalCleanupRefs.fallbackTimeout);
+                        window.modalCleanupRefs.audio.removeEventListener('loadedmetadata', window.modalCleanupRefs.handleLoadedMetadata);
+                        window.modalCleanupRefs = null;
+                    }
+
                     if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
-                        window.globalAudioPlayer.logger.log('INFO', 'handleResume ejecutado', {
+                        window.globalAudioPlayer.logger.log('INFO', 'handleResume ejecutado - con limpieza', {
                             eventType: e.type,
                             target: e.target.id || e.target.className,
                             sessionId: sessionId,
@@ -1349,13 +1356,13 @@
                             window.globalAudioPlayer.logger.log('ERROR', 'No se encontró elemento de audio al reanudar');
                         }
                         modal.style.display = 'none';
-                        resumeModalShown = false; // Reset para permitir futuras llamadas
+                        // NO resetear resumeModalShown aquí para evitar re-disparos
                         return;
                     }
 
                     // Cerrar modal inmediatamente
                     modal.style.display = 'none';
-                    resumeModalShown = false; // Reset para permitir futuras llamadas
+                    // NO resetear resumeModalShown aquí
 
                     // Establecer tiempo de reanudación
                     currentAudio.currentTime = Math.min(savedPosition.currentTime, currentAudio.duration || savedPosition.currentTime);
@@ -1398,8 +1405,15 @@
                     e.preventDefault();
                     e.stopPropagation();
 
+                    // Limpiar listeners y timeouts para evitar duplicados
+                    if (window.modalCleanupRefs) {
+                        clearTimeout(window.modalCleanupRefs.fallbackTimeout);
+                        window.modalCleanupRefs.audio.removeEventListener('loadedmetadata', window.modalCleanupRefs.handleLoadedMetadata);
+                        window.modalCleanupRefs = null;
+                    }
+
                     if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
-                        window.globalAudioPlayer.logger.log('INFO', 'handleRestart ejecutado', {
+                        window.globalAudioPlayer.logger.log('INFO', 'handleRestart ejecutado - con limpieza', {
                             eventType: e.type,
                             target: e.target.id || e.target.className,
                             sessionId: sessionId
@@ -1412,7 +1426,7 @@
                         currentAudio.currentTime = 0;
                     }
                     modal.style.display = 'none';
-                    resumeModalShown = false; // Reset para permitir futuras llamadas
+                    // NO resetear resumeModalShown aquí para evitar re-disparos
 
                     if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
                         window.globalAudioPlayer.logger.log('INFO', 'Usuario eligió empezar desde el principio', {
@@ -1507,8 +1521,14 @@
                 // Añadir botón de escape para emergencias en móvil
                 const handleEscape = (e) => {
                     if (e.key === 'Escape' || e.keyCode === 27) {
+                        // Limpiar listeners y timeouts
+                        if (window.modalCleanupRefs) {
+                            clearTimeout(window.modalCleanupRefs.fallbackTimeout);
+                            window.modalCleanupRefs.audio.removeEventListener('loadedmetadata', window.modalCleanupRefs.handleLoadedMetadata);
+                            window.modalCleanupRefs = null;
+                        }
                         modal.style.display = 'none';
-                        resumeModalShown = false; // Reset para permitir futuras llamadas
+                        // NO resetear resumeModalShown para evitar re-disparos
                         document.removeEventListener('keydown', handleEscape);
                     }
                 };
@@ -1520,8 +1540,14 @@
                         if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
                             window.globalAudioPlayer.logger.log('WARN', 'Modal de reanudación cerrado por timeout de seguridad');
                         }
+                        // Limpiar listeners y timeouts
+                        if (window.modalCleanupRefs) {
+                            clearTimeout(window.modalCleanupRefs.fallbackTimeout);
+                            window.modalCleanupRefs.audio.removeEventListener('loadedmetadata', window.modalCleanupRefs.handleLoadedMetadata);
+                            window.modalCleanupRefs = null;
+                        }
                         modal.style.display = 'none';
-                        resumeModalShown = false; // Reset para permitir futuras llamadas
+                        // NO resetear resumeModalShown para evitar re-disparos
                         document.removeEventListener('keydown', handleEscape);
                     }
                 }, 30000); // 30 segundos de timeout
@@ -1613,33 +1639,36 @@
                                 readyState: audio.readyState
                             });
                         }
-                        // Listener para cuando se carguen los metadatos
-                        audio.addEventListener('loadedmetadata', () => {
-                            // Protección adicional: no ejecutar si ya se mostró el modal
-                            if (resumeModalShown) {
-                                if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
-                                    window.globalAudioPlayer.logger.log('WARN', 'loadedmetadata: Modal ya mostrado - ignorando');
-                                }
-                                return;
-                            }
 
+                        // Solución robusta para evitar duplicados - guardamos referencias para limpieza
+                        const handleLoadedMetadata = () => {
+                            if (resumeModalShown) return;  // ya mostrado, no duplicar
                             if (!isNaN(audio.duration) && savedPosition.currentTime > 0) {
                                 const durationDiff = Math.abs(audio.duration - savedPosition.duration);
                                 if (durationDiff < 10) {
                                     showModalWithFallback();
                                 }
                             }
-                        });
-                        
-                        // Fallback con timeout para iOS
-                        setTimeout(() => {
-                            if (!resumeModalShown && (!document.getElementById('resumeModal') || document.getElementById('resumeModal').style.display === 'none')) {
+                        };
+
+                        audio.addEventListener('loadedmetadata', handleLoadedMetadata);
+
+                        const fallbackTimeout = setTimeout(() => {
+                            if (!resumeModalShown &&
+                                (!document.getElementById('resumeModal') || document.getElementById('resumeModal').style.display === 'none')) {
                                 if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
                                     window.globalAudioPlayer.logger.log('WARN', 'Modal no se mostró - usando fallback de timeout');
                                 }
                                 showModalWithFallback();
                             }
                         }, 2000);
+
+                        // Guardar referencias para limpieza posterior
+                        window.modalCleanupRefs = {
+                            handleLoadedMetadata,
+                            fallbackTimeout,
+                            audio
+                        };
                     }
                 } else {
                     // Si no hay progreso significativo, empezar desde el principio
@@ -2444,13 +2473,13 @@
             const backButton = document.querySelector('.nav-back');
             if (backButton) {
                 if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
-                    window.globalAudioPlayer.logger.log('INFO', 'Configurando navegación móvil para botón volver');
+                    window.globalAudioPlayer.logger.log('INFO', 'Configurando navegación móvil simplificada para botón volver');
                 }
-                
+
                 // Remover onclick existente para evitar conflictos
                 backButton.removeAttribute('onclick');
-                
-                // Mejorar eventos táctiles
+
+                // Efecto visual en touchstart
                 backButton.addEventListener('touchstart', function(e) {
                     this.style.opacity = '0.7';
                     if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
@@ -2458,66 +2487,23 @@
                     }
                 }, { passive: true });
 
+                // Evento táctil final: navegar atrás inmediatamente en móviles
                 backButton.addEventListener('touchend', function(e) {
-                    this.style.opacity = '1';
+                    this.style.opacity = '1';        // restaurar opacidad
                     e.preventDefault();
                     e.stopPropagation();
                     if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
-                        window.globalAudioPlayer.logger.log('INFO', 'Touch end en botón volver - ejecutando navegateBack');
+                        window.globalAudioPlayer.logger.log('INFO', 'Touch end en botón volver - navegación directa');
                     }
-                    // Delay más largo para iOS
-                    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
-                                 (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 0);
-                    const delay = isIOS ? 200 : 100;
-                    setTimeout(() => navigateBack(), delay);
+                    navigateBack();                 // llamada directa sin delay
                 }, { passive: false });
 
-                // Event listener adicional específico para iOS
-                const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
-                             (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 0);
-
-                if (isIOS) {
-                    // Para iOS, añadir también un listener de click que use window.location.assign
-                    backButton.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-
-                        if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
-                            window.globalAudioPlayer.logger.log('INFO', 'Click iOS específico en botón volver');
-                        }
-
-                        // Usar window.location.assign que es más robusto en iOS
-                        const urlParams = new URLSearchParams(window.location.search);
-                        const fromPage = urlParams.get('from');
-
-                        if (fromPage && fromPage.includes('.html')) {
-                            const pageMatch = fromPage.match(/([^\/]+\.html)$/);
-                            if (pageMatch) {
-                                const pageName = pageMatch[1];
-                                const validPages = ['house.html', 'techno.html', 'progressive.html', 'private.html', 'remember.html'];
-                                if (validPages.includes(pageName)) {
-                                    setTimeout(() => {
-                                        window.location.assign(pageName);
-                                    }, 100);
-                                    return;
-                                }
-                            }
-                        }
-
-                        // Fallback a index.html
-                        setTimeout(() => {
-                            window.location.assign('index.html');
-                        }, 100);
-
-                    }, { passive: false });
-                }
-
-                // Añadir evento de click adicional como backup para PC
+                // Evento click (como backup para desktop o navegadores que no emiten touch)
                 backButton.addEventListener('click', function(e) {
                     e.preventDefault();
                     e.stopPropagation();
                     if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
-                        window.globalAudioPlayer.logger.log('INFO', 'Click en botón volver - ejecutando navegateBack');
+                        window.globalAudioPlayer.logger.log('INFO', 'Click en botón volver - navegación directa');
                     }
                     navigateBack();
                 }, { passive: false });

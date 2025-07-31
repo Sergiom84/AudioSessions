@@ -104,6 +104,7 @@ body {
     background: linear-gradient(90deg, var(--accent-color), var(--accent-secondary), var(--accent-tertiary), var(--accent-quaternary));
     z-index: 1000;
     transition: width 0.1s ease;
+    pointer-events: none; /* Asegurar que la barra de progreso no bloquee interacciones */
 }
 
 /* Background Particles */
@@ -2042,4 +2043,126 @@ body[data-genre="private"] {
     background: linear-gradient(135deg, #6a0dad, #8b00ff);
     transform: translateY(-1px);
     box-shadow: 0 3px 10px rgba(139, 0, 255, 0.3);
+}
+
+/* Estilos base para modal de reanudación */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+}
+
+.modal-container {
+    background: linear-gradient(135deg, rgba(20, 20, 20, 0.95), rgba(40, 40, 40, 0.9));
+    border-radius: 15px;
+    width: 90%;
+    max-width: 400px;
+    border: 1px solid rgba(139, 0, 255, 0.3);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+    overflow: hidden;
+}
+
+.modal-header {
+    background: linear-gradient(135deg, rgba(139, 0, 255, 0.2), rgba(74, 0, 170, 0.3));
+    padding: 20px;
+    border-bottom: 1px solid rgba(139, 0, 255, 0.3);
+    text-align: center;
+}
+
+.modal-header h3 {
+    margin: 0 0 8px 0;
+    color: #ffffff;
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
+.modal-header p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 1rem;
+    line-height: 1.4;
+}
+
+.modal-content {
+    padding: 25px;
+}
+
+.modal-options {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.modal-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.modal-btn.primary {
+    background: linear-gradient(135deg, #8b00ff, #6a0dad);
+    color: white;
+}
+
+.modal-btn.primary:hover {
+    background: linear-gradient(135deg, #9a1aff, #7a1abb);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(139, 0, 255, 0.4);
+}
+
+.modal-btn.secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.modal-btn.secondary:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    transform: translateY(-1px);
+}
+
+/* Estilos responsivos para el modal en pantallas móviles */
+@media (max-width: 480px) {
+  /* Ajustar el contenedor del modal si es necesario */
+  .modal-container {
+    padding: 16px;
+    max-width: 90%;
+  }
+  /* Título del modal: tamaño ligeramente menor y margen inferior mayor */
+  .modal-header h3 {
+    font-size: 1.1rem;
+    margin-bottom: 12px;
+  }
+  /* Texto descriptivo: aumentar line-height para mayor legibilidad */
+  .modal-header p {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: 16px;
+  }
+  /* Contenido del modal: ajuste de padding para más espacio interior */
+  .modal-content {
+    padding: 20px;
+  }
+  /* Opciones: mantener suficiente separación entre botones */
+  .modal-options {
+    gap: 20px;
+  }
 }
