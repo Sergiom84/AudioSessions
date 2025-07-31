@@ -94,12 +94,6 @@
                     </div>
                     
                     <div class="player-actions">
-                        <button class="download-btn" id="downloadBtn">
-                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
-                            </svg>
-                            Descargar
-                        </button>
                         <div class="session-stats">
                             <span class="stat">
                                 <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
@@ -154,65 +148,7 @@
         </div>
     </div>
 
-    <!-- Modal para descarga mejorado -->
-    <div id="downloadModal" class="modal-overlay" style="display: none;">
-        <div class="modal-container download-modal">
-            <div class="modal-header">
-                <h3 id="downloadModalTitle">Descargar Sesión</h3>
-                <button id="closeDownloadModal" class="modal-close">×</button>
-            </div>
-            <div class="modal-content">
-                <div class="download-instructions">
-                    <!-- Imagen de tutorial -->
-                    <div class="download-preview-container">
-                        <img src="attached_assets/Download.jpg" alt="Tutorial de descarga" class="download-preview" />
-                    </div>
 
-                    <div class="instruction-text">
-                        <p id="downloadModalText">Para descargar la sesión, pulsa en los tres puntos que aparecerán a continuación y comenzará la descarga automáticamente.</p>
-                        <div class="download-steps">
-                            <div class="step">
-                                <div class="step-number">1</div>
-                                <div class="step-text">Se abrirá una nueva pestaña con el archivo de audio</div>
-                            </div>
-                            <div class="step">
-                                <div class="step-number">2</div>
-                                <div class="step-text">El navegador iniciará la descarga automáticamente</div>
-                            </div>
-                            <div class="step">
-                                <div class="step-number">3</div>
-                                <div class="step-text">Si no se descarga automáticamente, haz clic derecho y selecciona "Guardar como..."</div>
-                            </div>
-                        </div>
-
-                        <div class="download-info">
-                            <div class="info-item">
-                                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                                </svg>
-                                <span>Formato: MP3 Alta Calidad</span>
-                            </div>
-                            <div class="info-item">
-                                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
-                                </svg>
-                                <span id="downloadFileSize">Tamaño: ~50MB</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-actions">
-                    <button id="proceedDownload" class="modal-btn primary">
-                        <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
-                        </svg>
-                        <span>Iniciar Descarga</span>
-                    </button>
-                    <button id="cancelDownload" class="modal-btn secondary">Cancelar</button>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <style>
         /* Estilos para los modales */
@@ -376,144 +312,9 @@
             }
         }
 
-        /* Estilos para notificación de descarga */
-        .download-notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: linear-gradient(135deg, var(--accent-color), #00cc66);
-            color: var(--primary-bg);
-            padding: 16px 20px;
-            border-radius: 12px;
-            box-shadow: 0 8px 25px rgba(0, 255, 136, 0.3);
-            z-index: 10002;
-            transform: translateX(400px);
-            opacity: 0;
-            transition: all 0.3s ease;
-            max-width: 300px;
-        }
 
-        .download-notification.show {
-            transform: translateX(0);
-            opacity: 1;
-        }
 
-        .notification-content {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-weight: 500;
-            font-size: 0.9rem;
-        }
 
-        .notification-content svg {
-            flex-shrink: 0;
-        }
-
-        @media (max-width: 768px) {
-            .download-notification {
-                top: 10px;
-                right: 10px;
-                left: 10px;
-                max-width: none;
-                transform: translateY(-100px);
-            }
-
-            .download-notification.show {
-                transform: translateY(0);
-            }
-        }
-
-        .download-modal .modal-container {
-            max-width: 650px;
-        }
-
-        .download-instructions {
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-        }
-
-        .download-preview-container {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
-
-        .download-preview {
-            width: 100%;
-            max-width: 300px;
-            height: auto;
-            border-radius: 12px;
-            border: 2px solid var(--accent-color);
-            box-shadow: 0 8px 25px rgba(0, 255, 136, 0.2);
-            transition: transform 0.3s ease;
-        }
-
-        .download-preview:hover {
-            transform: scale(1.02);
-        }
-
-        .download-steps {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            margin: 20px 0;
-        }
-
-        .step {
-            display: flex;
-            align-items: flex-start;
-            gap: 16px;
-            padding: 16px;
-            background: rgba(0, 255, 136, 0.05);
-            border-radius: 12px;
-            border-left: 4px solid var(--accent-color);
-        }
-
-        .step-number {
-            background: var(--accent-color);
-            color: var(--primary-bg);
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 0.9rem;
-            flex-shrink: 0;
-        }
-
-        .step-text {
-            color: var(--text-primary);
-            line-height: 1.5;
-            font-size: 0.95rem;
-        }
-
-        .download-info {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-top: 20px;
-            padding: 16px;
-            background: rgba(255, 255, 255, 0.02);
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-        }
-
-        .info-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-        }
-
-        .info-item svg {
-            color: var(--accent-color);
-            flex-shrink: 0;
-        }
 
         .instruction-text p {
             color: var(--text-primary);
@@ -574,9 +375,7 @@
                 flex-direction: column;
             }
             
-            .download-instructions {
-                text-align: center;
-            }
+
         }
     </style>
     
@@ -587,7 +386,6 @@
                 title: 'Nature',
                 subtitle: 'Una selección potente de Tech House con beats profundos y grooves hipnóticos',
                 audioUrl: 'https://archive.org/download/nature-club/Nature%20Club.mp3',
-                downloadUrl: 'https://archive.org/download/nature-club/Nature%20Club.mp3',
                 duration: '01:15:32',
                 cover: `
                     <img class="session-cover-svg" src="attached_assets/Nature.png" alt="Carátula Nature" style="width:100%;height:300px;object-fit:cover;display:block;border-radius:var(--radius);box-shadow:var(--shadow-hover);" />
@@ -624,7 +422,6 @@
                 title: 'First Date Vol. II',
                 subtitle: 'La primera cita que nadie vio venir. Sin aviso, sin Vol. I. Solo música para desnudarse sin palabras',
                 audioUrl: 'https://archive.org/download/first-date-vol.-ii/First%20Date%20Vol.II.mp3',
-                downloadUrl: 'https://archive.org/download/first-date-vol.-ii/First%20Date%20Vol.II.mp3',
                 duration: '01:04:59',
                 cover: `
                     <img class="session-cover-svg" src="attached_assets/First Date Vol. II_1752256054711.png" alt="Carátula First Date Vol. II" style="width:100%;height:300px;object-fit:cover;display:block;border-radius:var(--radius);box-shadow:var(--shadow-hover);" />
@@ -656,7 +453,7 @@
                 title: 'Deep House Journey',
                 subtitle: 'Una sesión profunda y melódica que explora los sonidos del deep house contemporáneo',
                 audioUrl: 'https://archive.org/download/deep-house-session/deep-house-session.mp3',
-                downloadUrl: 'https://archive.org/download/deep-house-session/deep-house-session.mp3',
+
                 duration: '01:23:45',
                 cover: `
                     <svg class="session-cover-svg" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
@@ -702,7 +499,7 @@
                 title: 'Tech House Vibes',
                 subtitle: 'Ritmos techno fusionados con groove house para la pista de baile',
                 audioUrl: 'https://archive.org/download/tech-house-vibes/tech-house-vibes.mp3',
-                downloadUrl: 'https://archive.org/download/tech-house-vibes/tech-house-vibes.mp3',
+
                 duration: '01:15:30',
                 cover: `
                     <svg class="session-cover-svg" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
@@ -740,7 +537,7 @@
                 title: 'Sari Bari 2025',
                 subtitle: 'Un verano, una fiesta, una promesa de groove. En la arena de Granada, celebramos el ritmo con alma y un mar de abrazos. Sari Bari es calor, house y corazón.',
                 audioUrl: 'https://archive.org/download/saribari-20-25/Saribari%2020%2025.mp3',
-                downloadUrl: 'https://archive.org/download/saribari-20-25/Saribari%2020%2025.mp3',
+
                 duration: '01:45:30',
                 cover: `
                     <img class="session-cover-svg" src="attached_assets/Sari Bari - Vermu_1752514127352.png" alt="Carátula Sari Bari" style="width:100%;height:300px;object-fit:cover;display:block;border-radius:var(--radius);box-shadow:var(--shadow-hover);" />
@@ -780,7 +577,7 @@
                 title: 'Plastic',
                 subtitle: 'Homenaje a la mítica discoteca Plastic de Madrid',
                 audioUrl: 'https://archive.org/download/plastic_202507/Plastic.mp3',
-                downloadUrl: 'https://archive.org/download/plastic_202507/Plastic.mp3',
+
                 duration: '55:40',
                 cover: `
                     <img class="session-cover-svg" src="attached_assets/Plastic_1752516636118.png" alt="Carátula Plastic" style="width:100%;height:300px;object-fit:cover;display:block;border-radius:var(--radius);box-shadow:var(--shadow-hover);" />
@@ -806,7 +603,7 @@
                 title: 'Los niños del parque',
                 subtitle: 'Crecimos entre bajos, máquinas y parques que ardían de noche. Esta sesión es para los que nunca dejaron de bailar a oscuras.',
                 audioUrl: 'https://archive.org/download/los-ninos-del-parque/Los%20ni%C3%B1os%20del%20parque.mp3',
-                downloadUrl: 'https://archive.org/download/los-ninos-del-parque/Los%20ni%C3%B1os%20del%20parque.mp3',
+
                 duration: '64:32',
                 cover: `
                     <img class="session-cover-svg" src="attached_assets/Los niños del parque.png" alt="Carátula Los niños del parque" style="width:100%;height:300px;object-fit:cover;display:block;border-radius:var(--radius);box-shadow:var(--shadow-hover);" />
@@ -834,7 +631,7 @@
                 title: 'Aero-Red',
                 subtitle: 'Síntomas: sudor, euforia y acidez mental. Tratamiento: Aerored — ácido en vena, rave sin receta',
                 audioUrl: 'https://archive.org/download/aero-red/Aero-Red.mp3',
-                downloadUrl: 'https://archive.org/download/aero-red/Aero-Red.mp3',
+
                 duration: '68:45',
                 cover: `
                     <img class="session-cover-svg" src="attached_assets/Aero-Red.png" alt="Carátula Aero-Red" style="width:100%;height:300px;object-fit:cover;display:block;border-radius:var(--radius);box-shadow:var(--shadow-hover);" />
@@ -866,7 +663,7 @@
                 title: 'Nati Nati',
                 subtitle: 'Una oda al groove fino y la emoción en loop. Así suena Nati Nati: femenina, profunda, inolvidable',
                 audioUrl: 'https://archive.org/download/nati-nati/Nati%20Nati.mp3',
-                downloadUrl: 'https://dn721608.ca.archive.org/0/items/nati-nati/Nati%20Nati.flac',
+
                 duration: '35:20',
                 cover: `
                     <img class="session-cover-svg" src="attached_assets/Nati Nati_1752569294098.png" alt="Carátula Nati Nati" style="width:100%;height:300px;object-fit:cover;display:block;border-radius:var(--radius);box-shadow:var(--shadow-hover);" />
@@ -888,7 +685,7 @@
                 title: 'Into the Wild',
                 subtitle: 'Una sesión para perderse sin miedo. Ritmos cálidos, melodías nómadas y pulsos que parecen venir desde lo más profundo del bosque. Aquí la brújula es el corazón.',
                 audioUrl: 'http://dn721206.ca.archive.org/0/items/into-the-wild_202507/Into%20the%20Wild.flac',
-                downloadUrl: 'https://ia601409.us.archive.org/0/items/into-the-wild_202507/Into%20the%20Wild.flac',
+
                 duration: '--:--',
                 cover: `
                     <img class="session-cover-svg" src="attached_assets/Into_the_wild.jpg" alt="Carátula Into the Wild" style="width:100%;height:300px;object-fit:cover;display:block;border-radius:var(--radius);box-shadow:var(--shadow-hover);" />
@@ -912,7 +709,7 @@
                 title: 'Rituales del Sur',
                 subtitle: 'Ritmos ancestrales, melodías profundas y voces que acarician el alma. Esta sesión es un ritual sonoro para conectar con lo más terrenal... y elevarte.',
                 audioUrl: 'https://ia601808.us.archive.org/8/items/rituales-del-sur/Rituales%20del%20Sur.wav',
-                downloadUrl: 'https://ia601808.us.archive.org/8/items/rituales-del-sur/Rituales%20del%20Sur.flac',
+
                 duration: '--:--',
                 cover: `
                     <img class="session-cover-svg" src="attached_assets/Rituales del Sur.png" alt="Carátula Rituales del Sur" style="width:100%;height:300px;object-fit:cover;display:block;border-radius:var(--radius);box-shadow:var(--shadow-hover);" />
@@ -937,7 +734,7 @@
                 title: 'Primavera Sound',
                 subtitle: 'Esta sesión es un viaje sonoro desde una terraza al atardecer hasta un club al borde del amanecer.',
                 audioUrl: 'https://dn721908.ca.archive.org/0/items/primavera-sound/Primavera%20Sound.flac',
-                downloadUrl: 'https://dn721908.ca.archive.org/0/items/primavera-sound/Primavera%20Sound.flac',
+
                 duration: '--:--',
                 cover: `
                     <img class="session-cover-svg" src="attached_assets/primavera-sound.jpg" alt="Carátula Primavera Sound" style="width:100%;height:300px;object-fit:cover;display:block;border-radius:var(--radius);box-shadow:var(--shadow-hover);" />
@@ -968,7 +765,7 @@
                 title: 'ElROW',
                 subtitle: 'Un delirio; confeti, techno y fantasía en estado puro.',
                 audioUrl: 'https://dn721207.ca.archive.org/0/items/ro-wllaz-o/RoWllazO.flac',
-                downloadUrl: 'https://dn721207.ca.archive.org/0/items/ro-wllaz-o/RoWllazO.flac',
+
                 duration: '--:--',
                 cover: `
                     <img class="session-cover-svg" src="attached_assets/maxresdefault_1752569874084.jpg" alt="Carátula ElRow" style="width:100%;height:300px;object-fit:cover;display:block;border-radius:var(--radius);box-shadow:var(--shadow-hover);" />
@@ -1000,7 +797,7 @@
                 title: 'Ros In Da House',
                 subtitle: 'Ritmos profundos y mínimos, texturas orgánicas y matices afro unidos por pulsos melódicos y grooves implacables.',
                 audioUrl: 'https://dn721404.ca.archive.org/0/items/ros-in-da-house/Ros%20in%20da%20House.flac',
-                downloadUrl: 'https://dn721404.ca.archive.org/0/items/ros-in-da-house/Ros%20in%20da%20House.flac',
+
                 duration: '--:--',
                 cover: `
                     <img class="session-cover-svg" src="attached_assets/ROS.png" alt="Carátula Ros In Da House" style="width:100%;height:300px;object-fit:cover;display:block;border-radius:var(--radius);box-shadow:var(--shadow-hover);" />
@@ -1029,7 +826,7 @@
                 title: 'Terraceo en Graná',
                 subtitle: 'Sol, groove y buen rollo servido en copa larga. Esta sesión huele a tarde de vermú, palmas discretas y cuerpos bailando sin mirar el reloj.',
                 audioUrl: 'https://ia903103.us.archive.org/29/items/terraceo-en-grana/Terraceo%20en%20Gran%C3%A1.flac',
-                downloadUrl: 'https://ia903103.us.archive.org/29/items/terraceo-en-grana/Terraceo%20en%20Gran%C3%A1.flac',
+
                 duration: '--:--',
                 cover: `
                     <img class="session-cover-svg" src="attached_assets/Terraceo_en_Grana.jpg" alt="Carátula Terraceo en Graná" style="width:100%;height:300px;object-fit:cover;display:block;border-radius:var(--radius);box-shadow:var(--shadow-hover);" />
@@ -1058,7 +855,7 @@
                 title: 'Tributo SpS',
                 subtitle: 'Grooves oscuros, vocales embriagadores y esencia tribal con aroma a domingo en Madrid. Revive la magia del templo sonoro que marcó a toda una generación.',
                 audioUrl: 'https://dn720705.ca.archive.org/0/items/tributo-sp-s/Tributo%20SpS.mp3',
-                downloadUrl: 'https://dn720705.ca.archive.org/0/items/tributo-sp-s/Tributo%20SpS.mp3',
+
                 duration: '--:--',
                 cover: `
                     <img class="session-cover-svg" src="attached_assets/Tributo_SpS.jpg" alt="Carátula Tributo SpS" style="width:100%;height:300px;object-fit:cover;display:block;border-radius:var(--radius);box-shadow:var(--shadow-hover);" />
@@ -1086,7 +883,7 @@
                 title: 'Jaus Musik',
                 subtitle: 'El título no es solo un juego de palabras, es una declaración de intenciones. Una sesión que celebra los himnos que hicieron historia en la pista, voces icónicas y beats que no envejecen. Ponte cómodo... o mejor, ¡ponte a bailar!',
                 audioUrl: 'https://ia601702.us.archive.org/27/items/jaus-musik/Jaus%20Musik.flac',
-                downloadUrl: 'https://ia601702.us.archive.org/27/items/jaus-musik/Jaus%20Musik.flac',
+
                 duration: '--:--',
                 cover: `
                     <img class="session-cover-svg" src="attached_assets/Jaus Musik.jpg" alt="Carátula Jaus Musik" style="width:100%;height:300px;object-fit:cover;display:block;border-radius:var(--radius);box-shadow:var(--shadow-hover);" />
@@ -1121,7 +918,7 @@
                 title: 'Tributo MA',
                 subtitle: 'No se hace música como antes, pero se puede pinchar como antes. Es un remember con corazón noventero.',
                 audioUrl: 'https://dn721606.ca.archive.org/0/items/tributo-ma/Tributo%20MA.mp3',
-                downloadUrl: 'https://dn721606.ca.archive.org/0/items/tributo-ma/Tributo%20MA.mp3',
+
                 cover: `<img class="session-cover-svg" src="attached_assets/Tributo_MA.jpg" alt="Carátula Tributo MA" style="width:100%;height:300px;object-fit:cover;display:block;border-radius:var(--radius);box-shadow:var(--shadow-hover);" />`,
                 tracklist: [
                     { time: '00:00', artist: 'Dunne', title: 'Espiral (1991)' },
@@ -1153,7 +950,7 @@
                 title: 'Insane',
                 subtitle: 'Imagina a Alicia cayendo, pero esta vez con un bombo hipnótico y pads melódicos. Sigue al conejo.',
                 audioUrl: 'https://dn720700.ca.archive.org/0/items/in-sane/InSANE.flac',
-                downloadUrl: 'https://dn720700.ca.archive.org/0/items/in-sane/InSANE.flac',
+
                 duration: '01:18:42',
                 cover: `<img class="session-cover-svg" src="attached_assets/insane.jpg" alt="Carátula Insane" style="width:100%;height:300px;object-fit:cover;display:block;border-radius:var(--radius);box-shadow:var(--shadow-hover);" />`,
                 tracklist: [
@@ -1360,7 +1157,30 @@
                             if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
                                 window.globalAudioPlayer.logger.log('SUCCESS', 'Navegando a página de género', { pageName });
                             }
-                            window.location.href = pageName;
+
+                            // Navegación robusta para iOS usando múltiples métodos
+                            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+
+                            if (isIOS) {
+                                // Para iOS, usar window.location.assign que es más confiable
+                                setTimeout(() => {
+                                    try {
+                                        window.location.assign(pageName);
+                                    } catch (e) {
+                                        // Fallback si assign falla
+                                        window.location.href = pageName;
+                                    }
+                                }, 100);
+                            } else if (isMobile) {
+                                // Para otros móviles
+                                setTimeout(() => {
+                                    window.location.href = pageName;
+                                }, 50);
+                            } else {
+                                // Para desktop
+                                window.location.href = pageName;
+                            }
                             return;
                         }
                     } catch (e) {
@@ -1376,7 +1196,26 @@
                     history.back();
                 } else {
                     // Para móvil o cuando no hay historial válido, ir siempre a index.html
-                    window.location.href = 'index.html';
+                    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+
+                    if (isIOS) {
+                        // Para iOS, usar window.location.assign
+                        setTimeout(() => {
+                            try {
+                                window.location.assign('index.html');
+                            } catch (e) {
+                                window.location.href = 'index.html';
+                            }
+                        }, 100);
+                    } else if (isMobile) {
+                        // Para otros móviles
+                        setTimeout(() => {
+                            window.location.href = 'index.html';
+                        }, 50);
+                    } else {
+                        // Para desktop
+                        window.location.href = 'index.html';
+                    }
                 }
             }
 
@@ -1641,187 +1480,9 @@
                 }, 30000); // 30 segundos de timeout
             }
 
-            // Modal de instrucciones de descarga mejorado
-            function showDownloadModal(audioUrl, sessionTitle, sessionData = null) {
-                // URL específica para Nati Nati
-                const downloadUrl = sessionTitle === 'Nati Nati' ?
-                    'https://dn721608.ca.archive.org/0/items/nati-nati/Nati%20Nati.flac' :
-                    audioUrl;
 
-                if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
-                    window.globalAudioPlayer.logger.log('INFO', 'showDownloadModal llamado', {
-                        audioUrl: audioUrl,
-                        downloadUrl: downloadUrl,
-                        sessionTitle: sessionTitle,
-                        sessionData: sessionData
-                    });
-                }
 
-                const modal = document.getElementById('downloadModal');
-                const proceedBtn = document.getElementById('proceedDownload');
-                const cancelBtn = document.getElementById('cancelDownload');
-                const closeBtn = document.getElementById('closeDownloadModal');
-                const modalTitle = document.getElementById('downloadModalTitle');
-                const modalText = document.getElementById('downloadModalText');
-                const fileSizeEl = document.getElementById('downloadFileSize');
 
-                if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
-                    window.globalAudioPlayer.logger.log('INFO', 'Elementos del modal encontrados', {
-                        modalFound: !!modal,
-                        proceedBtnFound: !!proceedBtn,
-                        cancelBtnFound: !!cancelBtn,
-                        closeBtnFound: !!closeBtn,
-                        fileSizeElFound: !!fileSizeEl
-                    });
-                }
-
-                if (!modal) {
-                    if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
-                        window.globalAudioPlayer.logger.log('ERROR', 'Modal de descarga no encontrado en el DOM');
-                    }
-                    return;
-                }
-
-                // Personalizar contenido del modal según la sesión
-                if (modalTitle && sessionTitle) {
-                    modalTitle.textContent = `Descargar ${sessionTitle}`;
-                }
-
-                // Actualizar información del archivo
-                if (fileSizeEl && sessionData) {
-                    const estimatedSize = estimateFileSize(sessionData.duration || 3600);
-                    fileSizeEl.innerHTML = `<svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
-                    </svg>
-                    <span>Tamaño: ~${estimatedSize}</span>`;
-                }
-
-                modal.style.display = 'flex';
-
-                if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
-                    window.globalAudioPlayer.logger.log('SUCCESS', 'Modal de descarga mostrado');
-                }
-
-                // Limpiar event listeners previos
-                if (proceedBtn) {
-                    proceedBtn.onclick = null;
-                    if (proceedBtn._downloadHandler) {
-                        proceedBtn.removeEventListener('click', proceedBtn._downloadHandler);
-                    }
-                    if (proceedBtn._downloadTouchHandler) {
-                        proceedBtn.removeEventListener('touchend', proceedBtn._downloadTouchHandler);
-                    }
-                }
-
-                // Función para manejar la descarga
-                const handleDownload = (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-
-                    modal.style.display = 'none';
-
-                    if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
-                        window.globalAudioPlayer.logger.log('INFO', 'Usuario inició descarga', {
-                            audioUrl: audioUrl,
-                            downloadUrl: downloadUrl,
-                            sessionTitle: sessionTitle
-                        });
-                    }
-
-                    // Usar exactamente la misma URL del audio para la descarga
-                    const link = document.createElement('a');
-                    link.href = downloadUrl;
-                    link.target = '_blank';
-                    link.rel = 'noopener noreferrer';
-
-                    // Detectar extensión de archivo de la URL
-                    const fileExtension = downloadUrl.includes('.flac') ? 'flac' :
-                                        downloadUrl.includes('.wav') ? 'wav' : 'mp3';
-                    link.download = `${sessionTitle}.${fileExtension}`;
-
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-
-                    if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
-                        window.globalAudioPlayer.logger.log('SUCCESS', 'Descarga iniciada correctamente', {
-                            sessionTitle: sessionTitle,
-                            downloadUrl: downloadUrl,
-                            suggestedFilename: `${sessionTitle}.${fileExtension}`
-                        });
-                    }
-
-                    // Mostrar notificación de éxito
-                    showDownloadNotification(sessionTitle);
-                };
-
-                // Detectar dispositivo para event listeners apropiados
-                const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-
-                if (proceedBtn) {
-                    if (isMobile) {
-                        proceedBtn._downloadTouchHandler = handleDownload;
-                        proceedBtn.addEventListener('touchend', handleDownload, { passive: false });
-                    }
-                    proceedBtn._downloadHandler = handleDownload;
-                    proceedBtn.addEventListener('click', handleDownload);
-                    proceedBtn.onclick = handleDownload; // Fallback
-                }
-
-                function closeModal() {
-                    modal.style.display = 'none';
-
-                    if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
-                        window.globalAudioPlayer.logger.log('INFO', 'Usuario canceló la descarga');
-                    }
-                }
-
-                if (cancelBtn) cancelBtn.onclick = closeModal;
-                if (closeBtn) closeBtn.onclick = closeModal;
-
-                // Cerrar modal al hacer clic fuera
-                modal.onclick = (e) => {
-                    if (e.target === modal) {
-                        closeModal();
-                    }
-                };
-            }
-
-            // Función auxiliar para estimar el tamaño del archivo
-            function estimateFileSize(durationInSeconds) {
-                // Estimación basada en MP3 320kbps: ~40KB por segundo
-                const sizeInMB = (durationInSeconds * 40) / 1024;
-                if (sizeInMB < 1) {
-                    return `${Math.round(sizeInMB * 1024)}KB`;
-                } else {
-                    return `${Math.round(sizeInMB)}MB`;
-                }
-            }
-
-            // Función para mostrar notificación de descarga
-            function showDownloadNotification(sessionTitle) {
-                const notification = document.createElement('div');
-                notification.className = 'download-notification';
-                notification.innerHTML = `
-                    <div class="notification-content">
-                        <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                        </svg>
-                        <span>Descarga de "${sessionTitle}" iniciada</span>
-                    </div>
-                `;
-
-                document.body.appendChild(notification);
-
-                // Mostrar notificación
-                setTimeout(() => notification.classList.add('show'), 100);
-
-                // Ocultar después de 3 segundos
-                setTimeout(() => {
-                    notification.classList.remove('show');
-                    setTimeout(() => notification.remove(), 300);
-                }, 3000);
-            }
 
             // Función para probar MediaSession manualmente
             function testMediaSession() {
@@ -1852,18 +1513,7 @@
                 }
             }
 
-            // Botón de descarga siempre disponible si hay audioUrl
-            const playerActions = document.querySelector('.player-actions');
-            if (session.audioUrl) {
-                playerActions.innerHTML = `<button class="download-btn" id="downloadBtn">
-                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
-                    </svg>
-                    Descargar
-                </button>`;
-            } else {
-                playerActions.innerHTML = '';
-            }
+
             
             // Load audio
             const audio = document.getElementById('mainAudioPlayer');
@@ -2023,8 +1673,7 @@
             // Global player se encarga de setupMediaSession ahora
             // No necesitamos función local duplicada
 
-            // Setup download button
-            setupDownload();
+
 
             // Diagnóstico específico para iOS - detectar elementos que bloquean eventos
             if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
@@ -2358,7 +2007,7 @@
 
                 // Event delegation desde el document para asegurar que funcione
                 document.addEventListener('touchend', (e) => {
-                    const target = e.target.closest('#playPauseBtn, #stopBtn, #rewindBtn, #forwardBtn, #downloadBtn');
+                    const target = e.target.closest('#playPauseBtn, #stopBtn, #rewindBtn, #forwardBtn');
                     if (target) {
                         e.preventDefault();
                         e.stopPropagation();
@@ -2396,19 +2045,14 @@
                                     audio.currentTime = Math.min(audio.duration, audio.currentTime + 10);
                                 }
                                 break;
-                            case 'downloadBtn':
-                                // El botón de descarga es manejado por setupDownload()
-                                // No hacer nada aquí para evitar conflictos
-                                e.preventDefault();
-                                e.stopPropagation();
-                                break;
+
                         }
                     }
                 }, { passive: false });
 
                 // También añadir feedback visual
                 document.addEventListener('touchstart', (e) => {
-                    const target = e.target.closest('#playPauseBtn, #stopBtn, #rewindBtn, #forwardBtn, #downloadBtn');
+                    const target = e.target.closest('#playPauseBtn, #stopBtn, #rewindBtn, #forwardBtn');
                     if (target) {
                         target.style.transform = 'scale(0.95)';
                         target.style.opacity = '0.8';
@@ -2416,7 +2060,7 @@
                 });
 
                 document.addEventListener('touchend', (e) => {
-                    const target = e.target.closest('#playPauseBtn, #stopBtn, #rewindBtn, #forwardBtn, #downloadBtn');
+                    const target = e.target.closest('#playPauseBtn, #stopBtn, #rewindBtn, #forwardBtn');
                     if (target) {
                         target.style.transform = 'scale(1)';
                         target.style.opacity = '1';
@@ -2679,74 +2323,7 @@
             }
         }
 
-        function setupDownload() {
-            const downloadBtn = document.getElementById('downloadBtn');
-            
-            if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
-                window.globalAudioPlayer.logger.log('INFO', 'Setup download inicializado', {
-                    downloadBtnFound: !!downloadBtn,
-                    sessionExists: !!session,
-                    downloadUrl: session ? session.downloadUrl : null,
-                    sessionData: session ? {
-                        title: session.title,
-                        downloadUrl: session.downloadUrl,
-                        audioUrl: session.audioUrl
-                    } : null
-                });
-            }
-            
-            if (!downloadBtn) {
-                if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
-                    window.globalAudioPlayer.logger.log('ERROR', 'Botón de descarga no encontrado en el DOM');
-                }
-                return;
-            }
-            
-            // Función para manejar la descarga
-            const handleDownload = (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                
-                if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
-                    window.globalAudioPlayer.logger.log('CLICK', 'Click en botón de descarga (handleDownload)', {
-                        sessionTitle: session ? session.title : 'desconocida',
-                        downloadUrl: session ? session.downloadUrl : null,
-                        event: e.type,
-                        target: e.target.tagName
-                    });
-                }
 
-                // Mostrar modal de instrucciones de descarga usando audioUrl del player
-                if (session && session.audioUrl) {
-                    if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
-                        window.globalAudioPlayer.logger.log('INFO', 'Abriendo modal de descarga', {
-                            audioUrl: session.audioUrl,
-                            sessionTitle: session.title,
-                            sessionData: session
-                        });
-                    }
-                    // Usar audioUrl (URL del player) en lugar de downloadUrl específica
-                    showDownloadModal(session.audioUrl, session.title, session);
-                } else {
-                    // Fallback en caso de error
-                    if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
-                        window.globalAudioPlayer.logger.log('ERROR', 'No se encontró URL de audio para la sesión', {
-                            sessionExists: !!session,
-                            hasAudioUrl: !!(session && session.audioUrl),
-                            hasDownloadUrl: !!(session && session.downloadUrl),
-                            sessionData: session ? JSON.stringify(session) : null
-                        });
-                    }
-                }
-            };
-            
-            // Agregar múltiples listeners para asegurar compatibilidad
-            downloadBtn.addEventListener('click', handleDownload, { capture: true, passive: false });
-            downloadBtn.addEventListener('touchend', handleDownload, { capture: true, passive: false });
-            
-            // Para iOS - agregar también como onclick directo
-            downloadBtn.onclick = handleDownload;
-        }
 
         // Media Session es manejado completamente por global-player.js
         // para evitar duplicación y conflictos
@@ -2821,8 +2398,52 @@
                     if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
                         window.globalAudioPlayer.logger.log('INFO', 'Touch end en botón volver - ejecutando navegateBack');
                     }
-                    setTimeout(() => navigateBack(), 100); // Pequeño delay para iOS
+                    // Delay más largo para iOS
+                    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+                                 (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 0);
+                    const delay = isIOS ? 200 : 100;
+                    setTimeout(() => navigateBack(), delay);
                 }, { passive: false });
+
+                // Event listener adicional específico para iOS
+                const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+                             (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 0);
+
+                if (isIOS) {
+                    // Para iOS, añadir también un listener de click que use window.location.assign
+                    backButton.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                            window.globalAudioPlayer.logger.log('INFO', 'Click iOS específico en botón volver');
+                        }
+
+                        // Usar window.location.assign que es más robusto en iOS
+                        const urlParams = new URLSearchParams(window.location.search);
+                        const fromPage = urlParams.get('from');
+
+                        if (fromPage && fromPage.includes('.html')) {
+                            const pageMatch = fromPage.match(/([^\/]+\.html)$/);
+                            if (pageMatch) {
+                                const pageName = pageMatch[1];
+                                const validPages = ['house.html', 'techno.html', 'progressive.html', 'private.html', 'remember.html'];
+                                if (validPages.includes(pageName)) {
+                                    setTimeout(() => {
+                                        window.location.assign(pageName);
+                                    }, 100);
+                                    return;
+                                }
+                            }
+                        }
+
+                        // Fallback a index.html
+                        setTimeout(() => {
+                            window.location.assign('index.html');
+                        }, 100);
+
+                    }, { passive: false });
+                }
 
                 // Añadir evento de click adicional como backup para PC
                 backButton.addEventListener('click', function(e) {
