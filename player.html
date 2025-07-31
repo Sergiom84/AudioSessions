@@ -126,6 +126,267 @@
             </div>
         </main>
     </div>
+
+    <!-- Modal para continuar reproducción -->
+    <div id="resumeModal" class="modal-overlay" style="display: none;">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3>¿Continuar reproducción?</h3>
+                <p>Detectamos que ya habías comenzado a escuchar esta sesión</p>
+            </div>
+            <div class="modal-content">
+                <div class="modal-options">
+                    <button id="resumeBtn" class="modal-btn primary">
+                        <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                        <span>Continuar donde lo dejé</span>
+                    </button>
+                    <button id="restartBtn" class="modal-btn secondary">
+                        <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/>
+                        </svg>
+                        <span>Empezar desde el principio</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para descarga -->
+    <div id="downloadModal" class="modal-overlay" style="display: none;">
+        <div class="modal-container download-modal">
+            <div class="modal-header">
+                <h3>Instrucciones de descarga</h3>
+                <button id="closeDownloadModal" class="modal-close">×</button>
+            </div>
+            <div class="modal-content">
+                <div class="download-instructions">
+                    <img src="attached_assets/Download.jpg" alt="Instrucciones de descarga" class="download-preview">
+                    <div class="instruction-text">
+                        <p>En la página que se abrirá, sigue estos pasos:</p>
+                        <ol>
+                            <li>Pulsa en los <strong>tres puntos</strong> (⋮) en la esquina superior derecha</li>
+                            <li>Selecciona <strong>"Download"</strong> del menú desplegable</li>
+                            <li>Tu descarga comenzará automáticamente</li>
+                        </ol>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button id="proceedDownload" class="modal-btn primary">
+                        <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+                        </svg>
+                        Abrir página de descarga
+                    </button>
+                    <button id="cancelDownload" class="modal-btn secondary">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        /* Estilos para los modales */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-container {
+            background: var(--card-bg);
+            border-radius: 16px;
+            max-width: 480px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            animation: slideUp 0.3s ease;
+            border: 1px solid var(--border-color);
+        }
+
+        .modal-header {
+            padding: 24px 24px 16px;
+            border-bottom: 1px solid var(--border-color);
+            position: relative;
+        }
+
+        .modal-header h3 {
+            color: var(--text-primary);
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 0 0 8px 0;
+        }
+
+        .modal-header p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 24px;
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .modal-close:hover {
+            background: var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .modal-content {
+            padding: 24px;
+        }
+
+        .modal-options {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .modal-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 20px;
+            border-radius: 12px;
+            border: none;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+
+        .modal-btn.primary {
+            background: var(--accent-color);
+            color: var(--primary-bg);
+        }
+
+        .modal-btn.primary:hover {
+            background: #00e67d;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 255, 136, 0.3);
+        }
+
+        .modal-btn.secondary {
+            background: var(--border-color);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .modal-btn.secondary:hover {
+            background: var(--text-secondary);
+            transform: translateY(-2px);
+        }
+
+        .download-modal .modal-container {
+            max-width: 600px;
+        }
+
+        .download-instructions {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .download-preview {
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            margin: 0 auto;
+            display: block;
+        }
+
+        .instruction-text p {
+            color: var(--text-primary);
+            font-size: 1rem;
+            margin-bottom: 16px;
+        }
+
+        .instruction-text ol {
+            color: var(--text-secondary);
+            padding-left: 20px;
+        }
+
+        .instruction-text li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+            flex-wrap: wrap;
+        }
+
+        .modal-actions .modal-btn {
+            flex: 1;
+            min-width: 140px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { 
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .modal-container {
+                margin: 10px;
+                max-height: 85vh;
+            }
+            
+            .modal-header, .modal-content {
+                padding: 20px;
+            }
+            
+            .modal-actions {
+                flex-direction: column;
+            }
+            
+            .download-instructions {
+                text-align: center;
+            }
+        }
+    </style>
     
     <script>
         // Session data structure
@@ -134,7 +395,7 @@
                 title: 'Nature',
                 subtitle: 'Una selección potente de Tech House con beats profundos y grooves hipnóticos',
                 audioUrl: 'https://archive.org/download/nature-club/Nature%20Club.mp3',
-                downloadUrl: 'https://archive.org/details/nature-club',
+                downloadUrl: 'https://archive.org/download/nature-club/Nature%20Club.mp3',
                 duration: '01:15:32',
                 cover: `
                     <img class="session-cover-svg" src="attached_assets/Nature.png" alt="Carátula Nature" style="width:100%;height:300px;object-fit:cover;display:block;border-radius:var(--radius);box-shadow:var(--shadow-hover);" />
@@ -171,7 +432,7 @@
                 title: 'First Date Vol. II',
                 subtitle: 'La primera cita que nadie vio venir. Sin aviso, sin Vol. I. Solo música para desnudarse sin palabras',
                 audioUrl: 'https://archive.org/download/first-date-vol.-ii/First%20Date%20Vol.II.mp3',
-                downloadUrl: 'https://archive.org/details/first-date-vol.-ii',
+                downloadUrl: 'https://archive.org/download/first-date-vol.-ii/First%20Date%20Vol.II.mp3',
                 duration: '01:04:59',
                 cover: `
                     <img class="session-cover-svg" src="attached_assets/First Date Vol. II_1752256054711.png" alt="Carátula First Date Vol. II" style="width:100%;height:300px;object-fit:cover;display:block;border-radius:var(--radius);box-shadow:var(--shadow-hover);" />
@@ -287,7 +548,7 @@
                 title: 'Sari Bari 2025',
                 subtitle: 'Un verano, una fiesta, una promesa de groove. En la arena de Granada, celebramos el ritmo con alma y un mar de abrazos. Sari Bari es calor, house y corazón.',
                 audioUrl: 'https://archive.org/download/saribari-20-25/Saribari%2020%2025.mp3',
-                downloadUrl: 'https://archive.org/details/saribari-20-25',
+                downloadUrl: 'https://archive.org/download/saribari-20-25/Saribari%2020%2025.mp3',
                 duration: '01:45:30',
                 cover: `
                     <img class="session-cover-svg" src="attached_assets/Sari Bari - Vermu_1752514127352.png" alt="Carátula Sari Bari" style="width:100%;height:300px;object-fit:cover;display:block;border-radius:var(--radius);box-shadow:var(--shadow-hover);" />
@@ -327,7 +588,7 @@
                 title: 'Plastic',
                 subtitle: 'Homenaje a la mítica discoteca Plastic de Madrid',
                 audioUrl: 'https://archive.org/download/plastic_202507/Plastic.mp3',
-                downloadUrl: 'https://archive.org/details/plastic_202507',
+                downloadUrl: 'https://archive.org/download/plastic_202507/Plastic.mp3',
                 duration: '55:40',
                 cover: `
                     <img class="session-cover-svg" src="attached_assets/Plastic_1752516636118.png" alt="Carátula Plastic" style="width:100%;height:300px;object-fit:cover;display:block;border-radius:var(--radius);box-shadow:var(--shadow-hover);" />
@@ -353,7 +614,7 @@
                 title: 'Los niños del parque',
                 subtitle: 'Crecimos entre bajos, máquinas y parques que ardían de noche. Esta sesión es para los que nunca dejaron de bailar a oscuras.',
                 audioUrl: 'https://archive.org/download/los-ninos-del-parque/Los%20ni%C3%B1os%20del%20parque.mp3',
-                downloadUrl: 'https://archive.org/details/los-ninos-del-parque',
+                downloadUrl: 'https://archive.org/download/los-ninos-del-parque/Los%20ni%C3%B1os%20del%20parque.mp3',
                 duration: '64:32',
                 cover: `
                     <img class="session-cover-svg" src="attached_assets/Los niños del parque.png" alt="Carátula Los niños del parque" style="width:100%;height:300px;object-fit:cover;display:block;border-radius:var(--radius);box-shadow:var(--shadow-hover);" />
@@ -381,7 +642,7 @@
                 title: 'Aero-Red',
                 subtitle: 'Síntomas: sudor, euforia y acidez mental. Tratamiento: Aerored — ácido en vena, rave sin receta',
                 audioUrl: 'https://archive.org/download/aero-red/Aero-Red.mp3',
-                downloadUrl: 'https://archive.org/details/aero-red',
+                downloadUrl: 'https://archive.org/download/aero-red/Aero-Red.mp3',
                 duration: '68:45',
                 cover: `
                     <img class="session-cover-svg" src="attached_assets/Aero-Red.png" alt="Carátula Aero-Red" style="width:100%;height:300px;object-fit:cover;display:block;border-radius:var(--radius);box-shadow:var(--shadow-hover);" />
@@ -413,7 +674,7 @@
                 title: 'Nati Nati',
                 subtitle: 'Una oda al groove fino y la emoción en loop. Así suena Nati Nati: femenina, profunda, inolvidable',
                 audioUrl: 'https://archive.org/download/nati-nati/Nati%20Nati.mp3',
-                downloadUrl: 'https://archive.org/details/nati-nati',
+                downloadUrl: 'https://archive.org/download/nati-nati/Nati%20Nati.mp3',
                 duration: '35:20',
                 cover: `
                     <img class="session-cover-svg" src="attached_assets/Nati Nati_1752569294098.png" alt="Carátula Nati Nati" style="width:100%;height:300px;object-fit:cover;display:block;border-radius:var(--radius);box-shadow:var(--shadow-hover);" />
@@ -752,7 +1013,7 @@
                 document.getElementById('sessionSubtitle').textContent = 'Síntomas: sudor, euforia y acidez mental. Tratamiento: Aerored — ácido en vena, rave sin receta';
             } else if (sessionId === 'nati-nati') {
                 document.getElementById('mainSessionTitle').textContent = 'Nati Nati';
-                document.getElementById('sessionSubtitle').textContent = 'Organic House';
+                document.getElementById('sessionSubtitle').textContent = 'Una oda al groove fino y la emoción en loop. Así suena Nati Nati: femenina, profunda, inolvidable';
             } else if (sessionId === 'into-the-wild') {
                 document.getElementById('mainSessionTitle').textContent = 'Into the Wild';
                 document.getElementById('sessionSubtitle').textContent = 'Organic House';
@@ -872,7 +1133,7 @@
             }
             // --- FIN AUDIO PLAYER LOGIC ---
 
-            // Función para navegación de regreso inteligente
+            // Función para navegación de regreso inteligente - Mejorada para móvil
             function navigateBack() {
                 // Obtener el referrer de la sesión actual
                 const urlParams = new URLSearchParams(window.location.search);
@@ -882,34 +1143,159 @@
                     window.globalAudioPlayer.logger.log('INFO', 'Navegación de regreso solicitada', {
                         referrer: document.referrer,
                         fromParam: urlParams.get('from'),
-                        historyLength: history.length
+                        historyLength: history.length,
+                        isMobile: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
                     });
                 }
                 
                 // Si vino de una página específica del sitio, ir a esa página
-                if (fromPage && fromPage.includes(window.location.hostname)) {
+                if (fromPage) {
                     try {
-                        // Extraer solo el nombre de la página
-                        const pageMatch = fromPage.match(/([^\/]+\.html)$/);
-                        if (pageMatch) {
-                            const pageName = pageMatch[1];
-                            if (['house.html', 'techno.html', 'progressive.html', 'private.html', 'remember.html'].includes(pageName)) {
-                                window.location.href = pageName;
-                                return;
+                        // Buscar el nombre de la página en el parámetro 'from' o en el referrer
+                        let pageName = '';
+                        
+                        if (fromPage.includes('.html')) {
+                            const pageMatch = fromPage.match(/([^\/]+\.html)$/);
+                            if (pageMatch) {
+                                pageName = pageMatch[1];
                             }
+                        }
+                        
+                        // Lista de páginas válidas de género
+                        const validPages = ['house.html', 'techno.html', 'progressive.html', 'private.html', 'remember.html'];
+                        
+                        if (validPages.includes(pageName)) {
+                            window.location.href = pageName;
+                            return;
                         }
                     } catch (e) {
                         console.warn('Error procesando referrer:', e);
                     }
                 }
                 
-                // Si tiene historial previo en la misma sesión, usar history.back()
-                if (history.length > 1 && document.referrer.includes(window.location.hostname)) {
+                // Fallback mejorado para móvil
+                // En móvil, preferir navegación directa sobre history.back() para evitar problemas
+                const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                
+                if (!isMobile && history.length > 1 && document.referrer.includes(window.location.hostname)) {
                     history.back();
                 } else {
-                    // Fallback: ir a la página principal
+                    // Para móvil o cuando no hay historial válido, ir siempre a index.html
                     window.location.href = 'index.html';
                 }
+            }
+
+            // Funciones para manejar los modales
+
+            // Modal de continuación de reproducción
+            function showResumeModal(savedPosition, audio, sessionId) {
+                const modal = document.getElementById('resumeModal');
+                const resumeBtn = document.getElementById('resumeBtn');
+                const restartBtn = document.getElementById('restartBtn');
+                
+                modal.style.display = 'flex';
+                
+                // Formatear tiempo para mostrar en el botón
+                const minutes = Math.floor(savedPosition.currentTime / 60);
+                const seconds = Math.floor(savedPosition.currentTime % 60);
+                const timeString = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                
+                resumeBtn.querySelector('span').textContent = `Continuar desde ${timeString}`;
+                
+                // Event listeners
+                resumeBtn.onclick = () => {
+                    audio.currentTime = Math.min(savedPosition.currentTime, audio.duration);
+                    modal.style.display = 'none';
+                    
+                    // Iniciar reproducción automáticamente
+                    audio.play().then(() => {
+                        // El evento 'play' del audio se encargará de actualizar la interfaz automáticamente
+                        // No necesitamos hacer nada aquí, ya que los event listeners manejan la UI
+                        
+                        if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                            window.globalAudioPlayer.logger.log('SUCCESS', 'Usuario eligió continuar reproducción y se inició automáticamente', {
+                                sessionId: sessionId,
+                                restoredTime: audio.currentTime,
+                                percentage: savedPosition.percentage,
+                                autoplay: true
+                            });
+                        }
+                    }).catch(error => {
+                        // Si no se puede reproducir automáticamente (políticas del navegador)
+                        if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                            window.globalAudioPlayer.logger.log('WARNING', 'No se pudo iniciar reproducción automática - requiere interacción del usuario', {
+                                sessionId: sessionId,
+                                error: error.message
+                            });
+                        }
+                        console.log('Reproducción automática bloqueada por el navegador. El usuario debe hacer clic en play.');
+                    });
+                };
+                
+                restartBtn.onclick = () => {
+                    audio.currentTime = 0;
+                    modal.style.display = 'none';
+                    
+                    if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                        window.globalAudioPlayer.logger.log('INFO', 'Usuario eligió empezar desde el principio', {
+                            sessionId: sessionId
+                        });
+                    }
+                };
+                
+                // Cerrar modal al hacer clic fuera
+                modal.onclick = (e) => {
+                    if (e.target === modal) {
+                        restartBtn.click(); // Por defecto, empezar desde el principio
+                    }
+                };
+            }
+
+            // Modal de instrucciones de descarga
+            function showDownloadModal(downloadUrl, sessionTitle) {
+                const modal = document.getElementById('downloadModal');
+                const proceedBtn = document.getElementById('proceedDownload');
+                const cancelBtn = document.getElementById('cancelDownload');
+                const closeBtn = document.getElementById('closeDownloadModal');
+                
+                modal.style.display = 'flex';
+                
+                // Event listeners
+                proceedBtn.onclick = () => {
+                    modal.style.display = 'none';
+                    
+                    // Abrir la URL de descarga
+                    const link = document.createElement('a');
+                    link.href = downloadUrl;
+                    link.target = '_blank';
+                    link.rel = 'noopener noreferrer';
+                    link.click();
+                    
+                    if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                        window.globalAudioPlayer.logger.log('SUCCESS', 'Usuario procedió con la descarga', {
+                            sessionTitle: sessionTitle,
+                            downloadUrl: downloadUrl
+                        });
+                    }
+                };
+                
+                cancelBtn.onclick = closeModal;
+                closeBtn.onclick = closeModal;
+                
+                function closeModal() {
+                    modal.style.display = 'none';
+                    
+                    if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                        window.globalAudioPlayer.logger.log('INFO', 'Usuario canceló la descarga');
+                    }
+                }
+                
+                // Cerrar modal al hacer clic fuera
+                modal.onclick = (e) => {
+                    if (e.target === modal) {
+                        closeModal();
+                    }
+                };
             }
 
             // Función para probar MediaSession manualmente
@@ -962,36 +1348,41 @@
             if (window.globalAudioPlayer) {
                 const savedPosition = window.globalAudioPlayer.loadAudioPosition(sessionId);
                 
-                if (savedPosition) {
+                if (savedPosition && savedPosition.currentTime > 30) { // Solo mostrar si hay más de 30 segundos de progreso
                     audio.addEventListener('loadedmetadata', () => {
                         if (!isNaN(audio.duration) && savedPosition.currentTime > 0) {
                             // Solo restaurar si la duración coincide aproximadamente
                             const durationDiff = Math.abs(audio.duration - savedPosition.duration);
                             if (durationDiff < 10) { // Tolerancia de 10 segundos
-                                audio.currentTime = Math.min(savedPosition.currentTime, audio.duration);
-                                
-                                if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
-                                    window.globalAudioPlayer.logger.log('SUCCESS', 'Posición de audio restaurada automáticamente', {
-                                        sessionId: sessionId,
-                                        restoredTime: audio.currentTime,
-                                        percentage: savedPosition.percentage
-                                    });
-                                }
+                                // Mostrar modal de continuación en lugar de restaurar automáticamente
+                                showResumeModal(savedPosition, audio, sessionId);
                             }
                         }
                     });
+                } else {
+                    // Si no hay progreso significativo, empezar desde el principio
+                    audio.currentTime = 0;
                 }
             }
 
             // Fallback al sistema anterior si globalAudioPlayer no está disponible
             try {
                 const saved = JSON.parse(localStorage.getItem('sessionProgress') || '{}');
-                if (saved.id === sessionId && !window.globalAudioPlayer) {
+                if (saved.id === sessionId && saved.currentTime > 30 && !window.globalAudioPlayer) {
                     audio.addEventListener('loadedmetadata', () => {
                         if (!isNaN(audio.duration)) {
-                            audio.currentTime = Math.min(saved.currentTime || 0, audio.duration);
+                            // Crear objeto compatible para el modal
+                            const savedPosition = {
+                                currentTime: saved.currentTime || 0,
+                                duration: audio.duration,
+                                percentage: (saved.currentTime / audio.duration) * 100
+                            };
+                            showResumeModal(savedPosition, audio, sessionId);
                         }
                     });
+                } else if (saved.id === sessionId && !window.globalAudioPlayer) {
+                    // Si hay progreso pero es menor a 30 segundos, empezar desde el principio
+                    audio.currentTime = 0;
                 }
             } catch (e) {
                 console.warn('Could not load session progress:', e);
@@ -1069,7 +1460,8 @@
             setupCustomPlayer();
 
             // Setup Media Session metadata
-            setupMediaSession();
+            // Global player se encarga de setupMediaSession ahora
+            // No necesitamos función local duplicada
 
             // Setup download button
             setupDownload();
@@ -1206,23 +1598,52 @@
                 }
             }
 
-            // Si no encontramos artwork, intentar obtenerlo de los datos de sesión
-            if (!artworkUrl && session.coverImage) {
-                artworkUrl = new URL(session.coverImage, window.location.origin).href;
+            // Si no encontramos artwork, extraer de session.cover (HTML)
+            if (!artworkUrl && session.cover) {
+                const extractImageFromHTML = (html) => {
+                    if (!html) return '';
+                    const match = html.match(/src="([^"]+)"/i);
+                    return match ? match[1] : '';
+                };
+                
+                const extractedSrc = extractImageFromHTML(session.cover);
+                if (extractedSrc) {
+                    // Asegurar que la ruta sea absoluta desde attached_assets
+                    if (extractedSrc.startsWith('attached_assets/')) {
+                        artworkUrl = new URL(extractedSrc, window.location.origin).href;
+                    } else if (!extractedSrc.startsWith('http')) {
+                        // Si no es HTTP y no empieza con attached_assets, asumir que está en esa carpeta
+                        artworkUrl = new URL(`attached_assets/${extractedSrc}`, window.location.origin).href;
+                    } else {
+                        artworkUrl = extractedSrc;
+                    }
+                }
             }
+
+            // Como última opción, buscar en attached_assets basado en el sessionId
+            if (!artworkUrl) {
+                // Intentar construir URL basada en patrones comunes
+                const commonExtensions = ['png', 'jpg', 'jpeg'];
+                for (const ext of commonExtensions) {
+                    const guessedPath = `attached_assets/${sessionId}.${ext}`;
+                    // Esta será la URL que intentará MediaSession
+                    artworkUrl = new URL(guessedPath, window.location.origin).href;
+                    break; // Usar la primera extensión como fallback
+                }
+            }
+            
             
             window.currentSessionData = {
                 title: session.title,
-                subtitle: session.subtitle,
                 audioUrl: session.audioUrl,
-                artwork: artworkUrl
+                artwork: artworkUrl // Solo título y artwork necesarios para MediaSession
             };
 
             if (window.globalAudioPlayer) {
                 window.globalAudioPlayer.currentSession = window.currentSessionData;
                 window.globalAudioPlayer.setAudioElement(audio);
                 
-                // Configurar Media Session para pantalla de bloqueo
+                // Configurar Media Session para pantalla de bloqueo (solo título e imagen)
                 const mediaSessionSuccess = window.globalAudioPlayer.setupMediaSession(window.currentSessionData);
                 
                 if (window.globalAudioPlayer.logger) {
@@ -1452,8 +1873,10 @@
                 playIcon.style.display = 'none';
                 pauseIcon.style.display = 'block';
                 
-                // Actualizar Media Session
+                // Actualizar Media Session cuando comience la reproducción
                 if (window.globalAudioPlayer) {
+                    // Reconfigurar MediaSession para asegurar datos frescos
+                    window.globalAudioPlayer.setupMediaSession(window.currentSessionData);
                     window.globalAudioPlayer.updateMediaSessionPosition();
                 }
             });
@@ -1701,6 +2124,8 @@
         function setupDownload() {
             const downloadBtn = document.getElementById('downloadBtn');
             downloadBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                
                 if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
                     window.globalAudioPlayer.logger.log('CLICK', 'Click en botón de descarga', {
                         sessionTitle: session ? session.title : 'desconocida',
@@ -1710,53 +2135,20 @@
                     });
                 }
 
-                try {
-                    const link = document.createElement('a');
-                    link.href = session.downloadUrl;
-                    link.download = `${session.title}.mp3`;
-                    link.click();
-                    
+                // Mostrar modal de instrucciones de descarga
+                if (session && session.downloadUrl) {
+                    showDownloadModal(session.downloadUrl, session.title);
+                } else {
+                    // Fallback en caso de error
                     if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
-                        window.globalAudioPlayer.logger.log('SUCCESS', 'Descarga iniciada correctamente');
-                    }
-                } catch (error) {
-                    if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
-                        window.globalAudioPlayer.logger.log('ERROR', 'Error al iniciar descarga', { error: error.message });
+                        window.globalAudioPlayer.logger.log('ERROR', 'No se encontró URL de descarga para la sesión');
                     }
                 }
             });
         }
 
-        function setupMediaSession() {
-            if (!('mediaSession' in navigator)) return;
-
-            const extractImage = (html) => {
-                if (!html) return '';
-                const match = html.match(/src="([^"]+)"/i);
-                return match ? match[1] : '';
-            };
-
-            const artworkUrl = session.artworkUrl || extractImage(session.cover);
-
-            navigator.mediaSession.metadata = new MediaMetadata({
-                title: session.title,
-                artist: session.artist || '',
-                album: session.subtitle || '',
-                artwork: artworkUrl ? [{ src: artworkUrl, sizes: '512x512', type: 'image/png' }] : []
-            });
-
-            const audio = document.getElementById('mainAudioPlayer');
-            navigator.mediaSession.setActionHandler('play', () => audio.play());
-            navigator.mediaSession.setActionHandler('pause', () => audio.pause());
-            navigator.mediaSession.setActionHandler('seekbackward', (details) => {
-                const skip = details.seekOffset || 10;
-                audio.currentTime = Math.max(0, audio.currentTime - skip);
-            });
-            navigator.mediaSession.setActionHandler('seekforward', (details) => {
-                const skip = details.seekOffset || 10;
-                audio.currentTime = Math.min(audio.duration, audio.currentTime + skip);
-            });
-        }
+        // Media Session es manejado completamente por global-player.js
+        // para evitar duplicación y conflictos
 
         // Scroll Progress Indicator
         window.addEventListener('scroll', () => {
@@ -1802,8 +2194,33 @@
             console.log('Window gained focus');
         });
 
+        // Mejorar navegación para móvil en player
+        function setupMobileNavigationPlayer() {
+            const backButton = document.querySelector('.nav-back');
+            if (backButton) {
+                // Mejorar eventos táctiles
+                backButton.addEventListener('touchstart', function(e) {
+                    this.style.opacity = '0.7';
+                }, { passive: true });
+
+                backButton.addEventListener('touchend', function(e) {
+                    this.style.opacity = '1';
+                }, { passive: true });
+
+                // Añadir evento de click adicional como backup
+                backButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    navigateBack();
+                });
+            }
+        }
+
         // Initialize when page loads
-        document.addEventListener('DOMContentLoaded', initializePlayer);
+        document.addEventListener('DOMContentLoaded', function() {
+            initializePlayer();
+            setupMobileNavigationPlayer();
+        });
     </script>
 </body>
 </html>

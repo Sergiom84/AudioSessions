@@ -319,18 +319,22 @@ class GlobalAudioPlayer {
                 });
             }
 
-            // Configurar metadata con más información para iOS
+            // Configurar metadata con solo el título de la sesión
             navigator.mediaSession.metadata = new MediaMetadata({
                 title: sessionData.title || 'Sesión de Audio',
-                artist: 'Audio Sessions', // iOS a veces necesita artist para mostrar datos
-                album: 'Mix Sessions',     // Album ayuda en algunos dispositivos
+                artist: '', // Sin artista como solicitado
+                album: '',  // Sin álbum como solicitado
                 artwork: artworkArray
             });
 
-            this.logger.log('SUCCESS', 'MediaMetadata configurado', {
+            this.logger.log('SUCCESS', 'MediaMetadata configurado - Solo título', {
                 metadataTitle: navigator.mediaSession.metadata.title,
-                metadataArtist: navigator.mediaSession.metadata.artist,
-                artworkCount: navigator.mediaSession.metadata.artwork.length
+                artworkCount: navigator.mediaSession.metadata.artwork.length,
+                firstArtworkSrc: navigator.mediaSession.metadata.artwork[0]?.src,
+                sessionDataPassed: {
+                    title: sessionData.title,
+                    artworkOriginal: sessionData.artwork
+                }
             });
 
             // Configurar controles de media session

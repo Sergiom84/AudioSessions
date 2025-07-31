@@ -26,7 +26,7 @@ sessions_db = {
             'artist': 'Unknown Artist',
             'description': 'La primera cita que nadie vio venir. Sin aviso, sin Vol. I. Solo música para desnudarse sin palabras',
             'cover': 'attached_assets/First Date Vol. II_1752256054711.png',
-            'audio_url': '#',  # Placeholder
+            'audio_url': 'https://archive.org/download/first-date-vol.-ii/First%20Date%20Vol.II.mp3',
             'duration': 3600,
             'created_at': '2024-01-01'
         },
@@ -36,7 +36,7 @@ sessions_db = {
             'artist': 'Unknown Artist',
             'description': 'Una oda al groove fino y la emoción en loop. Así suena Nati Nati: femenina, profunda, inolvidable',
             'cover': 'attached_assets/Nati Nati_1752569294098.png',
-            'audio_url': '#',
+            'audio_url': 'https://archive.org/download/nati-nati/Nati%20Nati.mp3',
             'duration': 3200,
             'created_at': '2024-01-02'
         },
@@ -46,7 +46,7 @@ sessions_db = {
             'artist': 'Unknown Artist',
             'description': 'Ritmos profundos y mínimos, texturas orgánicas y matices afro unidos por pulsos melódicos y grooves implacables.',
             'cover': 'attached_assets/ROS.png',
-            'audio_url': '#',
+            'audio_url': 'https://dn721404.ca.archive.org/0/items/ros-in-da-house/Ros%20in%20da%20House.flac',
             'duration': 4200,
             'created_at': '2024-01-03'
         }
