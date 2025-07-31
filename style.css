@@ -654,11 +654,19 @@ body[data-active-genre="remember"] {
     text-decoration: none;
     font-weight: 600;
     transition: all 0.3s ease;
+    position: relative; /* asegura que el z-index tenga efecto */
+    z-index: 9999;      /* mucho más alto que cualquier otro elemento */
 }
 
 .nav-back:hover {
     color: var(--text-primary);
     transform: translateX(-4px);
+}
+
+/* Estilos específicos para el botón volver por ID (refuerzo) */
+#backButton {
+    position: relative;
+    z-index: 9999;
 }
 
 .nav-title {
@@ -2165,4 +2173,29 @@ body[data-genre="private"] {
   .modal-options {
     gap: 20px;
   }
+}
+
+/* Estilos para zona privada */
+#password-form input:focus {
+    border-color: var(--accent-secondary);
+    box-shadow: 0 0 0 3px rgba(139, 0, 255, 0.2);
+}
+
+#password-form button:hover {
+    background: linear-gradient(135deg, var(--accent-secondary), var(--accent-tertiary));
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(139, 0, 255, 0.4);
+}
+
+.vip-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: linear-gradient(135deg, #ffd700, #ffed4e);
+    color: #000;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: bold;
+    z-index: 10;
 }

@@ -118,6 +118,21 @@ def authenticate():
     except Exception as e:
         return jsonify({'error': 'Authentication failed', 'code': 500}), 500
 
+@app.route('/api/verify-password', methods=['POST'])
+def verify_password():
+    try:
+        data = request.get_json()
+        if not data or 'password' not in data:
+            return jsonify({'access': False, 'error': 'Password required'}), 400
+
+        password = data['password']
+        if check_password_hash(app.config['PRIVATE_ZONE_PASSWORD_HASH'], password):
+            return jsonify({'access': True})
+        else:
+            return jsonify({'access': False, 'error': 'Invalid password'})
+    except Exception as e:
+        return jsonify({'access': False, 'error': 'Verification failed'}), 500
+
 @app.route('/api/logout', methods=['POST'])
 def logout():
     session.pop('authenticated', None)
