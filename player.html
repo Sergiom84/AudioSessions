@@ -279,6 +279,13 @@
             cursor: pointer;
             transition: all 0.2s ease;
             width: 100%;
+            /* Mejoras para móviles */
+            min-height: 48px; /* Tamaño mínimo recomendado para touch */
+            touch-action: manipulation; /* Optimización para touch */
+            -webkit-tap-highlight-color: transparent; /* Quitar highlight en iOS */
+            user-select: none; /* Prevenir selección de texto */
+            position: relative;
+            z-index: 10001; /* Asegurar que esté por encima del modal */
         }
 
         .modal-btn.primary {
@@ -292,6 +299,15 @@
             box-shadow: 0 8px 25px rgba(0, 255, 136, 0.3);
         }
 
+        /* Estilos específicos para touch en móviles */
+        .modal-btn.primary:active,
+        .modal-btn.primary:focus {
+            background: #00cc66;
+            transform: translateY(0);
+            box-shadow: 0 4px 15px rgba(0, 255, 136, 0.4);
+            outline: none;
+        }
+
         .modal-btn.secondary {
             background: var(--border-color);
             color: var(--text-primary);
@@ -301,6 +317,34 @@
         .modal-btn.secondary:hover {
             background: var(--text-secondary);
             transform: translateY(-2px);
+        }
+
+        .modal-btn.secondary:active,
+        .modal-btn.secondary:focus {
+            background: #555555;
+            transform: translateY(0);
+            outline: none;
+        }
+
+        /* Media queries para móviles */
+        @media (max-width: 768px) {
+            .modal-btn {
+                padding: 18px 24px;
+                font-size: 1.1rem;
+                min-height: 52px;
+            }
+
+            .modal-options {
+                gap: 16px;
+            }
+        }
+
+        /* Específico para iOS */
+        @supports (-webkit-touch-callout: none) {
+            .modal-btn {
+                -webkit-touch-callout: none;
+                -webkit-user-select: none;
+            }
         }
 
         .download-modal .modal-container {
@@ -1233,9 +1277,42 @@
                 // Clear any existing listeners to prevent duplicates
                 resumeBtn.onclick = null;
                 restartBtn.onclick = null;
-                
-                // Event listeners
-                resumeBtn.onclick = () => {
+
+                // Remover todos los event listeners previos
+                const removeAllListeners = (element) => {
+                    if (element._handlers) {
+                        element._handlers.forEach(handler => {
+                            element.removeEventListener(handler.event, handler.func, handler.options);
+                        });
+                        element._handlers = [];
+                    }
+                };
+
+                removeAllListeners(resumeBtn);
+                removeAllListeners(restartBtn);
+
+                // Detectar tipo de dispositivo
+                const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+                                 (navigator.maxTouchPoints && navigator.maxTouchPoints > 0) ||
+                                 'ontouchstart' in window;
+                const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+                             (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 0);
+
+                // Función universal para manejar la reanudación
+                const handleResume = (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                        window.globalAudioPlayer.logger.log('INFO', 'handleResume ejecutado', {
+                            eventType: e.type,
+                            target: e.target.id || e.target.className,
+                            sessionId: sessionId,
+                            isMobile: isMobile,
+                            isIOS: isIOS
+                        });
+                    }
+
                     // Obtener referencia fresca del audio
                     const currentAudio = document.getElementById('mainAudioPlayer');
                     if (!currentAudio) {
@@ -1245,49 +1322,148 @@
                         modal.style.display = 'none';
                         return;
                     }
-                    
-                    currentAudio.currentTime = Math.min(savedPosition.currentTime, currentAudio.duration || savedPosition.currentTime);
+
+                    // Cerrar modal inmediatamente
                     modal.style.display = 'none';
-                    
-                    // Iniciar reproducción automáticamente
-                    currentAudio.play().then(() => {
-                        // El evento 'play' del audio se encargará de actualizar la interfaz automáticamente
-                        // No necesitamos hacer nada aquí, ya que los event listeners manejan la UI
-                        
-                        if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
-                            window.globalAudioPlayer.logger.log('SUCCESS', 'Usuario eligió continuar reproducción y se inició automáticamente', {
-                                sessionId: sessionId,
-                                restoredTime: currentAudio.currentTime,
-                                percentage: savedPosition.percentage,
-                                autoplay: true
+
+                    // Establecer tiempo de reanudación
+                    currentAudio.currentTime = Math.min(savedPosition.currentTime, currentAudio.duration || savedPosition.currentTime);
+
+                    // Función para iniciar reproducción con manejo específico por dispositivo
+                    const startPlayback = () => {
+                        const playPromise = currentAudio.play();
+                        if (playPromise !== undefined) {
+                            playPromise.then(() => {
+                                if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                                    window.globalAudioPlayer.logger.log('SUCCESS', 'Audio reanudado correctamente', {
+                                        sessionId: sessionId,
+                                        resumeTime: savedPosition.currentTime,
+                                        deviceType: isIOS ? 'iOS' : (isMobile ? 'Android/Mobile' : 'Desktop')
+                                    });
+                                }
+                            }).catch(error => {
+                                if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                                    window.globalAudioPlayer.logger.log('ERROR', 'Error al reproducir tras reanudar', {
+                                        error: error.message,
+                                        sessionId: sessionId,
+                                        deviceType: isIOS ? 'iOS' : (isMobile ? 'Android/Mobile' : 'Desktop')
+                                    });
+                                }
+                                console.error('Error playing after resume:', error);
                             });
                         }
-                    }).catch(error => {
-                        // Si no se puede reproducir automáticamente (políticas del navegador)
-                        if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
-                            window.globalAudioPlayer.logger.log('WARNING', 'No se pudo iniciar reproducción automática - requiere interacción del usuario', {
-                                sessionId: sessionId,
-                                error: error.message
-                            });
-                        }
-                        console.log('Reproducción automática bloqueada por el navegador. El usuario debe hacer clic en play.');
-                    });
+                    };
+
+                    // Para iOS y móviles, añadir un pequeño delay
+                    if (isMobile) {
+                        setTimeout(startPlayback, 150);
+                    } else {
+                        startPlayback();
+                    }
                 };
-                
-                restartBtn.onclick = () => {
+
+                // Función universal para manejar el reinicio
+                const handleRestart = (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                        window.globalAudioPlayer.logger.log('INFO', 'handleRestart ejecutado', {
+                            eventType: e.type,
+                            target: e.target.id || e.target.className,
+                            sessionId: sessionId
+                        });
+                    }
+
                     // Obtener referencia fresca del audio
                     const currentAudio = document.getElementById('mainAudioPlayer');
                     if (currentAudio) {
                         currentAudio.currentTime = 0;
                     }
                     modal.style.display = 'none';
-                    
+
                     if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
                         window.globalAudioPlayer.logger.log('INFO', 'Usuario eligió empezar desde el principio', {
                             sessionId: sessionId
                         });
                     }
                 };
+
+                // Configurar event listeners universales
+                const addUniversalListeners = (element, handler) => {
+                    if (!element._handlers) element._handlers = [];
+
+                    // Eventos para todos los dispositivos
+                    const events = ['click'];
+
+                    // Eventos adicionales para móviles
+                    if (isMobile) {
+                        events.push('touchend');
+                        // Para iOS específicamente, también touchstart como backup
+                        if (isIOS) {
+                            events.push('touchstart');
+                        }
+                    }
+
+                    events.forEach(eventType => {
+                        const options = eventType.startsWith('touch') ? { passive: false } : {};
+                        element.addEventListener(eventType, handler, options);
+                        element._handlers.push({ event: eventType, func: handler, options });
+                    });
+                };
+
+                // Aplicar listeners a ambos botones
+                addUniversalListeners(resumeBtn, handleResume);
+                addUniversalListeners(restartBtn, handleRestart);
+
+                // Fallback onclick para máxima compatibilidad
+                resumeBtn.onclick = handleResume;
+                restartBtn.onclick = handleRestart;
+
+                if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                    window.globalAudioPlayer.logger.log('SUCCESS', 'Event listeners universales configurados', {
+                        isMobile: isMobile,
+                        isIOS: isIOS,
+                        resumeBtnListeners: resumeBtn._handlers ? resumeBtn._handlers.length : 0,
+                        restartBtnListeners: restartBtn._handlers ? restartBtn._handlers.length : 0
+                    });
+                }
+
+                // Debug específico para móviles - test de hit detection
+                if (isMobile && window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                    const testHitDetection = () => {
+                        const resumeBtnRect = resumeBtn.getBoundingClientRect();
+                        const restartBtnRect = restartBtn.getBoundingClientRect();
+
+                        window.globalAudioPlayer.logger.log('INFO', 'Hit detection test para botones del modal', {
+                            resumeBtn: {
+                                id: resumeBtn.id,
+                                rect: {
+                                    x: resumeBtnRect.x,
+                                    y: resumeBtnRect.y,
+                                    width: resumeBtnRect.width,
+                                    height: resumeBtnRect.height
+                                },
+                                visible: resumeBtnRect.width > 0 && resumeBtnRect.height > 0,
+                                zIndex: window.getComputedStyle(resumeBtn).zIndex
+                            },
+                            restartBtn: {
+                                id: restartBtn.id,
+                                rect: {
+                                    x: restartBtnRect.x,
+                                    y: restartBtnRect.y,
+                                    width: restartBtnRect.width,
+                                    height: restartBtnRect.height
+                                },
+                                visible: restartBtnRect.width > 0 && restartBtnRect.height > 0,
+                                zIndex: window.getComputedStyle(restartBtn).zIndex
+                            }
+                        });
+                    };
+
+                    // Ejecutar test después de que el modal esté completamente renderizado
+                    setTimeout(testHitDetection, 100);
+                }
                 
                 // Cerrar modal al hacer clic fuera
                 modal.onclick = (e) => {
