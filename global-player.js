@@ -872,21 +872,10 @@ class GlobalAudioPlayer {
             this.audio.src = audioUrl;
             this.audio.load();
             
-            // Auto-start playing after loading
-            const playPromise = this.audio.play();
-            if (playPromise !== undefined) {
-                playPromise
-                    .then(() => {
-                        console.log('Auto-play successful');
-                        this.show();
-                        this.saveToStorage();
-                    })
-                    .catch(error => {
-                        console.warn('Auto-play prevented:', error);
-                        this.show();
-                        this.setStatus('Click para reproducir');
-                    });
-            }
+            // No auto-play - solo mostrar el player listo para reproducir
+            this.show();
+            this.setStatus('Click para reproducir');
+            this.saveToStorage();
         } catch (error) {
             this.handleAudioError(error);
         }
