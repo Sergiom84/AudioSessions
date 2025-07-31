@@ -1204,18 +1204,28 @@
                 
                 // Event listeners
                 resumeBtn.onclick = () => {
-                    audio.currentTime = Math.min(savedPosition.currentTime, audio.duration);
+                    // Obtener referencia fresca del audio
+                    const currentAudio = document.getElementById('mainAudioPlayer');
+                    if (!currentAudio) {
+                        if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                            window.globalAudioPlayer.logger.log('ERROR', 'No se encontró elemento de audio al reanudar');
+                        }
+                        modal.style.display = 'none';
+                        return;
+                    }
+                    
+                    currentAudio.currentTime = Math.min(savedPosition.currentTime, currentAudio.duration || savedPosition.currentTime);
                     modal.style.display = 'none';
                     
                     // Iniciar reproducción automáticamente
-                    audio.play().then(() => {
+                    currentAudio.play().then(() => {
                         // El evento 'play' del audio se encargará de actualizar la interfaz automáticamente
                         // No necesitamos hacer nada aquí, ya que los event listeners manejan la UI
                         
                         if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
                             window.globalAudioPlayer.logger.log('SUCCESS', 'Usuario eligió continuar reproducción y se inició automáticamente', {
                                 sessionId: sessionId,
-                                restoredTime: audio.currentTime,
+                                restoredTime: currentAudio.currentTime,
                                 percentage: savedPosition.percentage,
                                 autoplay: true
                             });
@@ -1233,7 +1243,11 @@
                 };
                 
                 restartBtn.onclick = () => {
-                    audio.currentTime = 0;
+                    // Obtener referencia fresca del audio
+                    const currentAudio = document.getElementById('mainAudioPlayer');
+                    if (currentAudio) {
+                        currentAudio.currentTime = 0;
+                    }
                     modal.style.display = 'none';
                     
                     if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
@@ -1249,38 +1263,92 @@
                         restartBtn.click(); // Por defecto, empezar desde el principio
                     }
                 };
+                
+                // Añadir botón de escape para emergencias en móvil
+                const handleEscape = (e) => {
+                    if (e.key === 'Escape' || e.keyCode === 27) {
+                        modal.style.display = 'none';
+                        document.removeEventListener('keydown', handleEscape);
+                    }
+                };
+                document.addEventListener('keydown', handleEscape);
+                
+                // Timeout de seguridad para evitar modal bloqueado
+                setTimeout(() => {
+                    if (modal.style.display === 'flex') {
+                        if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                            window.globalAudioPlayer.logger.log('WARN', 'Modal de reanudación cerrado por timeout de seguridad');
+                        }
+                        modal.style.display = 'none';
+                        document.removeEventListener('keydown', handleEscape);
+                    }
+                }, 30000); // 30 segundos de timeout
             }
 
             // Modal de instrucciones de descarga
             function showDownloadModal(downloadUrl, sessionTitle) {
+                if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                    window.globalAudioPlayer.logger.log('INFO', 'showDownloadModal llamado', {
+                        downloadUrl: downloadUrl,
+                        sessionTitle: sessionTitle
+                    });
+                }
+                
                 const modal = document.getElementById('downloadModal');
                 const proceedBtn = document.getElementById('proceedDownload');
                 const cancelBtn = document.getElementById('cancelDownload');
                 const closeBtn = document.getElementById('closeDownloadModal');
                 
+                if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                    window.globalAudioPlayer.logger.log('INFO', 'Elementos del modal encontrados', {
+                        modalFound: !!modal,
+                        proceedBtnFound: !!proceedBtn,
+                        cancelBtnFound: !!cancelBtn,
+                        closeBtnFound: !!closeBtn
+                    });
+                }
+                
+                if (!modal) {
+                    if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                        window.globalAudioPlayer.logger.log('ERROR', 'Modal de descarga no encontrado en el DOM');
+                    }
+                    return;
+                }
+                
                 modal.style.display = 'flex';
                 
-                // Event listeners
-                proceedBtn.onclick = () => {
-                    modal.style.display = 'none';
-                    
-                    // Abrir la URL de descarga
-                    const link = document.createElement('a');
-                    link.href = downloadUrl;
-                    link.target = '_blank';
-                    link.rel = 'noopener noreferrer';
-                    link.click();
-                    
-                    if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
-                        window.globalAudioPlayer.logger.log('SUCCESS', 'Usuario procedió con la descarga', {
-                            sessionTitle: sessionTitle,
-                            downloadUrl: downloadUrl
-                        });
-                    }
-                };
+                if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                    window.globalAudioPlayer.logger.log('SUCCESS', 'Modal de descarga mostrado');
+                }
                 
-                cancelBtn.onclick = closeModal;
-                closeBtn.onclick = closeModal;
+                // Event listeners
+                if (proceedBtn) {
+                    proceedBtn.onclick = () => {
+                        modal.style.display = 'none';
+                        
+                        if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                            window.globalAudioPlayer.logger.log('INFO', 'Usuario hizo clic en proceder descarga', {
+                                downloadUrl: downloadUrl
+                            });
+                        }
+                        
+                        // Abrir la URL de descarga
+                        const link = document.createElement('a');
+                        link.href = downloadUrl;
+                        link.target = '_blank';
+                        link.rel = 'noopener noreferrer';
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                        
+                        if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                            window.globalAudioPlayer.logger.log('SUCCESS', 'Usuario procedió con la descarga', {
+                                sessionTitle: sessionTitle,
+                                downloadUrl: downloadUrl
+                            });
+                        }
+                    };
+                }
                 
                 function closeModal() {
                     modal.style.display = 'none';
@@ -1289,6 +1357,9 @@
                         window.globalAudioPlayer.logger.log('INFO', 'Usuario canceló la descarga');
                     }
                 }
+                
+                if (cancelBtn) cancelBtn.onclick = closeModal;
+                if (closeBtn) closeBtn.onclick = closeModal;
                 
                 // Cerrar modal al hacer clic fuera
                 modal.onclick = (e) => {
@@ -1837,12 +1908,10 @@
                                 }
                                 break;
                             case 'downloadBtn':
-                                const link = document.createElement('a');
-                                link.href = session.downloadUrl;
-                                link.download = `${session.title}.mp3`;
-                                document.body.appendChild(link);
-                                link.click();
-                                document.body.removeChild(link);
+                                // El botón de descarga es manejado por setupDownload()
+                                // No hacer nada aquí para evitar conflictos
+                                e.preventDefault();
+                                e.stopPropagation();
                                 break;
                         }
                     }
@@ -2123,11 +2192,37 @@
 
         function setupDownload() {
             const downloadBtn = document.getElementById('downloadBtn');
-            downloadBtn.addEventListener('click', (e) => {
+            
+            if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                window.globalAudioPlayer.logger.log('INFO', 'Setup download inicializado', {
+                    downloadBtnFound: !!downloadBtn,
+                    sessionExists: !!session,
+                    downloadUrl: session ? session.downloadUrl : null,
+                    sessionData: session ? {
+                        title: session.title,
+                        downloadUrl: session.downloadUrl,
+                        audioUrl: session.audioUrl
+                    } : null
+                });
+            }
+            
+            if (!downloadBtn) {
+                if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                    window.globalAudioPlayer.logger.log('ERROR', 'Botón de descarga no encontrado en el DOM');
+                }
+                return;
+            }
+            
+            // Remover any event listeners previos para evitar duplicaciones
+            const newDownloadBtn = downloadBtn.cloneNode(true);
+            downloadBtn.parentNode.replaceChild(newDownloadBtn, downloadBtn);
+            
+            newDownloadBtn.addEventListener('click', (e) => {
                 e.preventDefault();
+                e.stopPropagation();
                 
                 if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
-                    window.globalAudioPlayer.logger.log('CLICK', 'Click en botón de descarga', {
+                    window.globalAudioPlayer.logger.log('CLICK', 'Click en botón de descarga (setupDownload)', {
                         sessionTitle: session ? session.title : 'desconocida',
                         downloadUrl: session ? session.downloadUrl : null,
                         event: e.type,
@@ -2137,14 +2232,23 @@
 
                 // Mostrar modal de instrucciones de descarga
                 if (session && session.downloadUrl) {
+                    if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
+                        window.globalAudioPlayer.logger.log('INFO', 'Abriendo modal de descarga', {
+                            downloadUrl: session.downloadUrl,
+                            sessionTitle: session.title
+                        });
+                    }
                     showDownloadModal(session.downloadUrl, session.title);
                 } else {
                     // Fallback en caso de error
                     if (window.globalAudioPlayer && window.globalAudioPlayer.logger) {
-                        window.globalAudioPlayer.logger.log('ERROR', 'No se encontró URL de descarga para la sesión');
+                        window.globalAudioPlayer.logger.log('ERROR', 'No se encontró URL de descarga para la sesión', {
+                            sessionExists: !!session,
+                            sessionData: session ? JSON.stringify(session) : null
+                        });
                     }
                 }
-            });
+            }, { capture: true, passive: false }); // Usar capture para asegurar prioridad
         }
 
         // Media Session es manejado completamente por global-player.js
