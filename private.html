@@ -14,7 +14,7 @@
     <!-- Navigation -->
     <nav class="genre-nav">
         <a href="index.html" class="nav-back">← Volver</a>
-        <h1 class="nav-title">PRIVATE ZONE</h1>
+        <h1 class="nav-title">🎧 Bienvenido a la Zona Privada</h1>
     </nav>
     
     <!-- Parallax Background Elements -->
@@ -30,36 +30,9 @@
     </div>
     
     <div class="viewport">
-        <!-- Formulario de contraseña -->
-        <div id="password-form" style="display: none; text-align: center; margin-top: 40px;">
-            <div class="container">
-                <h2 style="color: var(--accent-color); margin-bottom: 20px;">🔒 Zona Privada</h2>
-                <p style="color: var(--text-secondary); margin-bottom: 30px;">Introduce la contraseña para acceder:</p>
-                <form style="display: flex; justify-content: center; align-items: center; gap: 15px; flex-wrap: wrap;">
-                    <input
-                        id="password-input"
-                        type="password"
-                        placeholder="Contraseña"
-                        style="padding: 12px 16px; font-size: 16px; width: 250px; border: 2px solid var(--accent-color); border-radius: 8px; background: rgba(255,255,255,0.1); color: var(--text-primary); outline: none;"
-                    />
-                    <button
-                        type="submit"
-                        style="padding: 12px 24px; font-size: 16px; cursor: pointer; background: linear-gradient(135deg, var(--accent-color), var(--accent-secondary)); color: white; border: none; border-radius: 8px; font-weight: 600; transition: all 0.3s ease;"
-                    >
-                        Entrar
-                    </button>
-                </form>
-            </div>
-        </div>
-
         <!-- Contenido protegido -->
-        <div id="private-content" style="display: none;">
+        <div id="private-content">
             <main class="container private-sessions-container">
-                <div style="text-align: center; margin-bottom: 40px;">
-                    <h2 style="color: var(--accent-color);">🎧 Bienvenido a la Zona Privada</h2>
-                    <p style="color: var(--text-secondary);">Contenido exclusivo solo para usuarios autorizados</p>
-                </div>
-
                 <!-- Sari Bari 2025 VIP Session -->
                 <article class="session-preview-card vip-session" data-session="sari-bari-2025">
                     <div class="session-image-container">
@@ -74,21 +47,6 @@
                         <p class="session-description">Sesión exclusiva de House, Deep y Vocal para el 15 de Agosto.</p>
                     </div>
                 </article>
-
-                <!-- Tributo SpS VIP Session -->
-                <article class="session-preview-card vip-session" data-session="tributo-sps">
-                    <div class="session-image-container">
-                        <img class="session-image" src="attached_assets/Tributo_SpS.jpg" alt="Carátula Tributo SpS" />
-                        <div class="session-overlay">
-                            <span class="session-cta">Reproducir →</span>
-                        </div>
-                        <div class="vip-badge">VIP</div>
-                    </div>
-                    <div class="session-meta">
-                        <h2>Tributo SpS</h2>
-                        <p class="session-description">Grooves oscuros y esencia tribal. Revive la magia del templo sonoro.</p>
-                    </div>
-                </article>
             </main>
         </div>
     </div>
@@ -96,41 +54,14 @@
     <script>
         // Verificar acceso al cargar la página
         window.addEventListener('DOMContentLoaded', () => {
-            const access = localStorage.getItem('privateZoneAccess');
+            const access = sessionStorage.getItem('privateAccess');
             if (access === 'true') {
                 document.getElementById('private-content').style.display = 'block';
                 initializePrivateContent();
             } else {
-                document.getElementById('password-form').style.display = 'block';
+                // Redirigir a index si no hay acceso
+                window.location.href = 'index.html';
             }
-        });
-
-        // Manejar envío del formulario
-        document.querySelector('#password-form form').addEventListener('submit', function (e) {
-            e.preventDefault();
-            const password = document.getElementById('password-input').value;
-
-            fetch('/api/verify-password', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ password })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.access === true) {
-                    localStorage.setItem('privateZoneAccess', 'true');
-                    document.getElementById('password-form').style.display = 'none';
-                    document.getElementById('private-content').style.display = 'block';
-                    initializePrivateContent();
-                } else {
-                    alert('Contraseña incorrecta');
-                    document.getElementById('password-input').value = '';
-                }
-            })
-            .catch(() => {
-                alert('Error al verificar la contraseña');
-                document.getElementById('password-input').value = '';
-            });
         });
 
         // Inicializar contenido privado una vez autenticado
@@ -188,3 +119,4 @@
     </script>
 </body>
 </html>
+

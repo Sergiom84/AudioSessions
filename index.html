@@ -305,7 +305,7 @@
                 const data = await response.json();
                 
                 if (response.ok && data.success) {
-                    // Store access in session
+                    // Store access in session (persiste durante la sesión del navegador)
                     sessionStorage.setItem('privateAccess', 'true');
                     window.location.href = 'private.html';
                 } else {
@@ -337,3 +337,4 @@
     </script>
 </body>
 </html>
+
