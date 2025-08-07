@@ -2639,6 +2639,33 @@
                 // Set up download link
                 downloadLink.href = session.downloadUrl;
 
+                // Agregar manejador click/touch al enlace para móviles
+                downloadLink.addEventListener('click', (e) => {
+                    console.log('Click en enlace de descarga - URL:', session.downloadUrl);
+                    e.preventDefault();
+                    window.open(session.downloadUrl, '_blank');
+                });
+
+                // Eventos táctiles específicos para el enlace de descarga en móviles
+                if (isMobile) {
+                    downloadLink.addEventListener('touchend', (e) => {
+                        console.log('Touch end en enlace de descarga - URL:', session.downloadUrl);
+                        e.preventDefault();
+                        e.stopPropagation();
+                        window.open(session.downloadUrl, '_blank');
+                    }, { passive: false });
+
+                    // Feedback visual para el enlace
+                    downloadLink.addEventListener('touchstart', (e) => {
+                        console.log('Touch start en enlace de descarga');
+                        e.target.style.transform = 'scale(0.95)';
+                    }, { passive: true });
+
+                    downloadLink.addEventListener('touchend', (e) => {
+                        e.target.style.transform = 'scale(1)';
+                    }, { passive: true });
+                }
+
                 // Download button click handler (desktop y móvil)
                 function openDownloadModal() {
                     console.log('Abriendo modal de descarga para sesión:', sessionId);

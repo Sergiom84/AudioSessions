@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Download Link Modal</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 15px;
+            background: #111;
+            color: white;
+            font-size: 16px;
+        }
+        .test-container {
+            max-width: 100%;
+        }
+        .instruction-box {
+            background: #222;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 2px solid #00ff88;
+        }
+        .test-session {
+            background: #333;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .test-link {
+            display: block;
+            background: linear-gradient(135deg, #00ff88, #00cc66);
+            color: black;
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            touch-action: manipulation;
+        }
+        .test-link:active {
+            background: linear-gradient(135deg, #00cc66, #00aa55);
+            transform: scale(0.95);
+        }
+        .step {
+            background: #444;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 10px 0;
+            border-left: 4px solid #00ff88;
+        }
+        .logs {
+            background: #000;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+            border: 1px solid #333;
+        }
+        .error { color: #ff6b6b; }
+        .warn { color: #ffd93d; }
+        .success { color: #6bcf7f; }
+        .info { color: #74c0fc; }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🔗 Test Download Link Modal</h1>
+        
+        <div class="instruction-box">
+            <h3>🎯 Objetivo del Test</h3>
+            <p>Verificar que el enlace "Ir a la descarga" dentro del modal funciona correctamente en móviles.</p>
+            
+            <h4>🔧 Fix Implementado:</h4>
+            <ul>
+                <li>✅ <strong>addEventListener('click')</strong> agregado al downloadLink</li>
+                <li>✅ <strong>window.open(session.downloadUrl, '_blank')</strong> para abrir descarga</li>
+                <li>✅ <strong>Eventos táctiles</strong> específicos para móviles</li>
+                <li>✅ <strong>preventDefault()</strong> para evitar comportamiento por defecto</li>
+                <li>✅ <strong>Feedback visual</strong> en eventos touch</li>
+            </ul>
+        </div>
+        
+        <div class="test-session">
+            <h3>📋 Instrucciones de Prueba</h3>
+            <div class="step">
+                <strong>Paso 1:</strong> Toca cualquier enlace de sesión abajo
+            </div>
+            <div class="step">
+                <strong>Paso 2:</strong> Busca el botón "Descargar" debajo de duración/calidad
+            </div>
+            <div class="step">
+                <strong>Paso 3:</strong> Toca el botón "Descargar" (debe abrir modal)
+            </div>
+            <div class="step">
+                <strong>Paso 4:</strong> Dentro del modal, toca "Ir a la descarga"
+            </div>
+            <div class="step">
+                <strong>Paso 5:</strong> Verifica que se abre/descarga el archivo
+            </div>
+        </div>
+        
+        <h2>🎵 Sesiones de Prueba</h2>
+        
+        <a href="player.html?session=plastic" class="test-link">
+            📀 Plastic (Remember FLAC)
+            <br><small>URL: https://dn721301.ca.archive.org/0/items/plastic_202507/Plastic.flac</small>
+        </a>
+        
+        <a href="player.html?session=first-date-vol-ii" class="test-link">
+            🏠 First Date Vol.II (House MP3)
+            <br><small>URL: https://archive.org/download/first-date-vol.-ii/First%20Date%20Vol.II.mp3</small>
+        </a>
+        
+        <a href="player.html?session=nature-tech-house" class="test-link">
+            🔥 Nature (Techno MP3)
+            <br><small>URL: https://archive.org/download/nature-club/Nature%20Club.mp3</small>
+        </a>
+        
+        <a href="player.html?session=elrow" class="test-link">
+            🎪 ElROW (Techno FLAC)
+            <br><small>URL: https://dn721207.ca.archive.org/0/items/ro-wllaz-o/RoWllazO.flac</small>
+        </a>
+        
+        <a href="player.html?session=insane" class="test-link">
+            🎧 Insane (Progressive FLAC)
+            <br><small>URL: https://dn720700.ca.archive.org/0/items/in-sane/InSANE.flac</small>
+        </a>
+        
+        <a href="player.html?session=primavera-sound" class="test-link">
+            🌸 Primavera Sound (House FLAC)
+            <br><small>URL: https://dn721908.ca.archive.org/0/items/primavera-sound/Primavera%20Sound.flac</small>
+        </a>
+        
+        <div class="test-session">
+            <h3>✅ Qué Verificar</h3>
+            <ul>
+                <li>🎯 <strong>Modal se abre</strong> al tocar "Descargar"</li>
+                <li>🖼️ <strong>Imagen Download.jpg</strong> se muestra</li>
+                <li>📝 <strong>Texto instructivo</strong> aparece</li>
+                <li>🔗 <strong>Enlace "Ir a la descarga"</strong> es táctil</li>
+                <li>📥 <strong>Descarga se inicia</strong> al tocar el enlace</li>
+                <li>🌐 <strong>Nueva pestaña</strong> se abre con el archivo</li>
+            </ul>
+        </div>
+        
+        <div class="test-session">
+            <h3>🔍 Debugging</h3>
+            <p>Si algo no funciona, revisa los logs de consola:</p>
+            <ul>
+                <li>"Click en enlace de descarga - URL: ..."</li>
+                <li>"Touch end en enlace de descarga - URL: ..."</li>
+                <li>"Touch start en enlace de descarga"</li>
+            </ul>
+        </div>
+        
+        <div class="logs" id="testLogs">
+            <strong>📋 Logs de Actividad:</strong><br>
+        </div>
+    </div>
+
+    <script>
+        let logs = [];
+        
+        function addLog(type, message, data = null) {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = { timestamp, type, message, data };
+            logs.push(logEntry);
+            
+            if (logs.length > 30) {
+                logs.shift();
+            }
+            
+            updateLogDisplay();
+            console.log(`[${type}] ${message}`, data || '');
+        }
+        
+        function updateLogDisplay() {
+            const container = document.getElementById('testLogs');
+            const lastLogs = logs.slice(-15);
+            
+            container.innerHTML = '<strong>📋 Logs de Actividad:</strong><br>' + 
+                lastLogs.map(log => 
+                    `<div class="${log.type.toLowerCase()}">
+                        [${log.timestamp}] ${log.type}: ${log.message}
+                        ${log.data ? '<br><small>' + JSON.stringify(log.data, null, 2) + '</small>' : ''}
+                    </div>`
+                ).join('');
+            
+            container.scrollTop = container.scrollHeight;
+        }
+        
+        // Interceptar logs de consola relacionados con descarga
+        const originalLog = console.log;
+        const originalError = console.error;
+        
+        console.log = (...args) => {
+            originalLog.apply(console, args);
+            if (args[0] && typeof args[0] === 'string') {
+                if (args[0].includes('descarga') || args[0].includes('modal') || args[0].includes('enlace') || args[0].includes('Touch')) {
+                    addLog('INFO', args.join(' '));
+                }
+            }
+        };
+        
+        console.error = (...args) => {
+            originalError.apply(console, args);
+            addLog('ERROR', args.join(' '));
+        };
+        
+        // Detectar información del dispositivo
+        document.addEventListener('DOMContentLoaded', () => {
+            const deviceInfo = {
+                userAgent: navigator.userAgent,
+                isAndroid: /Android/i.test(navigator.userAgent),
+                isIOS: /iPad|iPhone|iPod/.test(navigator.userAgent),
+                isMobile: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+                         (navigator.maxTouchPoints && navigator.maxTouchPoints > 0) ||
+                         'ontouchstart' in window,
+                touchSupport: 'ontouchstart' in window,
+                maxTouchPoints: navigator.maxTouchPoints
+            };
+            
+            addLog('INIT', 'Test de enlace de descarga iniciado', deviceInfo);
+            
+            if (deviceInfo.isMobile) {
+                addLog('INFO', 'Dispositivo móvil detectado - eventos táctiles disponibles');
+            } else {
+                addLog('INFO', 'Dispositivo desktop detectado - usando eventos click');
+            }
+        });
+        
+        // Interceptar clicks en enlaces para logging
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('test-link') || e.target.closest('.test-link')) {
+                const link = e.target.closest('.test-link') || e.target;
+                addLog('CLICK', 'Click en enlace de prueba', {
+                    href: link.href,
+                    text: link.textContent.trim().split('\n')[0]
+                });
+            }
+        });
+        
+        // Interceptar eventos táctiles en enlaces
+        document.addEventListener('touchend', (e) => {
+            if (e.target.classList.contains('test-link') || e.target.closest('.test-link')) {
+                const link = e.target.closest('.test-link') || e.target;
+                addLog('TOUCH', 'Touch end en enlace de prueba', {
+                    href: link.href,
+                    text: link.textContent.trim().split('\n')[0]
+                });
+            }
+        }, { passive: true });
+    </script>
+</body>
+</html>

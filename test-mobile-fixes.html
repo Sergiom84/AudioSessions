@@ -79,11 +79,11 @@
         <div class="fix-section" id="downloadFix">
             <h3>📥 Fix 1: Botón de Descarga</h3>
             <p><strong>Problema:</strong> No funcionaba en Android/iPhone</p>
-            <p><strong>Solución:</strong> touchHandled flag + fallback click</p>
-            
+            <p><strong>Solución:</strong> touchHandled flag + fallback click + enlace modal</p>
+
             <button class="test-btn" onclick="testDownloadFix()">🧪 Test Descarga</button>
             <button class="test-btn" onclick="goToDownloadPage()">📄 Ir a Página</button>
-            
+
             <div class="status" id="downloadStatus">
                 Haz click en "Test Descarga" para probar
             </div>
@@ -203,6 +203,8 @@
                 <strong>Fix aplicado:</strong> ✅<br>
                 <strong>touchHandled flag:</strong> Implementado<br>
                 <strong>Fallback click:</strong> Configurado<br>
+                <strong>Enlace modal:</strong> Eventos click/touch agregados<br>
+                <strong>window.open():</strong> Configurado para móviles<br>
                 <strong>Estado:</strong> <span class="success">Listo para probar</span>
             `;
             document.getElementById('downloadFix').className = 'fix-section success';
