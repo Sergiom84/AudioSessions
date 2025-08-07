@@ -13,11 +13,18 @@ class SimpleAudioPlayer {
                        'ontouchstart' in window;
         this.userInteracted = false;
 
-        console.log('SimpleAudioPlayer - Dispositivo detectado:', {
+        // Sistema de logging mejorado para Android
+        this.debugMode = true;
+        this.logs = [];
+
+        this.log('INIT', 'SimpleAudioPlayer - Dispositivo detectado:', {
             isAndroid: this.isAndroid,
             isIOS: this.isIOS,
             isMobile: this.isMobile,
-            userAgent: navigator.userAgent
+            userAgent: navigator.userAgent,
+            audioSupport: !!window.Audio,
+            touchSupport: 'ontouchstart' in window,
+            maxTouchPoints: navigator.maxTouchPoints
         });
         this.init();
     }
@@ -26,6 +33,67 @@ class SimpleAudioPlayer {
         this.createPlayerUI();
         this.bindEvents();
         this.setupMobileSupport();
+    }
+
+    log(type, message, data = null) {
+        const timestamp = new Date().toISOString();
+        const logEntry = {
+            timestamp,
+            type,
+            message,
+            data,
+            device: this.isAndroid ? 'Android' : (this.isIOS ? 'iOS' : 'Desktop')
+        };
+
+        this.logs.push(logEntry);
+
+        // Mantener solo los últimos 50 logs
+        if (this.logs.length > 50) {
+            this.logs.shift();
+        }
+
+        // Log a consola con formato
+        const devicePrefix = this.isAndroid ? '[ANDROID]' : (this.isIOS ? '[iOS]' : '[DESKTOP]');
+        if (data) {
+            console.log(`${devicePrefix} [${type}] ${message}`, data);
+        } else {
+            console.log(`${devicePrefix} [${type}] ${message}`);
+        }
+
+        // Mostrar en UI si existe el contenedor de logs
+        this.updateLogDisplay();
+    }
+
+    updateLogDisplay() {
+        const logContainer = document.getElementById('debugLogs');
+        if (logContainer && this.debugMode) {
+            const lastLogs = this.logs.slice(-10); // Mostrar últimos 10 logs
+            logContainer.innerHTML = lastLogs.map(log =>
+                `<div style="margin: 2px 0; font-size: 11px; color: ${this.getLogColor(log.type)}">
+                    [${log.timestamp.split('T')[1].split('.')[0]}] ${log.type}: ${log.message}
+                    ${log.data ? '<br>' + JSON.stringify(log.data, null, 2) : ''}
+                </div>`
+            ).join('');
+        }
+    }
+
+    getLogColor(type) {
+        switch(type) {
+            case 'ERROR': return '#ff6b6b';
+            case 'WARN': return '#ffd93d';
+            case 'SUCCESS': return '#6bcf7f';
+            case 'AUDIO': return '#74c0fc';
+            case 'CLICK': return '#ffa8a8';
+            default: return '#fff';
+        }
+    }
+
+    getLogs() {
+        return this.logs;
+    }
+
+    exportLogs() {
+        return JSON.stringify(this.logs, null, 2);
     }
 
     createPlayerUI() {
@@ -101,12 +169,12 @@ class SimpleAudioPlayer {
     setupMobileSupport() {
         // Configurar eventos táctiles para móviles
         if (this.isMobile) {
-            console.log('Configurando soporte móvil para:', this.isAndroid ? 'Android' : (this.isIOS ? 'iOS' : 'Móvil genérico'));
+            this.log('INIT', 'Configurando soporte móvil para:', this.isAndroid ? 'Android' : (this.isIOS ? 'iOS' : 'Móvil genérico'));
 
             // Detectar primera interacción del usuario (requerida para autoplay en móviles)
             const enableAudioContext = () => {
                 this.userInteracted = true;
-                console.log('Primera interacción del usuario detectada');
+                this.log('SUCCESS', 'Primera interacción del usuario detectada');
                 document.removeEventListener('touchstart', enableAudioContext);
                 document.removeEventListener('click', enableAudioContext);
             };
@@ -120,12 +188,19 @@ class SimpleAudioPlayer {
                 // Eventos touch para Android
                 if (this.isAndroid) {
                     playPauseBtn.addEventListener('touchstart', (e) => {
-                        console.log('Android: touchstart en play/pause');
+                        this.log('CLICK', 'Android: touchstart en play/pause', {
+                            touches: e.touches ? e.touches.length : 0,
+                            target: e.target.tagName
+                        });
                         e.target.style.transform = 'scale(0.95)';
                     }, { passive: true });
 
                     playPauseBtn.addEventListener('touchend', (e) => {
-                        console.log('Android: touchend en play/pause');
+                        this.log('CLICK', 'Android: touchend en play/pause', {
+                            isPlaying: this.isPlaying,
+                            userInteracted: this.userInteracted,
+                            hasAudio: !!this.audio
+                        });
                         e.target.style.transform = 'scale(1)';
                         e.preventDefault();
                         this.togglePlay();
@@ -149,9 +224,14 @@ class SimpleAudioPlayer {
     }
 
     loadSession(session) {
-        if (!session.audio_url || session.audio_url === '#') return;
+        if (!session.audio_url || session.audio_url === '#') {
+            this.log('ERROR', 'URL de audio inválida', { session });
+            return;
+        }
 
-        console.log('Cargando sesión:', session.title, 'en dispositivo:', {
+        this.log('AUDIO', 'Cargando sesión:', {
+            title: session.title,
+            url: session.audio_url,
             isAndroid: this.isAndroid,
             isIOS: this.isIOS,
             userInteracted: this.userInteracted
@@ -189,59 +269,128 @@ class SimpleAudioPlayer {
         // Eventos de audio con manejo de errores mejorado
         this.audio.addEventListener('timeupdate', () => this.updateProgress());
         this.audio.addEventListener('ended', () => this.onEnded());
+
         this.audio.addEventListener('loadstart', () => {
-            console.log('Cargando audio...', session.title);
+            this.log('AUDIO', 'Iniciando carga de audio', { title: session.title });
         });
+
+        this.audio.addEventListener('loadedmetadata', () => {
+            this.log('AUDIO', 'Metadatos cargados', {
+                duration: this.audio.duration,
+                title: session.title
+            });
+        });
+
         this.audio.addEventListener('canplay', () => {
-            console.log('Audio listo para reproducir:', session.title);
+            this.log('SUCCESS', 'Audio listo para reproducir', {
+                title: session.title,
+                duration: this.audio.duration,
+                readyState: this.audio.readyState
+            });
         });
+
+        this.audio.addEventListener('canplaythrough', () => {
+            this.log('SUCCESS', 'Audio completamente cargado', { title: session.title });
+        });
+
         this.audio.addEventListener('error', (e) => {
-            console.error('Error de audio:', e.target.error, 'para sesión:', session.title);
+            this.log('ERROR', 'Error de audio', {
+                error: e.target.error,
+                code: e.target.error ? e.target.error.code : 'unknown',
+                message: e.target.error ? e.target.error.message : 'unknown',
+                title: session.title,
+                url: session.audio_url
+            });
             this.handleAudioError(e.target.error);
         });
+
         this.audio.addEventListener('stalled', () => {
-            console.warn('Audio estancado, reintentando...', session.title);
+            this.log('WARN', 'Audio estancado', {
+                title: session.title,
+                currentTime: this.audio.currentTime,
+                buffered: this.audio.buffered.length
+            });
+        });
+
+        this.audio.addEventListener('waiting', () => {
+            this.log('WARN', 'Audio esperando datos', { title: session.title });
+        });
+
+        this.audio.addEventListener('playing', () => {
+            this.log('SUCCESS', 'Audio reproduciendo', { title: session.title });
+        });
+
+        this.audio.addEventListener('pause', () => {
+            this.log('AUDIO', 'Audio pausado', { title: session.title });
         });
 
         // Para móviles, no reproducir automáticamente si no hay interacción del usuario
         if (this.isMobile && !this.userInteracted) {
-            console.log('Móvil sin interacción del usuario - esperando click para reproducir');
+            this.log('WARN', 'Móvil sin interacción del usuario - esperando click para reproducir', {
+                isMobile: this.isMobile,
+                userInteracted: this.userInteracted
+            });
             document.getElementById('playPauseBtn').textContent = '▶️';
             this.isPlaying = false;
         } else {
+            this.log('AUDIO', 'Iniciando reproducción automática');
             this.play();
         }
     }
 
     play() {
-        if (!this.audio) return;
+        if (!this.audio) {
+            this.log('ERROR', 'No hay elemento de audio para reproducir');
+            return;
+        }
 
-        console.log('Intentando reproducir audio en:', this.isAndroid ? 'Android' : (this.isIOS ? 'iOS' : 'Desktop'));
+        this.log('AUDIO', 'Intentando reproducir audio', {
+            device: this.isAndroid ? 'Android' : (this.isIOS ? 'iOS' : 'Desktop'),
+            readyState: this.audio.readyState,
+            paused: this.audio.paused,
+            currentTime: this.audio.currentTime,
+            duration: this.audio.duration,
+            src: this.audio.src
+        });
 
         const playPromise = this.audio.play();
 
         if (playPromise !== undefined) {
             playPromise.then(() => {
-                console.log('Reproducción iniciada exitosamente');
+                this.log('SUCCESS', 'Reproducción iniciada exitosamente', {
+                    currentTime: this.audio.currentTime,
+                    duration: this.audio.duration,
+                    volume: this.audio.volume
+                });
                 this.isPlaying = true;
                 document.getElementById('playPauseBtn').textContent = '⏸️';
                 this.userInteracted = true; // Marcar que el usuario ha interactuado
             }).catch(error => {
-                console.error('Error al reproducir:', error.name, error.message);
+                this.log('ERROR', 'Error al reproducir', {
+                    name: error.name,
+                    message: error.message,
+                    code: error.code,
+                    stack: error.stack
+                });
 
                 // Manejo específico de errores para Android
                 if (this.isAndroid) {
                     if (error.name === 'NotAllowedError') {
-                        console.log('Android: Autoplay bloqueado - esperando interacción del usuario');
+                        this.log('WARN', 'Android: Autoplay bloqueado - esperando interacción del usuario');
                         this.showPlayButton();
                     } else if (error.name === 'NotSupportedError') {
-                        console.log('Android: Formato no soportado - intentando fallback');
+                        this.log('WARN', 'Android: Formato no soportado - intentando fallback');
                         this.tryAudioFallback();
+                    } else {
+                        this.log('ERROR', 'Android: Error desconocido', { error });
+                        this.showPlayButton();
                     }
                 } else {
                     this.showPlayButton();
                 }
             });
+        } else {
+            this.log('WARN', 'play() no devolvió una Promise');
         }
     }
 
@@ -306,17 +455,22 @@ class SimpleAudioPlayer {
     }
 
     togglePlay() {
-        console.log('Toggle play - Estado actual:', this.isPlaying, 'Dispositivo:', {
+        this.log('CLICK', 'Toggle play - Estado actual', {
+            isPlaying: this.isPlaying,
             isAndroid: this.isAndroid,
-            userInteracted: this.userInteracted
+            userInteracted: this.userInteracted,
+            hasAudio: !!this.audio,
+            audioSrc: this.audio ? this.audio.src : 'none'
         });
 
         // Marcar que el usuario ha interactuado (importante para políticas de autoplay)
         this.userInteracted = true;
 
         if (this.isPlaying) {
+            this.log('AUDIO', 'Pausando audio');
             this.pause();
         } else {
+            this.log('AUDIO', 'Iniciando reproducción desde toggle');
             this.play();
         }
     }

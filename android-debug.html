@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Android Audio Debug</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 10px;
+            background: #000;
+            color: #00ff88;
+            font-size: 14px;
+        }
+        .status {
+            background: #111;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            border: 1px solid #333;
+        }
+        .test-btn {
+            background: #00ff88;
+            color: black;
+            border: none;
+            padding: 15px;
+            margin: 5px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: calc(50% - 10px);
+            font-size: 16px;
+            touch-action: manipulation;
+        }
+        .test-btn:active {
+            background: #00cc66;
+        }
+        .logs {
+            background: #111;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 11px;
+            border: 1px solid #333;
+        }
+        .error { color: #ff6b6b; }
+        .warn { color: #ffd93d; }
+        .success { color: #6bcf7f; }
+        .info { color: #74c0fc; }
+        .click { color: #ffa8a8; }
+        
+        #globalPlayer {
+            border: 2px solid #00ff88 !important;
+        }
+    </style>
+</head>
+<body>
+    <h2>🔧 Android Audio Debug</h2>
+    
+    <div class="status" id="deviceStatus">
+        <strong>📱 Dispositivo:</strong> Detectando...
+    </div>
+    
+    <div class="status" id="playerStatus">
+        <strong>🎵 Reproductor:</strong> Inicializando...
+    </div>
+    
+    <div style="text-align: center; margin: 20px 0;">
+        <button class="test-btn" onclick="testSimpleMP3()">🎵 Test MP3 Simple</button>
+        <button class="test-btn" onclick="testExternalMP3()">🌐 Test MP3 Externo</button>
+        <button class="test-btn" onclick="manualPlay()">▶️ Play Manual</button>
+        <button class="test-btn" onclick="showLogs()">📋 Ver Logs</button>
+    </div>
+    
+    <div class="logs" id="debugLogs"></div>
+    
+    <script src="global-player-simple.js"></script>
+    <script>
+        let debugInfo = {
+            device: {},
+            player: {},
+            logs: []
+        };
+        
+        // Función de logging personalizada
+        function debugLog(type, message, data = null) {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = {
+                timestamp,
+                type,
+                message,
+                data
+            };
+            
+            debugInfo.logs.push(logEntry);
+            
+            // Mantener solo últimos 50 logs
+            if (debugInfo.logs.length > 50) {
+                debugInfo.logs.shift();
+            }
+            
+            updateLogDisplay();
+            
+            // Log a consola también
+            console.log(`[${type}] ${message}`, data || '');
+        }
+        
+        function updateLogDisplay() {
+            const container = document.getElementById('debugLogs');
+            const lastLogs = debugInfo.logs.slice(-20);
+            
+            container.innerHTML = lastLogs.map(log => 
+                `<div class="${log.type.toLowerCase()}">
+                    [${log.timestamp}] ${log.type}: ${log.message}
+                    ${log.data ? '<br>' + JSON.stringify(log.data, null, 2) : ''}
+                </div>`
+            ).join('');
+            
+            container.scrollTop = container.scrollHeight;
+        }
+        
+        // Interceptar logs del reproductor
+        const originalConsoleLog = console.log;
+        const originalConsoleError = console.error;
+        const originalConsoleWarn = console.warn;
+        
+        console.log = (...args) => {
+            originalConsoleLog.apply(console, args);
+            if (args[0] && args[0].includes('[ANDROID]')) {
+                debugLog('INFO', args.join(' '));
+            }
+        };
+        
+        console.error = (...args) => {
+            originalConsoleError.apply(console, args);
+            debugLog('ERROR', args.join(' '));
+        };
+        
+        console.warn = (...args) => {
+            originalConsoleWarn.apply(console, args);
+            debugLog('WARN', args.join(' '));
+        };
+        
+        // Detectar información del dispositivo
+        document.addEventListener('DOMContentLoaded', () => {
+            debugInfo.device = {
+                userAgent: navigator.userAgent,
+                isAndroid: /Android/i.test(navigator.userAgent),
+                isIOS: /iPad|iPhone|iPod/.test(navigator.userAgent),
+                isMobile: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
+                touchSupport: 'ontouchstart' in window,
+                maxTouchPoints: navigator.maxTouchPoints,
+                audioSupport: !!window.Audio,
+                mediaSessionSupport: 'mediaSession' in navigator
+            };
+            
+            document.getElementById('deviceStatus').innerHTML = `
+                <strong>📱 Dispositivo:</strong><br>
+                Android: ${debugInfo.device.isAndroid ? '✅' : '❌'} | 
+                iOS: ${debugInfo.device.isIOS ? '✅' : '❌'} | 
+                Móvil: ${debugInfo.device.isMobile ? '✅' : '❌'}<br>
+                Touch: ${debugInfo.device.touchSupport ? '✅' : '❌'} | 
+                Audio: ${debugInfo.device.audioSupport ? '✅' : '❌'}
+            `;
+            
+            debugLog('INIT', 'Dispositivo detectado', debugInfo.device);
+            
+            // Verificar estado del reproductor
+            setTimeout(() => {
+                if (window.globalPlayer) {
+                    debugInfo.player.initialized = true;
+                    debugInfo.player.isAndroid = globalPlayer.isAndroid;
+                    debugInfo.player.userInteracted = globalPlayer.userInteracted;
+                    
+                    document.getElementById('playerStatus').innerHTML = `
+                        <strong>🎵 Reproductor:</strong> ✅ Inicializado<br>
+                        Android detectado: ${globalPlayer.isAndroid ? '✅' : '❌'} | 
+                        Usuario interactuó: ${globalPlayer.userInteracted ? '✅' : '❌'}
+                    `;
+                    
+                    debugLog('SUCCESS', 'Reproductor inicializado', debugInfo.player);
+                } else {
+                    debugLog('ERROR', 'Reproductor no inicializado');
+                    document.getElementById('playerStatus').innerHTML = `
+                        <strong>🎵 Reproductor:</strong> ❌ Error de inicialización
+                    `;
+                }
+            }, 1000);
+        });
+        
+        // Funciones de prueba
+        function testSimpleMP3() {
+            debugLog('TEST', 'Iniciando test MP3 simple');
+            const session = {
+                title: 'Test MP3 Simple',
+                audio_url: 'https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3',
+                cover: ''
+            };
+            
+            if (window.globalPlayer) {
+                globalPlayer.loadSession(session);
+            } else {
+                debugLog('ERROR', 'GlobalPlayer no disponible');
+            }
+        }
+        
+        function testExternalMP3() {
+            debugLog('TEST', 'Iniciando test MP3 externo');
+            const session = {
+                title: 'Test MP3 Externo',
+                audio_url: 'https://archive.org/download/first-date-vol.-ii/First%20Date%20Vol.II.mp3',
+                cover: ''
+            };
+            
+            if (window.globalPlayer) {
+                globalPlayer.loadSession(session);
+            } else {
+                debugLog('ERROR', 'GlobalPlayer no disponible');
+            }
+        }
+        
+        function manualPlay() {
+            debugLog('TEST', 'Reproducción manual forzada');
+            if (window.globalPlayer && globalPlayer.audio) {
+                globalPlayer.userInteracted = true;
+                globalPlayer.togglePlay();
+            } else {
+                debugLog('ERROR', 'No hay audio cargado para reproducir');
+            }
+        }
+        
+        function showLogs() {
+            const logsText = JSON.stringify(debugInfo, null, 2);
+            
+            // Intentar copiar al clipboard
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(logsText).then(() => {
+                    alert('Logs copiados al clipboard');
+                }).catch(() => {
+                    // Fallback: mostrar en alert
+                    alert('Logs:\n' + logsText.substring(0, 1000) + '...');
+                });
+            } else {
+                // Fallback: mostrar en alert
+                alert('Logs:\n' + logsText.substring(0, 1000) + '...');
+            }
+        }
+        
+        // Actualizar logs cada 2 segundos
+        setInterval(() => {
+            if (window.globalPlayer) {
+                debugInfo.player.userInteracted = globalPlayer.userInteracted;
+                debugInfo.player.isPlaying = globalPlayer.isPlaying;
+                debugInfo.player.currentSession = globalPlayer.currentSession ? globalPlayer.currentSession.title : null;
+            }
+        }, 2000);
+    </script>
+</body>
+</html>

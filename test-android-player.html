@@ -82,6 +82,19 @@
         <div class="console-log" id="consoleLog">
             <strong>Console Log:</strong><br>
         </div>
+
+        <div class="console-log" id="debugLogs" style="margin-top: 10px;">
+            <strong>Debug Logs del Reproductor:</strong><br>
+        </div>
+
+        <div style="margin-top: 20px;">
+            <button onclick="exportLogs()" style="background: #00ff88; color: black; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer;">
+                📋 Exportar Logs Completos
+            </button>
+            <button onclick="clearLogs()" style="background: #ff6b6b; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin-left: 10px;">
+                🗑️ Limpiar Logs
+            </button>
+        </div>
     </div>
 
     <script src="global-player-simple.js"></script>
@@ -179,6 +192,55 @@
             };
             playSession(session);
         }
+
+        // Funciones para manejo de logs
+        function exportLogs() {
+            if (globalPlayer && globalPlayer.getLogs) {
+                const logs = globalPlayer.exportLogs();
+                const blob = new Blob([logs], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `android-audio-logs-${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+
+                // También copiar al clipboard si es posible
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(logs).then(() => {
+                        alert('Logs copiados al clipboard y descargados como archivo');
+                    }).catch(() => {
+                        alert('Logs descargados como archivo');
+                    });
+                } else {
+                    alert('Logs descargados como archivo');
+                }
+            } else {
+                alert('No hay logs disponibles');
+            }
+        }
+
+        function clearLogs() {
+            const logContainer = document.getElementById('consoleLog');
+            const debugContainer = document.getElementById('debugLogs');
+            logContainer.innerHTML = '<strong>Console Log:</strong><br>';
+            debugContainer.innerHTML = '<strong>Debug Logs del Reproductor:</strong><br>';
+
+            if (globalPlayer && globalPlayer.logs) {
+                globalPlayer.logs = [];
+            }
+
+            console.log('Logs limpiados');
+        }
+
+        // Actualizar logs del reproductor cada segundo
+        setInterval(() => {
+            if (globalPlayer && globalPlayer.updateLogDisplay) {
+                globalPlayer.updateLogDisplay();
+            }
+        }, 1000);
     </script>
 </body>
 </html>
