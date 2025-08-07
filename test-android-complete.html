@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Completo Android</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 10px;
+            background: #000;
+            color: #00ff88;
+            font-size: 14px;
+        }
+        .test-section {
+            background: #111;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #333;
+        }
+        .test-btn {
+            background: #00ff88;
+            color: black;
+            border: none;
+            padding: 12px 20px;
+            margin: 5px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            touch-action: manipulation;
+            min-width: 120px;
+        }
+        .test-btn:active {
+            background: #00cc66;
+            transform: scale(0.95);
+        }
+        .status {
+            background: #222;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .success { color: #6bcf7f; }
+        .error { color: #ff6b6b; }
+        .warn { color: #ffd93d; }
+        .info { color: #74c0fc; }
+        
+        .controls-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 10px;
+            margin: 10px 0;
+        }
+        
+        #globalPlayer {
+            border: 2px solid #00ff88 !important;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h2>🔧 Test Completo Android</h2>
+    
+    <div class="test-section">
+        <h3>📱 Estado del Dispositivo</h3>
+        <div id="deviceStatus" class="status">Detectando...</div>
+    </div>
+    
+    <div class="test-section">
+        <h3>🎵 Cargar Sesión de Prueba</h3>
+        <div class="controls-grid">
+            <button class="test-btn" onclick="loadTestSession()">🎧 Cargar Audio</button>
+            <button class="test-btn" onclick="loadHouseSession()">🏠 House Session</button>
+            <button class="test-btn" onclick="loadTechnoSession()">🔥 Techno Session</button>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h3>⏯️ Controles de Reproducción</h3>
+        <div class="controls-grid">
+            <button class="test-btn" onclick="testPlay()">▶️ Play</button>
+            <button class="test-btn" onclick="testPause()">⏸️ Pause</button>
+            <button class="test-btn" onclick="testStop()">⏹️ Stop</button>
+            <button class="test-btn" onclick="testToggle()">🔄 Toggle</button>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h3>⏭️ Controles de Navegación</h3>
+        <div class="controls-grid">
+            <button class="test-btn" onclick="testSeekStart()">⏮️ Inicio</button>
+            <button class="test-btn" onclick="testSeekBack()">⏪ -10s</button>
+            <button class="test-btn" onclick="testSeekForward()">⏩ +10s</button>
+            <button class="test-btn" onclick="testSeekMiddle()">⏭️ Medio</button>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h3>📊 Estado del Reproductor</h3>
+        <div id="playerStatus" class="status">No hay audio cargado</div>
+    </div>
+    
+    <div class="test-section">
+        <h3>📋 Logs de Actividad</h3>
+        <div class="controls-grid">
+            <button class="test-btn" onclick="showLogs()">📋 Ver Logs</button>
+            <button class="test-btn" onclick="clearLogs()">🗑️ Limpiar</button>
+            <button class="test-btn" onclick="exportLogs()">💾 Exportar</button>
+        </div>
+        <div id="activityLogs" class="status" style="max-height: 200px; overflow-y: auto;"></div>
+    </div>
+
+    <script src="global-player-simple.js"></script>
+    <script>
+        let testLogs = [];
+        
+        function addLog(type, message, data = null) {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = { timestamp, type, message, data };
+            testLogs.push(logEntry);
+            
+            if (testLogs.length > 50) {
+                testLogs.shift();
+            }
+            
+            updateLogDisplay();
+            console.log(`[${type}] ${message}`, data || '');
+        }
+        
+        function updateLogDisplay() {
+            const container = document.getElementById('activityLogs');
+            const lastLogs = testLogs.slice(-10);
+            
+            container.innerHTML = lastLogs.map(log => 
+                `<div class="${log.type.toLowerCase()}">
+                    [${log.timestamp}] ${log.type}: ${log.message}
+                    ${log.data ? '<br><small>' + JSON.stringify(log.data, null, 2) + '</small>' : ''}
+                </div>`
+            ).join('');
+            
+            container.scrollTop = container.scrollHeight;
+        }
+        
+        function updatePlayerStatus() {
+            const status = document.getElementById('playerStatus');
+            if (window.globalPlayer && window.globalPlayer.audio) {
+                const audio = window.globalPlayer.audio;
+                status.innerHTML = `
+                    <strong>Audio:</strong> ${window.globalPlayer.currentSession ? window.globalPlayer.currentSession.title : 'Sin título'}<br>
+                    <strong>Estado:</strong> ${window.globalPlayer.isPlaying ? 'Reproduciendo' : 'Pausado'}<br>
+                    <strong>Tiempo:</strong> ${audio.currentTime ? audio.currentTime.toFixed(1) : 0}s / ${audio.duration ? audio.duration.toFixed(1) : 0}s<br>
+                    <strong>Ready State:</strong> ${audio.readyState}<br>
+                    <strong>Interacción:</strong> ${window.globalPlayer.userInteracted ? 'Sí' : 'No'}
+                `;
+            } else {
+                status.innerHTML = 'No hay audio cargado';
+            }
+        }
+        
+        // Detectar información del dispositivo
+        document.addEventListener('DOMContentLoaded', () => {
+            const deviceInfo = {
+                userAgent: navigator.userAgent,
+                isAndroid: /Android/i.test(navigator.userAgent),
+                isIOS: /iPad|iPhone|iPod/.test(navigator.userAgent),
+                isMobile: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
+                touchSupport: 'ontouchstart' in window,
+                maxTouchPoints: navigator.maxTouchPoints,
+                audioSupport: !!window.Audio,
+                mediaSessionSupport: 'mediaSession' in navigator
+            };
+            
+            document.getElementById('deviceStatus').innerHTML = `
+                <strong>Android:</strong> ${deviceInfo.isAndroid ? '✅' : '❌'} | 
+                <strong>iOS:</strong> ${deviceInfo.isIOS ? '✅' : '❌'} | 
+                <strong>Móvil:</strong> ${deviceInfo.isMobile ? '✅' : '❌'}<br>
+                <strong>Touch:</strong> ${deviceInfo.touchSupport ? '✅' : '❌'} | 
+                <strong>Audio:</strong> ${deviceInfo.audioSupport ? '✅' : '❌'} | 
+                <strong>MediaSession:</strong> ${deviceInfo.mediaSessionSupport ? '✅' : '❌'}<br>
+                <strong>Touch Points:</strong> ${deviceInfo.maxTouchPoints}
+            `;
+            
+            addLog('INFO', 'Dispositivo detectado', deviceInfo);
+            
+            // Actualizar estado cada segundo
+            setInterval(updatePlayerStatus, 1000);
+        });
+        
+        // Funciones de prueba
+        function loadTestSession() {
+            addLog('TEST', 'Cargando sesión de prueba');
+            const session = {
+                title: 'Test MP3 Android',
+                audio_url: 'https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3'
+            };
+            
+            if (window.globalPlayer) {
+                window.globalPlayer.loadSession(session);
+                addLog('SUCCESS', 'Sesión cargada', { title: session.title });
+            } else {
+                addLog('ERROR', 'GlobalPlayer no disponible');
+            }
+        }
+        
+        function loadHouseSession() {
+            addLog('TEST', 'Cargando sesión House');
+            const session = {
+                title: 'First Date Vol.II',
+                audio_url: 'https://archive.org/download/first-date-vol.-ii/First%20Date%20Vol.II.mp3'
+            };
+            
+            if (window.globalPlayer) {
+                window.globalPlayer.loadSession(session);
+                addLog('SUCCESS', 'Sesión House cargada');
+            } else {
+                addLog('ERROR', 'GlobalPlayer no disponible');
+            }
+        }
+        
+        function loadTechnoSession() {
+            addLog('TEST', 'Cargando sesión Techno');
+            const session = {
+                title: 'Nature Tech House',
+                audio_url: 'https://archive.org/download/nature-club/Nature%20Club.mp3'
+            };
+            
+            if (window.globalPlayer) {
+                window.globalPlayer.loadSession(session);
+                addLog('SUCCESS', 'Sesión Techno cargada');
+            } else {
+                addLog('ERROR', 'GlobalPlayer no disponible');
+            }
+        }
+        
+        function testPlay() {
+            addLog('TEST', 'Probando Play');
+            if (window.globalPlayer && window.globalPlayer.audio) {
+                window.globalPlayer.play();
+                addLog('SUCCESS', 'Play ejecutado');
+            } else {
+                addLog('ERROR', 'No hay audio para reproducir');
+            }
+        }
+        
+        function testPause() {
+            addLog('TEST', 'Probando Pause');
+            if (window.globalPlayer && window.globalPlayer.audio) {
+                window.globalPlayer.pause();
+                addLog('SUCCESS', 'Pause ejecutado');
+            } else {
+                addLog('ERROR', 'No hay audio para pausar');
+            }
+        }
+        
+        function testStop() {
+            addLog('TEST', 'Probando Stop');
+            if (window.globalPlayer && window.globalPlayer.audio) {
+                window.globalPlayer.stop();
+                addLog('SUCCESS', 'Stop ejecutado');
+            } else {
+                addLog('ERROR', 'No hay audio para detener');
+            }
+        }
+        
+        function testToggle() {
+            addLog('TEST', 'Probando Toggle Play/Pause');
+            if (window.globalPlayer && window.globalPlayer.audio) {
+                window.globalPlayer.togglePlay();
+                addLog('SUCCESS', 'Toggle ejecutado');
+            } else {
+                addLog('ERROR', 'No hay audio para toggle');
+            }
+        }
+        
+        function testSeekStart() {
+            addLog('TEST', 'Probando Seek al inicio');
+            if (window.globalPlayer && window.globalPlayer.audio) {
+                window.globalPlayer.seekTo(0);
+                addLog('SUCCESS', 'Seek al inicio ejecutado');
+            } else {
+                addLog('ERROR', 'No hay audio para seek');
+            }
+        }
+        
+        function testSeekBack() {
+            addLog('TEST', 'Probando Seek -10s');
+            if (window.globalPlayer && window.globalPlayer.audio) {
+                window.globalPlayer.seekRelative(-10);
+                addLog('SUCCESS', 'Seek -10s ejecutado');
+            } else {
+                addLog('ERROR', 'No hay audio para seek');
+            }
+        }
+        
+        function testSeekForward() {
+            addLog('TEST', 'Probando Seek +10s');
+            if (window.globalPlayer && window.globalPlayer.audio) {
+                window.globalPlayer.seekRelative(10);
+                addLog('SUCCESS', 'Seek +10s ejecutado');
+            } else {
+                addLog('ERROR', 'No hay audio para seek');
+            }
+        }
+        
+        function testSeekMiddle() {
+            addLog('TEST', 'Probando Seek al medio');
+            if (window.globalPlayer && window.globalPlayer.audio && window.globalPlayer.audio.duration) {
+                const middleTime = window.globalPlayer.audio.duration / 2;
+                window.globalPlayer.seekTo(middleTime);
+                addLog('SUCCESS', 'Seek al medio ejecutado', { time: middleTime });
+            } else {
+                addLog('ERROR', 'No hay audio con duración para seek');
+            }
+        }
+        
+        function showLogs() {
+            if (window.globalPlayer && window.globalPlayer.getLogs) {
+                const playerLogs = window.globalPlayer.getLogs();
+                addLog('INFO', 'Logs del reproductor obtenidos', { count: playerLogs.length });
+                
+                // Mostrar últimos 5 logs del reproductor
+                const lastPlayerLogs = playerLogs.slice(-5);
+                lastPlayerLogs.forEach(log => {
+                    addLog('PLAYER', `${log.type}: ${log.message}`, log.data);
+                });
+            } else {
+                addLog('WARN', 'No hay logs del reproductor disponibles');
+            }
+        }
+        
+        function clearLogs() {
+            testLogs = [];
+            if (window.globalPlayer && window.globalPlayer.logs) {
+                window.globalPlayer.logs = [];
+            }
+            updateLogDisplay();
+            addLog('INFO', 'Logs limpiados');
+        }
+        
+        function exportLogs() {
+            const allLogs = {
+                testLogs: testLogs,
+                playerLogs: window.globalPlayer ? window.globalPlayer.getLogs() : [],
+                deviceInfo: {
+                    userAgent: navigator.userAgent,
+                    timestamp: new Date().toISOString()
+                }
+            };
+            
+            const logsText = JSON.stringify(allLogs, null, 2);
+            
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(logsText).then(() => {
+                    addLog('SUCCESS', 'Logs copiados al clipboard');
+                }).catch(() => {
+                    addLog('WARN', 'No se pudo copiar al clipboard');
+                });
+            } else {
+                addLog('INFO', 'Logs preparados para exportar', { size: logsText.length });
+            }
+        }
+    </script>
+</body>
+</html>

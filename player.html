@@ -111,7 +111,17 @@
                     </div>
                 </div>
             </div>
-            
+
+            <!-- Download Section -->
+            <div class="download-section" id="downloadSection" style="display: none;">
+                <button class="download-btn" id="downloadBtn">
+                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+                    </svg>
+                    Descargar
+                </button>
+            </div>
+
             <!-- Tracklist Section -->
             <div class="tracklist-section">
                 <h2 class="tracklist-title">Tracklist</h2>
@@ -360,25 +370,113 @@
             }
         }
 
+        /* Download Section Styles */
+        .download-section {
+            margin: 20px 0;
+            padding: 0 20px;
+        }
+
+        .download-btn {
+            background: linear-gradient(135deg, #00ff88, #00cc66);
+            color: #000;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 255, 136, 0.3);
+        }
+
+        .download-btn:hover {
+            background: linear-gradient(135deg, #00cc66, #00aa55);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 255, 136, 0.4);
+        }
+
+        .download-btn:active {
+            transform: translateY(0);
+        }
+
+        .download-link-btn {
+            background: linear-gradient(135deg, #00ff88, #00cc66);
+            color: #000;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 255, 136, 0.3);
+        }
+
+        .download-link-btn:hover {
+            background: linear-gradient(135deg, #00cc66, #00aa55);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 255, 136, 0.4);
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .modal-container {
                 margin: 10px;
                 max-height: 85vh;
             }
-            
+
             .modal-header, .modal-content {
                 padding: 20px;
             }
-            
+
             .modal-actions {
                 flex-direction: column;
             }
-            
 
+            .download-section {
+                padding: 0 15px;
+            }
+
+            .download-btn, .download-link-btn {
+                font-size: 14px;
+                padding: 10px 20px;
+            }
         }
     </style>
-    
+
+    <!-- Download Modal -->
+    <div class="modal-overlay" id="downloadModal" style="display: none;">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3>Descargar Sesión</h3>
+                <button class="modal-close" id="closeDownloadModal">&times;</button>
+            </div>
+            <div class="modal-content">
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <img src="attached_assets/Download.jpg" alt="Instrucciones de descarga" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+                </div>
+                <p style="text-align: center; font-size: 16px; margin-bottom: 20px;">
+                    Pulsa en los <strong>tres puntitos</strong> para comenzar la descarga
+                </p>
+                <div style="text-align: center;">
+                    <a id="downloadLink" href="#" target="_blank" class="download-link-btn">
+                        <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+                        </svg>
+                        Ir a la descarga
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Session data structure
         const sessionData = {
@@ -386,6 +484,7 @@
                 title: 'Nature',
                 subtitle: 'Una selección potente de Tech House con beats profundos y grooves hipnóticos',
                 audioUrl: 'https://archive.org/download/nature-club/Nature%20Club.mp3',
+                downloadUrl: 'https://archive.org/download/nature-club/Nature%20Club.mp3',
                 duration: '01:15:32',
                 cover: `
                     <img class="session-cover-svg" src="attached_assets/Nature.png" alt="Carátula Nature" style="width:100%;height:300px;object-fit:cover;display:block;border-radius:var(--radius);box-shadow:var(--shadow-hover);" />
@@ -422,6 +521,7 @@
                 title: 'First Date Vol. II',
                 subtitle: 'La primera cita que nadie vio venir. Sin aviso, sin Vol. I. Solo música para desnudarse sin palabras',
                 audioUrl: 'https://archive.org/download/first-date-vol.-ii/First%20Date%20Vol.II.mp3',
+                downloadUrl: 'https://archive.org/download/first-date-vol.-ii/First%20Date%20Vol.II.mp3',
                 duration: '01:04:59',
                 cover: `
                     <img class="session-cover-svg" src="attached_assets/First Date Vol. II_1752256054711.png" alt="Carátula First Date Vol. II" style="width:100%;height:300px;object-fit:cover;display:block;border-radius:var(--radius);box-shadow:var(--shadow-hover);" />
@@ -537,7 +637,7 @@
                 title: 'Sari Bari 2025',
                 subtitle: 'Un verano, una fiesta, una promesa de groove. En la arena de Granada, celebramos el ritmo con alma y un mar de abrazos. Sari Bari es calor, house y corazón.',
                 audioUrl: 'https://archive.org/download/saribari-20-25/Saribari%2020%2025.mp3',
-
+                downloadUrl: 'https://archive.org/download/saribari-20-25/Saribari%2020%2025.mp3',
                 duration: '01:45:30',
                 cover: `
                     <img class="session-cover-svg" src="attached_assets/Sari Bari - Vermu_1752514127352.png" alt="Carátula Sari Bari" style="width:100%;height:300px;object-fit:cover;display:block;border-radius:var(--radius);box-shadow:var(--shadow-hover);" />
@@ -577,7 +677,7 @@
                 title: 'Plastic',
                 subtitle: 'Homenaje a la mítica discoteca Plastic de Madrid',
                 audioUrl: 'https://archive.org/download/plastic_202507/Plastic.mp3',
-
+                downloadUrl: 'https://dn721301.ca.archive.org/0/items/plastic_202507/Plastic.flac',
                 duration: '55:40',
                 cover: `
                     <img class="session-cover-svg" src="attached_assets/Plastic_1752516636118.png" alt="Carátula Plastic" style="width:100%;height:300px;object-fit:cover;display:block;border-radius:var(--radius);box-shadow:var(--shadow-hover);" />
@@ -603,7 +703,7 @@
                 title: 'Los niños del parque',
                 subtitle: 'Crecimos entre bajos, máquinas y parques que ardían de noche. Esta sesión es para los que nunca dejaron de bailar a oscuras.',
                 audioUrl: 'https://archive.org/download/los-ninos-del-parque/Los%20ni%C3%B1os%20del%20parque.mp3',
-
+                downloadUrl: 'https://archive.org/download/los-ninos-del-parque/Los%20ni%C3%B1os%20del%20parque.mp3',
                 duration: '64:32',
                 cover: `
                     <img class="session-cover-svg" src="attached_assets/Los niños del parque.png" alt="Carátula Los niños del parque" style="width:100%;height:300px;object-fit:cover;display:block;border-radius:var(--radius);box-shadow:var(--shadow-hover);" />
@@ -631,7 +731,7 @@
                 title: 'Aero-Red',
                 subtitle: 'Síntomas: sudor, euforia y acidez mental. Tratamiento: Aerored — ácido en vena, rave sin receta',
                 audioUrl: 'https://archive.org/download/aero-red/Aero-Red.mp3',
-
+                downloadUrl: 'https://archive.org/download/aero-red/Aero-Red.mp3',
                 duration: '68:45',
                 cover: `
                     <img class="session-cover-svg" src="attached_assets/Aero-Red.png" alt="Carátula Aero-Red" style="width:100%;height:300px;object-fit:cover;display:block;border-radius:var(--radius);box-shadow:var(--shadow-hover);" />
@@ -663,7 +763,7 @@
                 title: 'Nati Nati',
                 subtitle: 'Una oda al groove fino y la emoción en loop. Así suena Nati Nati: femenina, profunda, inolvidable',
                 audioUrl: 'https://archive.org/download/nati-nati/Nati%20Nati.mp3',
-
+                downloadUrl: 'https://archive.org/download/nati-nati/Nati%20Nati.mp3',
                 duration: '35:20',
                 cover: `
                     <img class="session-cover-svg" src="attached_assets/Nati Nati_1752569294098.png" alt="Carátula Nati Nati" style="width:100%;height:300px;object-fit:cover;display:block;border-radius:var(--radius);box-shadow:var(--shadow-hover);" />
@@ -734,7 +834,7 @@
                 title: 'Primavera Sound',
                 subtitle: 'Esta sesión es un viaje sonoro desde una terraza al atardecer hasta un club al borde del amanecer.',
                 audioUrl: 'https://dn721908.ca.archive.org/0/items/primavera-sound/Primavera%20Sound.flac',
-
+                downloadUrl: 'https://dn721908.ca.archive.org/0/items/primavera-sound/Primavera%20Sound.flac',
                 duration: '01:25:30',
                 cover: `
                     <img class="session-cover-svg" src="attached_assets/primavera-sound.jpg" alt="Carátula Primavera Sound" style="width:100%;height:300px;object-fit:cover;display:block;border-radius:var(--radius);box-shadow:var(--shadow-hover);" />
@@ -765,7 +865,7 @@
                 title: 'ElROW',
                 subtitle: 'Un delirio; confeti, techno y fantasía en estado puro.',
                 audioUrl: 'https://dn721207.ca.archive.org/0/items/ro-wllaz-o/RoWllazO.flac',
-
+                downloadUrl: 'https://dn721207.ca.archive.org/0/items/ro-wllaz-o/RoWllazO.flac',
                 duration: '01:12:45',
                 cover: `
                     <img class="session-cover-svg" src="attached_assets/maxresdefault_1752569874084.jpg" alt="Carátula ElRow" style="width:100%;height:300px;object-fit:cover;display:block;border-radius:var(--radius);box-shadow:var(--shadow-hover);" />
@@ -797,7 +897,7 @@
                 title: 'Ros In Da House',
                 subtitle: 'Ritmos profundos y mínimos, texturas orgánicas y matices afro unidos por pulsos melódicos y grooves implacables.',
                 audioUrl: 'https://dn721404.ca.archive.org/0/items/ros-in-da-house/Ros%20in%20da%20House.flac',
-
+                downloadUrl: 'https://dn721404.ca.archive.org/0/items/ros-in-da-house/Ros%20in%20da%20House.flac',
                 duration: '01:08:30',
                 cover: `
                     <img class="session-cover-svg" src="attached_assets/ROS.png" alt="Carátula Ros In Da House" style="width:100%;height:300px;object-fit:cover;display:block;border-radius:var(--radius);box-shadow:var(--shadow-hover);" />
@@ -826,7 +926,7 @@
                 title: 'Terraceo en Graná',
                 subtitle: 'Sol, groove y buen rollo servido en copa larga. Esta sesión huele a tarde de vermú, palmas discretas y cuerpos bailando sin mirar el reloj.',
                 audioUrl: 'https://ia903103.us.archive.org/29/items/terraceo-en-grana/Terraceo%20en%20Gran%C3%A1.flac',
-
+                downloadUrl: 'https://ia903103.us.archive.org/29/items/terraceo-en-grana/Terraceo%20en%20Gran%C3%A1.flac',
                 duration: '01:15:20',
                 cover: `
                     <img class="session-cover-svg" src="attached_assets/Terraceo_en_Grana.jpg" alt="Carátula Terraceo en Graná" style="width:100%;height:300px;object-fit:cover;display:block;border-radius:var(--radius);box-shadow:var(--shadow-hover);" />
@@ -855,7 +955,7 @@
                 title: 'Tributo SpS',
                 subtitle: 'Grooves oscuros, vocales embriagadores y esencia tribal con aroma a domingo en Madrid. Revive la magia del templo sonoro que marcó a toda una generación.',
                 audioUrl: 'https://dn720705.ca.archive.org/0/items/tributo-sp-s/Tributo%20SpS.mp3',
-
+                downloadUrl: 'https://dn720705.ca.archive.org/0/items/tributo-sp-s/Tributo%20SpS.mp3',
                 duration: '01:16:40',
                 cover: `
                     <img class="session-cover-svg" src="attached_assets/Tributo_SpS.jpg" alt="Carátula Tributo SpS" style="width:100%;height:300px;object-fit:cover;display:block;border-radius:var(--radius);box-shadow:var(--shadow-hover);" />
@@ -883,7 +983,7 @@
                 title: 'Jaus Musik',
                 subtitle: 'El título no es solo un juego de palabras, es una declaración de intenciones. Una sesión que celebra los himnos que hicieron historia en la pista, voces icónicas y beats que no envejecen. Ponte cómodo... o mejor, ¡ponte a bailar!',
                 audioUrl: 'https://ia601702.us.archive.org/27/items/jaus-musik/Jaus%20Musik.flac',
-
+                downloadUrl: 'https://ia601702.us.archive.org/27/items/jaus-musik/Jaus%20Musik.flac',
                 duration: '01:28:20',
                 cover: `
                     <img class="session-cover-svg" src="attached_assets/Jaus Musik.jpg" alt="Carátula Jaus Musik" style="width:100%;height:300px;object-fit:cover;display:block;border-radius:var(--radius);box-shadow:var(--shadow-hover);" />
@@ -918,6 +1018,7 @@
                 title: 'Tributo MA',
                 subtitle: 'No se hace música como antes, pero se puede pinchar como antes. Es un remember con corazón noventero.',
                 audioUrl: 'https://dn721606.ca.archive.org/0/items/tributo-ma/Tributo%20MA.mp3',
+                downloadUrl: 'https://dn721606.ca.archive.org/0/items/tributo-ma/Tributo%20MA.mp3',
                 duration: '01:24:15',
                 cover: `<img class="session-cover-svg" src="attached_assets/Tributo_MA.jpg" alt="Carátula Tributo MA" style="width:100%;height:300px;object-fit:cover;display:block;border-radius:var(--radius);box-shadow:var(--shadow-hover);" />`,
                 tracklist: [
@@ -950,7 +1051,7 @@
                 title: 'Insane',
                 subtitle: 'Imagina a Alicia cayendo, pero esta vez con un bombo hipnótico y pads melódicos. Sigue al conejo.',
                 audioUrl: 'https://dn720700.ca.archive.org/0/items/in-sane/InSANE.flac',
-
+                downloadUrl: 'https://dn720700.ca.archive.org/0/items/in-sane/InSANE.flac',
                 duration: '01:18:42',
                 cover: `<img class="session-cover-svg" src="attached_assets/insane.jpg" alt="Carátula Insane" style="width:100%;height:300px;object-fit:cover;display:block;border-radius:var(--radius);box-shadow:var(--shadow-hover);" />`,
                 tracklist: [
@@ -2516,10 +2617,66 @@
             }
         }
 
+        // Download functionality
+        function setupDownloadButton() {
+            const downloadSection = document.getElementById('downloadSection');
+            const downloadBtn = document.getElementById('downloadBtn');
+            const downloadModal = document.getElementById('downloadModal');
+            const closeDownloadModal = document.getElementById('closeDownloadModal');
+            const downloadLink = document.getElementById('downloadLink');
+
+            // Get current session
+            const urlParams = new URLSearchParams(window.location.search);
+            const sessionId = urlParams.get('session');
+            const session = sessionData[sessionId];
+
+            // Show download button only for sessions with download URL
+            if (session && session.downloadUrl) {
+                downloadSection.style.display = 'block';
+
+                // Set up download link
+                downloadLink.href = session.downloadUrl;
+
+                // Download button click handler
+                downloadBtn.addEventListener('click', function() {
+                    downloadModal.style.display = 'flex';
+                    document.body.style.overflow = 'hidden'; // Prevent background scrolling
+                });
+
+                // Close modal handlers
+                closeDownloadModal.addEventListener('click', function() {
+                    downloadModal.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                });
+
+                // Close modal when clicking outside
+                downloadModal.addEventListener('click', function(e) {
+                    if (e.target === downloadModal) {
+                        downloadModal.style.display = 'none';
+                        document.body.style.overflow = 'auto';
+                    }
+                });
+
+                // Close modal with Escape key
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape' && downloadModal.style.display === 'flex') {
+                        downloadModal.style.display = 'none';
+                        document.body.style.overflow = 'auto';
+                    }
+                });
+
+                console.log('Download button configured for session:', sessionId, 'URL:', session.downloadUrl);
+            } else {
+                downloadSection.style.display = 'none';
+                console.log('No download URL available for session:', sessionId);
+            }
+        }
+
         // Initialize when page loads
         document.addEventListener('DOMContentLoaded', function() {
             initializePlayer();
             setupMobileNavigationPlayer();
+            setupDownloadButton();
         });
     </script>
 </body>

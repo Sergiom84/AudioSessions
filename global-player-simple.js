@@ -7,7 +7,7 @@ class SimpleAudioPlayer {
         // Detección mejorada de dispositivos
         this.isAndroid = /Android/i.test(navigator.userAgent);
         this.isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
-                    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 0);
+                    (navigator.userAgentData?.platform === 'macOS' && navigator.maxTouchPoints > 0);
         this.isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
                        (navigator.maxTouchPoints && navigator.maxTouchPoints > 0) ||
                        'ontouchstart' in window;
@@ -140,15 +140,54 @@ class SimpleAudioPlayer {
         document.body.insertAdjacentHTML('beforeend', playerHTML);
 
         // Agregar evento click a la barra de progreso para seek
-        document.getElementById('playerProgress').addEventListener('click', (e) => {
+        const progressBar = document.getElementById('playerProgress');
+        progressBar.addEventListener('click', (e) => {
             if (this.audio && this.audio.duration) {
                 const rect = e.target.getBoundingClientRect();
                 const percent = (e.clientX - rect.left) / rect.width;
                 const newTime = percent * this.audio.duration;
-                this.audio.currentTime = newTime;
-                console.log('Seek a:', newTime, 'segundos');
+                this.seekTo(newTime);
+                this.log('CLICK', 'Seek desde barra de progreso', {
+                    percent: percent,
+                    newTime: newTime,
+                    duration: this.audio.duration
+                });
             }
         });
+
+        // Eventos táctiles para la barra de progreso en móviles
+        if (this.isMobile) {
+            let isDragging = false;
+
+            progressBar.addEventListener('touchstart', () => {
+                isDragging = true;
+                this.log('CLICK', 'Touch start en barra de progreso');
+            }, { passive: true });
+
+            progressBar.addEventListener('touchmove', (e) => {
+                if (isDragging && this.audio && this.audio.duration) {
+                    const rect = progressBar.getBoundingClientRect();
+                    const percent = Math.max(0, Math.min(1, (e.touches[0].clientX - rect.left) / rect.width));
+
+                    // Actualizar visualmente sin cambiar el audio aún
+                    document.getElementById('playerProgressBar').style.width = (percent * 100) + '%';
+                }
+            }, { passive: true });
+
+            progressBar.addEventListener('touchend', (e) => {
+                if (isDragging && this.audio && this.audio.duration) {
+                    const rect = progressBar.getBoundingClientRect();
+                    const percent = Math.max(0, Math.min(1, (e.changedTouches[0].clientX - rect.left) / rect.width));
+                    const newTime = percent * this.audio.duration;
+                    this.seekTo(newTime);
+                    this.log('CLICK', 'Touch seek completado', {
+                        percent: percent,
+                        newTime: newTime
+                    });
+                }
+                isDragging = false;
+            }, { passive: true });
+        }
     }
 
     bindEvents() {
@@ -448,9 +487,46 @@ class SimpleAudioPlayer {
 
     pause() {
         if (this.audio) {
+            this.log('AUDIO', 'Pausando audio manualmente');
             this.audio.pause();
             this.isPlaying = false;
             document.getElementById('playPauseBtn').textContent = '▶️';
+        }
+    }
+
+    stop() {
+        if (this.audio) {
+            this.log('AUDIO', 'Deteniendo audio');
+            this.audio.pause();
+            this.audio.currentTime = 0;
+            this.isPlaying = false;
+            document.getElementById('playPauseBtn').textContent = '▶️';
+            this.updateProgress();
+        }
+    }
+
+    seekTo(time) {
+        if (this.audio && this.audio.duration) {
+            const newTime = Math.max(0, Math.min(time, this.audio.duration));
+            this.log('AUDIO', 'Seeking to time', {
+                requestedTime: time,
+                actualTime: newTime,
+                duration: this.audio.duration
+            });
+            this.audio.currentTime = newTime;
+            this.updateProgress();
+        }
+    }
+
+    seekRelative(seconds) {
+        if (this.audio) {
+            const newTime = this.audio.currentTime + seconds;
+            this.log('AUDIO', 'Seeking relative', {
+                currentTime: this.audio.currentTime,
+                offset: seconds,
+                newTime: newTime
+            });
+            this.seekTo(newTime);
         }
     }
 
