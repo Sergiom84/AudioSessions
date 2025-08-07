@@ -2157,6 +2157,7 @@
                     }
                     e.target.style.transform = 'scale(1)';
                     e.preventDefault(); // Evitar doble evento
+                    playPauseBtn.click();
                 });
 
                 // Touch events para otros botones
@@ -2175,6 +2176,7 @@
                         btn.addEventListener('touchend', (e) => {
                             e.target.style.transform = 'scale(1)';
                             e.preventDefault();
+                            btn.click();
                         });
                     }
                 });
@@ -2662,6 +2664,8 @@
                         e.target.style.background = 'linear-gradient(135deg, #00cc66, #00aa55)';
                     }, { passive: true });
 
+                    let touchHandled = false;
+
                     // Evento principal de touch
                     downloadBtn.addEventListener('touchend', function(e) {
                         console.log('Touch end en botón de descarga - abriendo modal');
@@ -2669,14 +2673,20 @@
                         e.target.style.background = 'linear-gradient(135deg, #00ff88, #00cc66)';
                         e.preventDefault(); // Prevenir doble evento
                         e.stopPropagation(); // Prevenir propagación
+                        touchHandled = true;
                         openDownloadModal();
                     }, { passive: false });
 
-                    // Prevenir eventos click en móviles
+                    // Fallback para dispositivos sin eventos táctiles
                     downloadBtn.addEventListener('click', function(e) {
-                        console.log('Click prevenido en móvil para botón de descarga');
-                        e.preventDefault();
-                        e.stopPropagation();
+                        console.log('Click en botón de descarga (fallback)');
+                        if (touchHandled) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            touchHandled = false;
+                        } else {
+                            openDownloadModal();
+                        }
                     });
                 } else {
                     // Solo eventos click para desktop
