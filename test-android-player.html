@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Android Audio Player</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #222;
+            color: white;
+        }
+        .test-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .device-info {
+            background: #333;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .test-session {
+            background: #444;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .test-session:hover {
+            background: #555;
+        }
+        .test-session h3 {
+            margin: 0 0 10px 0;
+            color: #00ff88;
+        }
+        .test-session p {
+            margin: 0;
+            color: #ccc;
+        }
+        .console-log {
+            background: #111;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>Test de Reproductor de Audio - Android</h1>
+        
+        <div class="device-info" id="deviceInfo">
+            <h3>Información del Dispositivo</h3>
+            <p>Cargando...</p>
+        </div>
+        
+        <h2>Sesiones de Prueba</h2>
+        
+        <div class="test-session" onclick="testSession1()">
+            <h3>🎵 Test Session 1 - MP3</h3>
+            <p>Archivo MP3 de prueba para verificar compatibilidad básica</p>
+        </div>
+        
+        <div class="test-session" onclick="testSession2()">
+            <h3>🎶 Test Session 2 - FLAC</h3>
+            <p>Archivo FLAC con fallback a MP3 para Android</p>
+        </div>
+        
+        <div class="test-session" onclick="testSession3()">
+            <h3>🎸 Test Session 3 - URL Externa</h3>
+            <p>Audio desde URL externa para probar CORS</p>
+        </div>
+        
+        <div class="console-log" id="consoleLog">
+            <strong>Console Log:</strong><br>
+        </div>
+    </div>
+
+    <script src="global-player-simple.js"></script>
+    <script>
+        // Capturar logs de consola
+        const originalLog = console.log;
+        const originalError = console.error;
+        const originalWarn = console.warn;
+        const logContainer = document.getElementById('consoleLog');
+        
+        function addToLog(type, ...args) {
+            const timestamp = new Date().toLocaleTimeString();
+            const message = args.map(arg => 
+                typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+            ).join(' ');
+            
+            logContainer.innerHTML += `<div style="color: ${
+                type === 'error' ? '#ff6b6b' : 
+                type === 'warn' ? '#ffd93d' : 
+                type === 'log' ? '#6bcf7f' : '#fff'
+            }">[${timestamp}] ${type.toUpperCase()}: ${message}</div>`;
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+        
+        console.log = (...args) => {
+            originalLog.apply(console, args);
+            addToLog('log', ...args);
+        };
+        
+        console.error = (...args) => {
+            originalError.apply(console, args);
+            addToLog('error', ...args);
+        };
+        
+        console.warn = (...args) => {
+            originalWarn.apply(console, args);
+            addToLog('warn', ...args);
+        };
+        
+        // Mostrar información del dispositivo
+        document.addEventListener('DOMContentLoaded', () => {
+            const deviceInfo = document.getElementById('deviceInfo');
+            const isAndroid = /Android/i.test(navigator.userAgent);
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            
+            deviceInfo.innerHTML = `
+                <h3>Información del Dispositivo</h3>
+                <p><strong>User Agent:</strong> ${navigator.userAgent}</p>
+                <p><strong>Es Android:</strong> ${isAndroid ? '✅ Sí' : '❌ No'}</p>
+                <p><strong>Es iOS:</strong> ${isIOS ? '✅ Sí' : '❌ No'}</p>
+                <p><strong>Es Móvil:</strong> ${isMobile ? '✅ Sí' : '❌ No'}</p>
+                <p><strong>Soporte Audio:</strong> ${!!window.Audio ? '✅ Sí' : '❌ No'}</p>
+                <p><strong>Touch Support:</strong> ${'ontouchstart' in window ? '✅ Sí' : '❌ No'}</p>
+                <p><strong>Max Touch Points:</strong> ${navigator.maxTouchPoints || 0}</p>
+            `;
+            
+            console.log('Página de prueba cargada - Información del dispositivo:', {
+                isAndroid,
+                isIOS,
+                isMobile,
+                userAgent: navigator.userAgent,
+                audioSupport: !!window.Audio,
+                touchSupport: 'ontouchstart' in window
+            });
+        });
+        
+        // Funciones de prueba
+        function testSession1() {
+            console.log('=== INICIANDO TEST SESSION 1 (MP3) ===');
+            const session = {
+                title: 'Test MP3 Audio',
+                audio_url: 'https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3',
+                cover: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAiIGhlaWdodD0iNTAiIHZpZXdCb3g9IjAgMCA1MCA1MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjUwIiBoZWlnaHQ9IjUwIiBmaWxsPSIjMDBmZjg4Ii8+Cjx0ZXh0IHg9IjI1IiB5PSIzMCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSIjMDAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj4xPC90ZXh0Pgo8L3N2Zz4K'
+            };
+            playSession(session);
+        }
+        
+        function testSession2() {
+            console.log('=== INICIANDO TEST SESSION 2 (FLAC con fallback) ===');
+            const session = {
+                title: 'Test FLAC Audio',
+                audio_url: 'https://dn720700.ca.archive.org/0/items/in-sane/InSANE.flac',
+                cover: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAiIGhlaWdodD0iNTAiIHZpZXdCb3g9IjAgMCA1MCA1MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjUwIiBoZWlnaHQ9IjUwIiBmaWxsPSIjZmY2YjZiIi8+Cjx0ZXh0IHg9IjI1IiB5PSIzMCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSIjZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj4yPC90ZXh0Pgo8L3N2Zz4K'
+            };
+            playSession(session);
+        }
+        
+        function testSession3() {
+            console.log('=== INICIANDO TEST SESSION 3 (URL Externa) ===');
+            const session = {
+                title: 'Test External URL',
+                audio_url: 'https://archive.org/download/first-date-vol.-ii/First%20Date%20Vol.II.mp3',
+                cover: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAiIGhlaWdodD0iNTAiIHZpZXdCb3g9IjAgMCA1MCA1MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjUwIiBoZWlnaHQ9IjUwIiBmaWxsPSIjZmZkOTNkIi8+Cjx0ZXh0IHg9IjI1IiB5PSIzMCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSIjMDAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj4zPC90ZXh0Pgo8L3N2Zz4K'
+            };
+            playSession(session);
+        }
+    </script>
+</body>
+</html>
