@@ -191,8 +191,42 @@ class SimpleAudioPlayer {
     }
 
     bindEvents() {
-        document.getElementById('playPauseBtn').addEventListener('click', () => this.togglePlay());
-        document.getElementById('volumeSlider').addEventListener('input', (e) => this.setVolume(e.target.value));
+        const playPauseBtn = document.getElementById('playPauseBtn');
+        const volumeSlider = document.getElementById('volumeSlider');
+
+        // Eventos de click para desktop
+        playPauseBtn.addEventListener('click', () => {
+            this.log('CLICK', 'Click en play/pause (desktop)');
+            this.togglePlay();
+        });
+
+        volumeSlider.addEventListener('input', (e) => this.setVolume(e.target.value));
+
+        // Eventos táctiles específicos para móviles
+        if (this.isMobile) {
+            this.log('INIT', 'Configurando eventos táctiles para móvil');
+
+            // Prevenir eventos click duplicados en móviles
+            playPauseBtn.addEventListener('click', (e) => {
+                if (this.isMobile) {
+                    e.preventDefault();
+                    this.log('CLICK', 'Click prevenido en móvil - usando touch events');
+                }
+            });
+
+            // Touch events para el botón play/pause
+            playPauseBtn.addEventListener('touchstart', (e) => {
+                this.log('CLICK', 'Touch start en play/pause');
+                e.target.style.transform = 'scale(0.95)';
+            }, { passive: true });
+
+            playPauseBtn.addEventListener('touchend', (e) => {
+                this.log('CLICK', 'Touch end en play/pause - ejecutando togglePlay');
+                e.target.style.transform = 'scale(1)';
+                e.preventDefault();
+                this.togglePlay();
+            }, { passive: false });
+        }
 
         // Atajos de teclado básicos (solo para desktop)
         if (!this.isMobile) {
@@ -221,44 +255,8 @@ class SimpleAudioPlayer {
             document.addEventListener('touchstart', enableAudioContext, { once: true, passive: true });
             document.addEventListener('click', enableAudioContext, { once: true });
 
-            // Eventos táctiles específicos para el botón de play/pause
-            const playPauseBtn = document.getElementById('playPauseBtn');
-            if (playPauseBtn) {
-                // Eventos touch para Android
-                if (this.isAndroid) {
-                    playPauseBtn.addEventListener('touchstart', (e) => {
-                        this.log('CLICK', 'Android: touchstart en play/pause', {
-                            touches: e.touches ? e.touches.length : 0,
-                            target: e.target.tagName
-                        });
-                        e.target.style.transform = 'scale(0.95)';
-                    }, { passive: true });
-
-                    playPauseBtn.addEventListener('touchend', (e) => {
-                        this.log('CLICK', 'Android: touchend en play/pause', {
-                            isPlaying: this.isPlaying,
-                            userInteracted: this.userInteracted,
-                            hasAudio: !!this.audio
-                        });
-                        e.target.style.transform = 'scale(1)';
-                        e.preventDefault();
-                        this.togglePlay();
-                    }, { passive: false });
-                }
-
-                // Eventos touch para iOS
-                if (this.isIOS) {
-                    playPauseBtn.addEventListener('touchstart', (e) => {
-                        console.log('iOS: touchstart en play/pause');
-                        e.target.style.transform = 'scale(0.95)';
-                    }, { passive: true });
-
-                    playPauseBtn.addEventListener('touchend', (e) => {
-                        console.log('iOS: touchend en play/pause');
-                        e.target.style.transform = 'scale(1)';
-                    }, { passive: true });
-                }
-            }
+            // Los eventos táctiles ya están configurados en bindEvents()
+            this.log('INIT', 'Eventos táctiles configurados en bindEvents()');
         }
     }
 

@@ -563,8 +563,9 @@ class GlobalAudioPlayer {
             });
 
             this.playBtn.addEventListener('touchend', (e) => {
-                this.logger.log('CLICK', 'Touchend en botón global play/pause');
+                this.logger.log('CLICK', 'Touchend en botón global play/pause - ejecutando togglePlayPause');
                 e.preventDefault(); // Prevenir doble evento
+                this.togglePlayPause(); // Garantizar que la reproducción se active en dispositivos táctiles
             });
 
             // Touch events para la barra de progreso

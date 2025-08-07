@@ -78,6 +78,15 @@
             <button class="test-btn" onclick="loadTechnoSession()">🔥 Techno Session</button>
         </div>
     </div>
+
+    <div class="test-section">
+        <h3>📥 Test Botón Descarga</h3>
+        <div class="controls-grid">
+            <button class="test-btn" onclick="testDownloadButton()">📥 Test Descarga</button>
+            <button class="test-btn" onclick="goToDownloadTest()">📱 Página Test</button>
+        </div>
+        <div class="status" id="downloadStatus">Carga una sesión con descarga para probar</div>
+    </div>
     
     <div class="test-section">
         <h3>⏯️ Controles de Reproducción</h3>
@@ -341,6 +350,43 @@
             addLog('INFO', 'Logs limpiados');
         }
         
+        function testDownloadButton() {
+            addLog('TEST', 'Probando botón de descarga');
+            const downloadBtn = document.getElementById('downloadBtn');
+            const downloadStatus = document.getElementById('downloadStatus');
+
+            if (downloadBtn) {
+                downloadStatus.innerHTML = `
+                    <strong>Botón encontrado:</strong> ✅<br>
+                    <strong>Visible:</strong> ${downloadBtn.style.display !== 'none' ? '✅' : '❌'}<br>
+                    <strong>Eventos:</strong> Verificando...
+                `;
+
+                // Simular touch en el botón
+                if ('ontouchstart' in window) {
+                    const touchStart = new TouchEvent('touchstart', { bubbles: true });
+                    const touchEnd = new TouchEvent('touchend', { bubbles: true });
+
+                    downloadBtn.dispatchEvent(touchStart);
+                    setTimeout(() => {
+                        downloadBtn.dispatchEvent(touchEnd);
+                        addLog('SUCCESS', 'Eventos touch simulados en botón descarga');
+                    }, 100);
+                } else {
+                    downloadBtn.click();
+                    addLog('SUCCESS', 'Click simulado en botón descarga');
+                }
+            } else {
+                downloadStatus.innerHTML = '<strong>Botón NO encontrado:</strong> ❌<br>Carga una sesión con descarga primero';
+                addLog('ERROR', 'Botón de descarga no encontrado');
+            }
+        }
+
+        function goToDownloadTest() {
+            addLog('INFO', 'Redirigiendo a página de test de descarga móvil');
+            window.location.href = 'test-mobile-download.html';
+        }
+
         function exportLogs() {
             const allLogs = {
                 testLogs: testLogs,
@@ -350,9 +396,9 @@
                     timestamp: new Date().toISOString()
                 }
             };
-            
+
             const logsText = JSON.stringify(allLogs, null, 2);
-            
+
             if (navigator.clipboard) {
                 navigator.clipboard.writeText(logsText).then(() => {
                     addLog('SUCCESS', 'Logs copiados al clipboard');
