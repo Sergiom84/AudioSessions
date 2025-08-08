@@ -235,6 +235,11 @@
         .modal-content {
             padding: 24px;
         }
+        /* Download instructions styling */
+        .download-illustration { display: flex; align-items: center; justify-content: center; margin-bottom: 16px; }
+        .download-illustration img { max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+        .download-instructions { text-align: left; margin: 12px 0 20px; }
+        .download-instructions p { margin: 8px 0; font-size: 15px; line-height: 1.5; color: var(--text-primary); }
 
         .modal-options {
             display: flex;
@@ -460,12 +465,13 @@
                 <button class="modal-close" id="closeDownloadModal">&times;</button>
             </div>
             <div class="modal-content">
-                <div style="text-align: center; margin-bottom: 20px;">
-                    <img src="attached_assets/Download.jpg" alt="Instrucciones de descarga" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+                <div class="download-illustration">
+                    <img src="attached_assets/Download.jpg" alt="Instrucciones de descarga">
                 </div>
-                <p style="text-align: center; font-size: 16px; margin-bottom: 20px;">
-                    Pulsa en los <strong>tres puntitos</strong> para comenzar la descarga
-                </p>
+                <div class="download-instructions">
+                    <p><strong>Si estás en un ordenador</strong>, pulsa: <em>Ir a la descarga</em>, a continuación, en los <strong>tres puntitos</strong> y <strong>download</strong>.</p>
+                    <p><strong>Si estás en un móvil</strong>, deja pulsado durante <strong>1 segundo</strong> <em>Ir a la descarga</em> y selecciona <strong>abrir en otra pestaña</strong>; cuando haya cargado te solicitará que lo descargues.</p>
+                </div>
                 <div style="text-align: center;">
                     <a id="downloadLink" href="#" target="_blank" class="download-link-btn">
                         <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
