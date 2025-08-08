@@ -2632,37 +2632,34 @@
             const sessionId = urlParams.get('session');
             const session = sessionData[sessionId];
 
-            // Show download button only for sessions with download URL
-            if (session && session.downloadUrl) {
+            // Detectar si es móvil (declarado antes de cualquier uso)
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+                            (navigator.maxTouchPoints && navigator.maxTouchPoints > 0) ||
+                            'ontouchstart' in window;
+
+            // Mostrar botón si hay sesión válida y existe alguna URL (downloadUrl o audioUrl)
+            if (session && (session.downloadUrl || session.audioUrl)) {
                 downloadSection.style.display = 'block';
 
-                // Set up download link
-                downloadLink.href = session.downloadUrl;
+                // Determinar URL final de descarga (downloadUrl o fallback a audioUrl)
+                const finalDownloadUrl = (session.downloadUrl && session.downloadUrl.trim() !== '') ? session.downloadUrl : session.audioUrl;
 
-                // Agregar manejador click/touch al enlace para móviles
-                downloadLink.addEventListener('click', (e) => {
-                    console.log('Click en enlace de descarga - URL:', session.downloadUrl);
-                    e.preventDefault();
-                    window.open(session.downloadUrl, '_blank');
-                });
+                // Configurar enlace de descarga (dejar que el navegador gestione la navegación)
+                downloadLink.href = finalDownloadUrl;
+                downloadLink.setAttribute('rel', 'noopener');
+                // Sugerir descarga para desktop cuando sea posible (puede ser ignorado cross-origin)
+                if (!isMobile) {
+                    downloadLink.setAttribute('download', '');
+                }
 
-                // Eventos táctiles específicos para el enlace de descarga en móviles
+                // Feedback visual opcional en móviles sin bloquear la navegación por defecto
                 if (isMobile) {
-                    downloadLink.addEventListener('touchend', (e) => {
-                        console.log('Touch end en enlace de descarga - URL:', session.downloadUrl);
-                        e.preventDefault();
-                        e.stopPropagation();
-                        window.open(session.downloadUrl, '_blank');
-                    }, { passive: false });
-
-                    // Feedback visual para el enlace
                     downloadLink.addEventListener('touchstart', (e) => {
                         console.log('Touch start en enlace de descarga');
-                        e.target.style.transform = 'scale(0.95)';
+                        e.currentTarget.style.transform = 'scale(0.95)';
                     }, { passive: true });
-
                     downloadLink.addEventListener('touchend', (e) => {
-                        e.target.style.transform = 'scale(1)';
+                        e.currentTarget.style.transform = 'scale(1)';
                     }, { passive: true });
                 }
 
@@ -2672,11 +2669,6 @@
                     downloadModal.style.display = 'flex';
                     document.body.style.overflow = 'hidden'; // Prevent background scrolling
                 }
-
-                // Detectar si es móvil
-                const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
-                                (navigator.maxTouchPoints && navigator.maxTouchPoints > 0) ||
-                                'ontouchstart' in window;
 
                 console.log('Configurando botón de descarga - Es móvil:', isMobile);
 
