@@ -1,0 +1,3 @@
+* 87e5d7d (HEAD -> main, origin/main) Private Zone: botón acceso por pulsación larga con contraseña; Analíticas locales (vistas/descargas por sesión) visibles en Private Zone; Download: fallback a audioUrl + conteo de descargas.
+* 3743505 Fix: Descarga — usa audioUrl como fallback, isMobile inicializado antes y enlace del modal abre directamente en nueva pestaña (sin bloquear eventos).
+* b8943c1 🔗 Fix FINAL: Enlace descarga dentro del modal

@@ -1,0 +1,3 @@
+## main...origin/main
+?? .git-remotes.txt
+?? .git-status.txt
