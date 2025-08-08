@@ -1,57 +1,32 @@
-@echo off
-echo ==========================================
-echo  AudioSessions - Subiendo a GitHub
-echo ==========================================
+@echo on
+REM AudioSessions - Upload to GitHub (robust)
 
-cd /d "c:\Users\Sergio\Desktop\IA\APP´s\AudioSessions"
+cd /d "%~dp0"
 
-echo.
-echo Verificando estado de Git...
-git status
+git --no-pager --version
+git rev-parse --is-inside-work-tree >NUL 2>&1 || git init
 
-echo.
-echo Agregando todos los archivos...
+REM Ensure branch is main
+git checkout -B main
+
+REM Ensure remote 'origin' points to the correct repo
+git remote get-url origin >NUL 2>&1 || git remote add origin https://github.com/Sergiom84/AudioSessions.git
+git remote set-url origin https://github.com/Sergiom84/AudioSessions.git
+
+echo ===== Remotes =====
+git remote -v
+
+echo ===== Status =====
+git status -sb
+
+echo ===== Commit =====
 git add -A
+git commit -m "Sync: Private Zone analytics modal + fixes" || echo No changes to commit.
 
-echo.
-echo Creando commit...
-git commit -m "🎵 AudioSessions v2.0: Media Session API completa y mejoras UX
+echo ===== Push (verbose) =====
+git push -v -u origin main
 
-✨ Características principales implementadas:
-- 📱 Media Session API para pantalla de bloqueo (título + imagen)
-- 🔄 Modal de reanudación con auto-play automático  
-- 📥 Modal de instrucciones de descarga con imagen
-- 🔧 Corrección de iconos SVG en botón play/pause
-- 🧭 Navegación optimizada con soporte móvil
+echo ===== Last commit =====
+git --no-pager log -1 --oneline --decorate --no-color
 
-🎯 Mejoras técnicas:
-- URLs de audio/descarga unificadas en todas las sesiones
-- Extracción robusta de artwork desde attached_assets/
-- Sistema de logging detallado para debugging
-- Gestión sincronizada del estado de audio
-- Corrección texto Nati Nati según carátula
-
-💻 Archivos principales modificados:
-- player.html: Modales, auto-play, navegación mejorada
-- global-player.js: Media Session API optimizada
-- Páginas de género: URLs actualizadas
-
-🎉 Resultado: Experiencia completa con pantalla de bloqueo funcional"
-
-echo.
-echo Configurando repositorio remoto...
-git remote add origin https://github.com/Sergiom84/AudioSessions.git 2>nul
-
-echo.
-echo Subiendo a GitHub...
-git push -u origin main
-
-echo.
-echo Verificando últimos commits...
-git log --oneline -3
-
-echo.
-echo ==========================================
-echo  Proceso completado!
-echo ==========================================
 pause

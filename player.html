@@ -319,6 +319,7 @@
             .modal-btn {
                 -webkit-touch-callout: none;
                 -webkit-user-select: none;
+                user-select: none;
             }
         }
 
@@ -2663,6 +2664,19 @@
                     }, { passive: true });
                 }
 
+                // Contabilizar descarga al pulsar el enlace
+                const countDownload = () => {
+                    try {
+                        const params = new URLSearchParams(window.location.search);
+                        const sid = params.get('session');
+                        if (sid) incrementCounter('sessionDownloads', sid, 1);
+                    } catch {}
+                };
+                downloadLink.addEventListener('click', countDownload);
+                if (isMobile) {
+                    downloadLink.addEventListener('touchend', countDownload, { passive: true });
+                }
+
                 // Download button click handler (desktop y móvil)
                 function openDownloadModal() {
                     console.log('Abriendo modal de descarga para sesión:', sessionId);
@@ -2766,11 +2780,50 @@
             }
         }
 
+        // Analítica: helpers
+    function incrementCounter(key, sessionId, amount = 1) {
+            try {
+                const obj = JSON.parse(localStorage.getItem(key) || '{}');
+                obj[sessionId] = (obj[sessionId] || 0) + amount;
+                localStorage.setItem(key, JSON.stringify(obj));
+            } catch {}
+        }
+        function saveSessionTitle(sessionId, title) {
+            try {
+                const obj = JSON.parse(localStorage.getItem('sessionsInfo') || '{}');
+                if (!obj[sessionId]) { obj[sessionId] = title; }
+                localStorage.setItem('sessionsInfo', JSON.stringify(obj));
+            } catch {}
+        }
+
+        // Hook analítica en reproducción
+        function setupAnalyticsForSession() {
+            const params = new URLSearchParams(window.location.search);
+            const sessionId = params.get('session');
+            const session = sessionData[sessionId];
+            if (!sessionId || !session) return;
+            // Guardar título para la tabla
+            saveSessionTitle(sessionId, session.title || sessionId);
+            // Contar "escucha" en el primer evento 'playing'
+            const audio = document.getElementById('mainAudioPlayer');
+            if (audio) {
+                let counted = false;
+                const onPlaying = () => {
+                    if (!counted) {
+                        incrementCounter('sessionListens', sessionId, 1);
+                        counted = true;
+                    }
+                };
+                audio.addEventListener('playing', onPlaying, { once: true });
+            }
+        }
+
         // Initialize when page loads
         document.addEventListener('DOMContentLoaded', function() {
             initializePlayer();
             setupMobileNavigationPlayer();
             setupDownloadButton();
+            setupAnalyticsForSession();
         });
     </script>
 </body>

@@ -29,9 +29,109 @@
         <div class="particle"></div>
     </div>
     
+    <style>
+        /* Botón circular amarillo para acceso oculto */
+        .longpress-access {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #fff7a6, #ffd84d 60%, #f5b700);
+            box-shadow: 0 8px 20px rgba(245, 183, 0, 0.45);
+            border: 2px solid rgba(0,0,0,0.08);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            user-select: none;
+            transition: transform .15s ease, box-shadow .15s ease;
+            position: fixed;
+            right: 16px;
+            bottom: 16px;
+            z-index: 10010;
+        }
+        .longpress-access:active { transform: scale(0.96); }
+        .longpress-access::after { content: ''; display: block; width: 0; height: 0; }
+        .access-hint { display: none; }
+        .access-panel { text-align: center; padding: 24px 16px; }
+        .analytics-section { margin-top: 24px; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 16px; }
+        .analytics-section h3 { margin: 0 0 12px; }
+        .analytics-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        .analytics-table th, .analytics-table td { padding: 8px 10px; border-bottom: 1px solid var(--border-color); text-align: left; }
+        .analytics-table th { color: var(--text-secondary); font-weight: 600; }
+        .analytics-empty { color: var(--text-secondary); font-size: 0.95rem; }
+
+        /* Analytics Modal */
+        .analytics-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10050;
+        }
+        .analytics-modal {
+            background: var(--card-bg, #ffffff);
+            color: var(--text-primary, #0f0f0f);
+            width: min(960px, 94vw);
+            max-height: 85vh;
+            border-radius: 14px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .analytics-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--border-color, #e5e5e5);
+            background: var(--background, #fafafa);
+        }
+        .analytics-modal-header h3 { margin: 0; font-size: 1.1rem; }
+        .analytics-modal-close {
+            appearance: none;
+            background: transparent;
+            border: none;
+            font-size: 22px;
+            line-height: 1;
+            cursor: pointer;
+            color: var(--text-secondary, #666);
+        }
+        .analytics-modal-body { padding: 0; overflow: auto; }
+        .analytics-modal-body .analytics-table { font-size: 15px; }
+
+        /* Ajustes de título en móvil para evitar solapado */
+        @media (max-width: 600px) {
+            .genre-nav .nav-title {
+                font-size: 1.5rem;
+                line-height: 1.2;
+                letter-spacing: 0.02em;
+                white-space: normal;
+                word-break: keep-all;
+                text-wrap: balance;
+            }
+        }
+    </style>
+
     <div class="viewport">
-        <!-- Contenido protegido -->
-        <div id="private-content">
+        <!-- Panel de acceso cuando no autenticado -->
+        <div id="access-gate" class="access-panel" style="display:none;">
+            <h2>Zona Privada</h2>
+            <p>Para acceder, mantén pulsado el botón amarillo e introduce la contraseña.</p>
+            <div id="accessButton" class="longpress-access" title="Mantén pulsado para acceder" aria-label="Acceso privado"></div>
+            <div class="access-hint">Mantén pulsado 1 segundo</div>
+
+            <div class="analytics-section" id="analyticsLocked" style="display:none;">
+                <h3>Uso de la aplicación</h3>
+                <div id="analyticsTableLocked"></div>
+            </div>
+        </div>
+
+    <!-- Contenido protegido -->
+    <div id="private-content" style="display:none;">
             <main class="container private-sessions-container">
                 <!-- Sari Bari 2025 VIP Session -->
                 <article class="session-preview-card vip-session" data-session="sari-bari-2025">
@@ -47,22 +147,113 @@
                         <p class="session-description">Sesión exclusiva de House, Deep y Vocal para el 15 de Agosto.</p>
                     </div>
                 </article>
+
+                <!-- Botón discreto para desbloquear analíticas (pulsación larga) -->
+                <div id="analyticsAccessBtn" class="longpress-access" title="Mantén pulsado para ver analíticas" aria-label="Ver analíticas"></div>
+
+                <!-- Analíticas de uso (oculto hasta desbloquear) -->
+                <section id="analyticsSection" class="analytics-section" style="display:none;">
+                    <h3>Analíticas de uso</h3>
+                    <div id="analyticsTable"></div>
+                </section>
             </main>
+        </div>
+    </div>
+
+    <!-- Analytics Modal (overlay) -->
+    <div id="analyticsModalOverlay" class="analytics-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="analyticsModalTitle" style="display:none;">
+        <div class="analytics-modal">
+            <div class="analytics-modal-header">
+                <h3 id="analyticsModalTitle">Analíticas de uso</h3>
+                <button id="analyticsModalClose" class="analytics-modal-close" aria-label="Cerrar">×</button>
+            </div>
+            <div class="analytics-modal-body">
+                <div id="analyticsTableModal"></div>
+            </div>
         </div>
     </div>
     
     <script>
-        // Verificar acceso al cargar la página
+        // Helpers analítica (usa localStorage)
+        function getCounts(key) {
+            try { return JSON.parse(localStorage.getItem(key) || '{}'); } catch { return {}; }
+        }
+        function getSessionsInfo() {
+            try { return JSON.parse(localStorage.getItem('sessionsInfo') || '{}'); } catch { return {}; }
+        }
+        function renderAnalytics(targetElId) {
+            const listens = getCounts('sessionListens');
+            const downloads = getCounts('sessionDownloads');
+            const info = getSessionsInfo();
+            const ids = Array.from(new Set([...Object.keys(listens), ...Object.keys(downloads)])).sort();
+            const container = document.getElementById(targetElId);
+            if (!container) return;
+            if (ids.length === 0) {
+                container.innerHTML = '<div class="analytics-empty">Sin datos aún</div>';
+                return;
+            }
+            let html = '<table class="analytics-table"><thead><tr><th>Sesión</th><th>Escuchas</th><th>Descargas</th></tr></thead><tbody>';
+            ids.forEach(id => {
+                const title = info[id] || id;
+                html += `<tr><td>${title}</td><td>${listens[id] || 0}</td><td>${downloads[id] || 0}</td></tr>`;
+            });
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        // Verificar acceso al cargar la página (sin redirección, muestra gate)
         window.addEventListener('DOMContentLoaded', () => {
-            const access = sessionStorage.getItem('privateAccess');
-            if (access === 'true') {
-                document.getElementById('private-content').style.display = 'block';
+            const access = sessionStorage.getItem('privateAccess') === 'true';
+            const gate = document.getElementById('access-gate');
+            const content = document.getElementById('private-content');
+            if (access) {
+                gate.style.display = 'none';
+                content.style.display = 'block';
                 initializePrivateContent();
+                // Analíticas requieren long-press adicional para mostrarse
             } else {
-                // Redirigir a index si no hay acceso
-                window.location.href = 'index.html';
+                gate.style.display = 'block';
+                content.style.display = 'none';
+                const analyticsLocked = document.getElementById('analyticsLocked');
+                if (analyticsLocked) {
+                    analyticsLocked.style.display = 'block';
+                    renderAnalytics('analyticsTableLocked');
+                }
+                setupAccessLongPress();
             }
         });
+
+        // Setup botón de acceso con long-press y contraseña
+        function setupAccessLongPress() {
+            const btn = document.getElementById('accessButton');
+            if (!btn) return;
+            let timer = null;
+            const PRESS_MS = 1000;
+            const start = () => {
+                if (timer) return;
+                timer = setTimeout(async () => {
+                    timer = null;
+                    const pwd = prompt('Introduce la contraseña:');
+                    if (pwd === 'xe05206') {
+                        sessionStorage.setItem('privateAccess', 'true');
+                        // Mostrar contenido
+                        document.getElementById('access-gate').style.display = 'none';
+                        document.getElementById('private-content').style.display = 'block';
+                        initializePrivateContent();
+                        renderAnalytics('analyticsTable');
+                    } else if (pwd !== null) {
+                        alert('Contraseña incorrecta');
+                    }
+                }, PRESS_MS);
+            };
+            const cancel = () => { if (timer) { clearTimeout(timer); timer = null; } };
+            btn.addEventListener('mousedown', start);
+            btn.addEventListener('mouseup', cancel);
+            btn.addEventListener('mouseleave', cancel);
+            btn.addEventListener('touchstart', start, { passive: true });
+            btn.addEventListener('touchend', cancel, { passive: true });
+            btn.addEventListener('touchcancel', cancel, { passive: true });
+        }
 
         // Inicializar contenido privado una vez autenticado
         function initializePrivateContent() {
@@ -115,6 +306,54 @@
 
             // Inicializar navegación móvil
             setupMobileNavigation();
+            // Desbloqueo por long-press: abrir modal de analíticas
+            setupAnalyticsModal();
+        }
+
+        // Modal helpers
+        function setupAnalyticsModal() {
+            const analyticsBtn = document.getElementById('analyticsAccessBtn');
+            const overlay = document.getElementById('analyticsModalOverlay');
+            const closeBtn = document.getElementById('analyticsModalClose');
+            if (!analyticsBtn || !overlay || !closeBtn) return;
+
+            let pressTimer = null;
+            const start = () => {
+                if (pressTimer) return;
+                pressTimer = setTimeout(() => {
+                    pressTimer = null;
+                    openAnalyticsModal();
+                }, 800);
+            };
+            const cancel = () => { if (pressTimer) { clearTimeout(pressTimer); pressTimer = null; } };
+
+            analyticsBtn.addEventListener('mousedown', start);
+            analyticsBtn.addEventListener('mouseup', cancel);
+            analyticsBtn.addEventListener('mouseleave', cancel);
+            analyticsBtn.addEventListener('touchstart', start, { passive: true });
+            analyticsBtn.addEventListener('touchend', cancel, { passive: true });
+            analyticsBtn.addEventListener('touchcancel', cancel, { passive: true });
+
+            const onBackdrop = (e) => { if (e.target === overlay) closeAnalyticsModal(); };
+            overlay.addEventListener('click', onBackdrop);
+            closeBtn.addEventListener('click', closeAnalyticsModal);
+
+            function onKey(e) { if (e.key === 'Escape') closeAnalyticsModal(); }
+
+            function openAnalyticsModal() {
+                overlay.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+                renderAnalytics('analyticsTableModal');
+                document.addEventListener('keydown', onKey);
+            }
+            function closeAnalyticsModal() {
+                overlay.style.display = 'none';
+                document.body.style.overflow = '';
+                document.removeEventListener('keydown', onKey);
+            }
+            // Expose for potential future use
+            window.openAnalyticsModal = openAnalyticsModal;
+            window.closeAnalyticsModal = closeAnalyticsModal;
         }
     </script>
 </body>
