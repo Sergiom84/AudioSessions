@@ -1,0 +1,189 @@
+{
+  "name": "AudioSessions - Interactive Music Archive",
+  "short_name": "AudioSessions",
+  "description": "Interactive audio sessions archive featuring House, Techno, Progressive and Remember music",
+  "version": "2.0.0",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
+  "orientation": "portrait-primary",
+  "theme_color": "#00ff88",
+  "background_color": "#0a0a0a",
+  "lang": "es-ES",
+  "dir": "ltr",
+  "categories": ["music", "audio", "entertainment"],
+  "shortcuts": [
+    {
+      "name": "House Sessions",
+      "short_name": "House",
+      "description": "Explore House music sessions",
+      "url": "/house.html",
+      "icons": [
+        {
+          "src": "/icons/house-96x96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Techno Sessions",
+      "short_name": "Techno",
+      "description": "Explore Techno music sessions",
+      "url": "/techno.html",
+      "icons": [
+        {
+          "src": "/icons/techno-96x96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Progressive Sessions",
+      "short_name": "Progressive",
+      "description": "Explore Progressive music sessions",
+      "url": "/progressive.html",
+      "icons": [
+        {
+          "src": "/icons/progressive-96x96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Remember Sessions",
+      "short_name": "Remember",
+      "description": "Explore Remember music sessions",
+      "url": "/remember.html",
+      "icons": [
+        {
+          "src": "/icons/remember-96x96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  "icons": [
+    {
+      "src": "/icons/icon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-128x128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-152x152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-384x384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshots/desktop-home.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Home page with genre selection"
+    },
+    {
+      "src": "/screenshots/mobile-player.png",
+      "sizes": "375x812",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Audio player interface"
+    },
+    {
+      "src": "/screenshots/desktop-session.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Session playing with track list"
+    }
+  ],
+  "features": [
+    "Cross Platform",
+    "Audio Streaming",
+    "Offline Playback",
+    "Background Playback",
+    "Media Controls",
+    "Responsive Design"
+  ],
+  "iarc_rating_id": "e84b072d-71b3-4d3e-86ae-31a8ce4e53b7",
+  "prefer_related_applications": false,
+  "protocol_handlers": [
+    {
+      "protocol": "web+audiosessions",
+      "url": "/player.html?session=%s"
+    }
+  ],
+  "file_handlers": [
+    {
+      "action": "/",
+      "accept": {
+        "audio/mpeg": [".mp3"],
+        "audio/flac": [".flac"],
+        "audio/wav": [".wav"]
+      }
+    }
+  ],
+  "share_target": {
+    "action": "/",
+    "method": "GET",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  },
+  "launch_handler": {
+    "client_mode": "focus-existing"
+  },
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "permissions": [
+    "audio-capture",
+    "background-sync",
+    "persistent-storage"
+  ]
+}
