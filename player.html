@@ -4,10 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Audio Player - Sessions Archive</title>
-    <meta name="description" content="Audio player with tracklist and download">
+    <meta name="description" content="Enhanced audio player with spectrum analysis, caching, and offline support">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#00ff88">
+    
+    <!-- Stylesheets -->
     <link rel="stylesheet" href="style.css?v=20250731-1445">
-    <script src="global-player.js?v=20250731-1445"></script>
-    <!-- Cache buster: 2025-07-31 14:45 - Fixed download URL for Nati Nati FLAC -->
+    
+    <!-- Enhanced JavaScript modules -->
+    <script src="js/playerState.js" defer></script>
+    <script src="js/sessionStorage.js" defer></script>
+    <script src="js/audioCache.js" defer></script>
+    <script src="js/enhancedPlayer.js" defer></script>
+    <script src="js/enhancedIntegration.js" defer></script>
+    <script src="global-player.js?v=20250731-1445" defer></script>
 </head>
 <body data-page="player">
     <!-- Scroll Progress Indicator -->

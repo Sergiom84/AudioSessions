@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AudioSessions - Interactive Music Archive</title>
+    <meta name="description" content="Advanced interactive audio sessions archive featuring House, Techno, Progressive and Remember music with offline support">
+    
+    <!-- Critical CSS inlined for faster loading -->
+    <style>
+        /* Critical above-the-fold CSS */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --primary-bg: #0a0a0a;
+            --text-primary: #ffffff;
+            --accent-color: #00ff88;
+            --transition-fast: 0.15s ease;
+        }
+        
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            color: var(--text-primary);
+            background-color: var(--primary-bg);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .loading-screen {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: var(--primary-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+        
+        .loading-spinner {
+            width: 50px; height: 50px;
+            border: 3px solid rgba(0, 255, 136, 0.3);
+            border-top: 3px solid var(--accent-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .genre-section {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        
+        .genre-section.loaded {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+
+    <!-- Preconnect to important resources -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="//fonts.gstatic.com">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json">
+    
+    <!-- PWA Icons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-16x16.png">
+    
+    <!-- PWA Meta tags -->
+    <meta name="theme-color" content="#00ff88">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="AudioSessions">
+    <meta name="mobile-web-app-capable" content="yes">
+    
+    <!-- Performance hints -->
+    <link rel="prefetch" href="/js/audioCache.js">
+    <link rel="prefetch" href="/js/enhancedPlayer.js">
+    <link rel="preload" href="/style.css" as="style">
+    <link rel="preload" href="/global-player.js" as="script">
+    
+    <!-- Service Worker registration (early) -->
+    <script>
+        // Register Service Worker immediately for better caching
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', async () => {
+                try {
+                    const registration = await navigator.serviceWorker.register('/serviceWorker.js', {
+                        scope: '/'
+                    });
+                    console.log('SW registered:', registration);
+                    
+                    // Handle updates
+                    registration.addEventListener('updatefound', () => {
+                        const newWorker = registration.installing;
+                        newWorker.addEventListener('statechange', () => {
+                            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                // New service worker available
+                                if (window.playerState) {
+                                    window.playerState.actions.showNotification({
+                                        title: 'App Updated',
+                                        message: 'New version available. Reload to update.',
+                                        type: 'info',
+                                        timeout: false,
+                                        actions: [{
+                                            text: 'Reload',
+                                            action: () => window.location.reload()
+                                        }]
+                                    });
+                                }
+                            }
+                        });
+                    });
+                } catch (error) {
+                    console.warn('SW registration failed:', error);
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+    <!-- Loading screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <!-- Skip to content for accessibility -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    
+    <!-- Scroll Progress Indicator -->
+    <div class="scroll-progress"></div>
+    
+    <!-- Parallax Background Elements -->
+    <div class="bg-particles">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+    
+    <div class="viewport">
+        <main class="container" id="main-content">
+            <!-- House Section -->
+            <section class="genre-section" data-genre="house" id="house-section">
+                <div class="genre-header">
+                    <h1 class="genre-title">HOUSE</h1>
+                    <div class="genre-indicator"></div>
+                </div>
+                <div class="genre-preview">
+                    <a href="house.html" class="genre-link">
+                        <div class="genre-image-container">
+                            <svg class="genre-image" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <linearGradient id="houseGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#00ff88;stop-opacity:0.8" />
+                                        <stop offset="100%" style="stop-color:#00cc66;stop-opacity:0.9" />
+                                    </linearGradient>
+                                </defs>
+                                <rect width="400" height="300" fill="url(#houseGradient)"/>
+                                <circle cx="200" cy="150" r="60" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+                                <circle cx="200" cy="150" r="40" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+                                <circle cx="200" cy="150" r="8" fill="rgba(255,255,255,0.8)"/>
+                                <text x="200" y="220" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="18" font-weight="bold">HOUSE SESSIONS</text>
+                            </svg>
+                            <div class="genre-overlay">
+                                <span class="genre-cta">Explorar →</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </section>
+
+            <!-- Techno Section -->
+            <section class="genre-section" data-genre="techno" id="techno-section">
+                <div class="genre-header">
+                    <h1 class="genre-title">TECHNO</h1>
+                    <div class="genre-indicator"></div>
+                </div>
+                <div class="genre-preview">
+                    <a href="techno.html" class="genre-link">
+                        <div class="genre-image-container">
+                            <svg class="genre-image" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <linearGradient id="technoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#ff0055;stop-opacity:0.8" />
+                                        <stop offset="100%" style="stop-color:#cc0044;stop-opacity:0.9" />
+                                    </linearGradient>
+                                </defs>
+                                <rect width="400" height="300" fill="url(#technoGradient)"/>
+                                <polygon points="200,90 260,150 200,210 140,150" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+                                <polygon points="200,110 240,150 200,190 160,150" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+                                <circle cx="200" cy="150" r="8" fill="rgba(255,255,255,0.8)"/>
+                                <text x="200" y="250" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="18" font-weight="bold">TECHNO SESSIONS</text>
+                            </svg>
+                            <div class="genre-overlay">
+                                <span class="genre-cta">Explorar →</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </section>
+
+            <!-- Progressive Section -->
+            <section class="genre-section" data-genre="progressive" id="progressive-section">
+                <div class="genre-header">
+                    <h1 class="genre-title">PROGRESSIVE</h1>
+                    <div class="genre-indicator"></div>
+                </div>
+                <div class="genre-preview">
+                    <a href="progressive.html" class="genre-link">
+                        <div class="genre-image-container">
+                            <svg class="genre-image" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <linearGradient id="progressiveGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#0099ff;stop-opacity:0.8" />
+                                        <stop offset="100%" style="stop-color:#0077cc;stop-opacity:0.9" />
+                                    </linearGradient>
+                                </defs>
+                                <rect width="400" height="300" fill="url(#progressiveGradient)"/>
+                                <path d="M150 180 L200 120 L250 180 L200 120 L250 180" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="3"/>
+                                <path d="M170 170 L200 140 L230 170" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="2"/>
+                                <circle cx="200" cy="150" r="8" fill="rgba(255,255,255,0.8)"/>
+                                <text x="200" y="220" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="18" font-weight="bold">PROGRESSIVE</text>
+                            </svg>
+                            <div class="genre-overlay">
+                                <span class="genre-cta">Explorar →</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </section>
+
+            <!-- Remember Section -->
+            <section class="genre-section" data-genre="remember" id="remember-section">
+                <div class="genre-header">
+                    <h1 class="genre-title">REMEMBER</h1>
+                    <div class="genre-indicator"></div>
+                </div>
+                <div class="genre-preview">
+                    <a href="remember.html" class="genre-link">
+                        <div class="genre-image-container">
+                            <svg class="genre-image" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <linearGradient id="rememberGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#ffaa00;stop-opacity:0.8" />
+                                        <stop offset="100%" style="stop-color:#cc8800;stop-opacity:0.9" />
+                                    </linearGradient>
+                                </defs>
+                                <rect width="400" height="300" fill="url(#rememberGradient)"/>
+                                <g transform="translate(200,150)">
+                                    <circle r="50" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+                                    <circle r="30" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+                                    <circle r="8" fill="rgba(255,255,255,0.8)"/>
+                                    <path d="M-20,-20 L20,20 M20,-20 L-20,20" stroke="rgba(255,255,255,0.4)" stroke-width="2"/>
+                                </g>
+                                <text x="200" y="230" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="18" font-weight="bold">REMEMBER</text>
+                            </svg>
+                            <div class="genre-overlay">
+                                <span class="genre-cta">Explorar →</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </section>
+
+            <!-- Private Zone Section -->
+            <section class="genre-section" data-genre="private" id="private-section">
+                <div class="genre-header">
+                    <h1 class="genre-title">PRIVATE ZONE</h1>
+                    <div class="genre-indicator private-indicator"></div>
+                </div>
+                <div class="genre-preview">
+                    <a href="private.html" class="genre-link private-link">
+                        <div class="genre-image-container">
+                            <svg class="genre-image" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <linearGradient id="privateGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#666666;stop-opacity:0.8" />
+                                        <stop offset="100%" style="stop-color:#333333;stop-opacity:0.9" />
+                                    </linearGradient>
+                                </defs>
+                                <rect width="400" height="300" fill="url(#privateGradient)"/>
+                                <g transform="translate(200,150)">
+                                    <rect x="-30" y="-20" width="60" height="40" rx="5" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+                                    <rect x="-15" y="-35" width="30" height="20" rx="15" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+                                    <circle r="3" fill="rgba(255,255,255,0.8)"/>
+                                </g>
+                                <text x="200" y="220" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="18" font-weight="bold">EXCLUSIVE ACCESS</text>
+                            </svg>
+                            <div class="genre-overlay private-overlay">
+                                <span class="genre-cta">Acceder →</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Performance monitoring -->
+    <script>
+        // Performance monitoring
+        window.addEventListener('load', () => {
+            if ('performance' in window) {
+                setTimeout(() => {
+                    const perfData = performance.getEntriesByType('navigation')[0];
+                    console.log('Page load performance:', {
+                        domContentLoaded: perfData.domContentLoadedEventEnd - perfData.domContentLoadedEventStart,
+                        loadComplete: perfData.loadEventEnd - perfData.loadEventStart,
+                        totalTime: perfData.loadEventEnd - perfData.fetchStart
+                    });
+                }, 1000);
+            }
+        });
+    </script>
+
+    <!-- Load non-critical CSS asynchronously -->
+    <link rel="stylesheet" href="style.css" media="print" onload="this.media='all'">
+    
+    <!-- Load JavaScript modules -->
+    <script src="js/playerState.js" defer></script>
+    <script src="js/sessionStorage.js" defer></script>
+    <script src="js/audioCache.js" defer></script>
+    <script src="js/enhancedPlayer.js" defer></script>
+    <script src="global-player.js" defer></script>
+    
+    <!-- Main initialization script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            console.log('AudioSessions: Enhanced initialization starting...');
+            
+            try {
+                // Initialize core systems
+                await initializeCoreModules();
+                
+                // Initialize UI
+                initializeUI();
+                
+                // Setup enhanced features
+                setupEnhancedFeatures();
+                
+                console.log('AudioSessions: Enhanced initialization complete');
+            } catch (error) {
+                console.error('AudioSessions: Initialization failed:', error);
+                showFallbackUI();
+            }
+        });
+        
+        async function initializeCoreModules() {
+            // Wait for modules to load
+            await waitForModules(['PlayerState', 'SessionStorage', 'AudioCache', 'EnhancedAudioPlayer']);
+            
+            // Initialize state management
+            if (!window.playerState) {
+                window.playerState = new PlayerState();
+            }
+            
+            // Initialize storage
+            if (!window.sessionStorageDB) {
+                window.sessionStorageDB = new SessionStorage();
+            }
+            
+            // Initialize audio cache
+            if (!window.audioCache) {
+                window.audioCache = new AudioCache({
+                    enableServiceWorker: true,
+                    maxCacheSize: 300 * 1024 * 1024 // 300MB
+                });
+            }
+            
+            // Setup state watchers
+            setupStateWatchers();
+        }
+        
+        function waitForModules(moduleNames) {
+            return new Promise((resolve) => {
+                const checkModules = () => {
+                    const allLoaded = moduleNames.every(name => window[name]);
+                    if (allLoaded) {
+                        resolve();
+                    } else {
+                        setTimeout(checkModules, 100);
+                    }
+                };
+                checkModules();
+            });
+        }
+        
+        function setupStateWatchers() {
+            // Watch for network changes
+            window.playerState.watch('network.isOnline', (isOnline) => {
+                document.body.classList.toggle('offline', !isOnline);
+                if (!isOnline) {
+                    window.playerState.actions.showNotification({
+                        title: 'Offline Mode',
+                        message: 'You are now offline. Some features may be limited.',
+                        type: 'warning',
+                        timeout: 5000
+                    });
+                }
+            });
+            
+            // Watch for theme changes
+            window.playerState.watch('ui.theme', (theme) => {
+                document.documentElement.setAttribute('data-theme', theme);
+            });
+        }
+        
+        function initializeUI() {
+            // Hide loading screen
+            const loadingScreen = document.getElementById('loadingScreen');
+            loadingScreen.style.opacity = '0';
+            setTimeout(() => {
+                loadingScreen.style.display = 'none';
+            }, 500);
+            
+            // Animate sections
+            const sections = document.querySelectorAll('.genre-section');
+            sections.forEach((section, index) => {
+                setTimeout(() => {
+                    section.classList.add('loaded');
+                }, index * 200);
+            });
+            
+            // Setup scroll progress
+            setupScrollProgress();
+        }
+        
+        function setupEnhancedFeatures() {
+            // Setup offline detection
+            setupOfflineDetection();
+            
+            // Setup performance monitoring
+            setupPerformanceMonitoring();
+            
+            // Setup analytics
+            setupAnalytics();
+            
+            // Setup PWA install prompt
+            setupPWAInstall();
+        }
+        
+        function setupScrollProgress() {
+            const progressBar = document.querySelector('.scroll-progress');
+            if (!progressBar) return;
+            
+            window.addEventListener('scroll', () => {
+                const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
+                const progress = (window.pageYOffset / totalHeight) * 100;
+                progressBar.style.width = `${Math.min(progress, 100)}%`;
+            });
+        }
+        
+        function setupOfflineDetection() {
+            window.addEventListener('online', () => {
+                window.playerState.set('network.isOnline', true);
+            });
+            
+            window.addEventListener('offline', () => {
+                window.playerState.set('network.isOnline', false);
+            });
+        }
+        
+        function setupPerformanceMonitoring() {
+            // Monitor largest contentful paint
+            if ('PerformanceObserver' in window) {
+                const observer = new PerformanceObserver((list) => {
+                    const entries = list.getEntries();
+                    entries.forEach((entry) => {
+                        if (entry.entryType === 'largest-contentful-paint') {
+                            console.log('LCP:', entry.startTime);
+                        }
+                    });
+                });
+                observer.observe({ entryTypes: ['largest-contentful-paint'] });
+            }
+        }
+        
+        function setupAnalytics() {
+            // Track page view
+            if (window.sessionStorageDB) {
+                window.sessionStorageDB.trackEvent('page', 'view', {
+                    url: window.location.href,
+                    referrer: document.referrer,
+                    timestamp: Date.now()
+                });
+            }
+        }
+        
+        function setupPWAInstall() {
+            let deferredPrompt;
+            
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                
+                // Show install prompt
+                window.playerState.actions.showNotification({
+                    title: 'Install App',
+                    message: 'Install AudioSessions for better performance and offline access.',
+                    type: 'info',
+                    timeout: false,
+                    actions: [{
+                        text: 'Install',
+                        action: async () => {
+                            if (deferredPrompt) {
+                                deferredPrompt.prompt();
+                                const result = await deferredPrompt.userChoice;
+                                deferredPrompt = null;
+                            }
+                        }
+                    }]
+                });
+            });
+        }
+        
+        function showFallbackUI() {
+            // Hide loading screen
+            document.getElementById('loadingScreen').style.display = 'none';
+            
+            // Show basic UI
+            const sections = document.querySelectorAll('.genre-section');
+            sections.forEach(section => section.classList.add('loaded'));
+            
+            console.log('AudioSessions: Running in fallback mode');
+        }
+    </script>
+</body>
+</html>

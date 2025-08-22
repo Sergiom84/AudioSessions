@@ -3,10 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Audio Sessions Archive - Private Zone Available</title>
-    <meta name="description" content="Interactive audio sessions archive featuring House, Techno, Progressive and Remember">
+    <title>AudioSessions - Interactive Music Archive</title>
+    <meta name="description" content="Advanced interactive audio sessions archive featuring House, Techno, Progressive and Remember music with offline support">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json">
+    
+    <!-- PWA Meta tags -->
+    <meta name="theme-color" content="#00ff88">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="AudioSessions">
+    
+    <!-- Preconnect to important resources -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="//fonts.gstatic.com">
+    
+    <!-- Stylesheets -->
     <link rel="stylesheet" href="style.css">
-    <script src="global-player.js"></script>
+    
+    <!-- Enhanced JavaScript modules -->
+    <script src="js/playerState.js" defer></script>
+    <script src="js/sessionStorage.js" defer></script>
+    <script src="js/audioCache.js" defer></script>
+    <script src="js/enhancedPlayer.js" defer></script>
+    <script src="js/enhancedIntegration.js" defer></script>
+    <script src="global-player.js" defer></script>
+    
+    <!-- Service Worker registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', async () => {
+                try {
+                    const registration = await navigator.serviceWorker.register('/serviceWorker.js');
+                    console.log('SW registered:', registration);
+                } catch (error) {
+                    console.warn('SW registration failed:', error);
+                }
+            });
+        }
+    </script>
 </head>
 <body>
     <!-- Scroll Progress Indicator -->
