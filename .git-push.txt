@@ -1,6 +1,0 @@
-git: 'credential-manager-core' is not a git command. See 'git --help'.
-Pushing to https://github.com/Sergiom84/AudioSessions.git
-To https://github.com/Sergiom84/AudioSessions.git
- = [up to date]      main -> main
-updating local tracking ref 'refs/remotes/origin/main'
-Everything up-to-date
