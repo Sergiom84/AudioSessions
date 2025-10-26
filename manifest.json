@@ -1,0 +1,76 @@
+{
+  "name": "Audio Sessions Archive",
+  "short_name": "AudioSessions",
+  "description": "Archivo interactivo de sesiones de música electrónica: House, Techno, Progressive y Remember",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#00ff88",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "attached_assets/Fondo_ppal.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "attached_assets/Fondo_ppal.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["music", "entertainment"],
+  "lang": "es-ES",
+  "dir": "ltr",
+  "prefer_related_applications": false,
+  "related_applications": [],
+  "screenshots": [
+    {
+      "src": "attached_assets/Fondo_ppal.png",
+      "sizes": "540x720",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "House Sessions",
+      "short_name": "House",
+      "description": "Explora sesiones House",
+      "url": "/house.html",
+      "icons": [
+        {
+          "src": "attached_assets/Fondo_ppal.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Techno Sessions",
+      "short_name": "Techno",
+      "description": "Explora sesiones Techno",
+      "url": "/techno.html",
+      "icons": [
+        {
+          "src": "attached_assets/Una de Techno, por favor!.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Private Zone",
+      "short_name": "Private",
+      "description": "Accede a sesiones exclusivas",
+      "url": "/private.html",
+      "icons": [
+        {
+          "src": "attached_assets/Fondo_ppal.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ]
+}
