@@ -335,6 +335,147 @@
             }
         });
     </script>
+
+    <!-- Newsletter Section -->
+    <footer class="newsletter-footer">
+        <div class="newsletter-container">
+            <h3>🔔 Recibe nuevas sesiones en tu email</h3>
+            <p>Te avisamos cuando subamos nuevas sesiones (sin spam, solo música)</p>
+            <form id="newsletterForm" class="newsletter-form">
+                <input
+                    type="email"
+                    id="emailInput"
+                    placeholder="tu@email.com"
+                    required
+                    pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+                />
+                <button type="submit">Suscribirme</button>
+            </form>
+            <p id="newsletterStatus" class="newsletter-status"></p>
+        </div>
+    </footer>
+
+    <style>
+    .newsletter-footer {
+        background: linear-gradient(135deg, rgba(0,255,136,0.1), rgba(0,204,102,0.1));
+        border-top: 1px solid var(--border-color);
+        padding: 48px 24px;
+        margin-top: 80px;
+    }
+
+    .newsletter-container {
+        max-width: 600px;
+        margin: 0 auto;
+        text-align: center;
+    }
+
+    .newsletter-container h3 {
+        font-size: 1.5rem;
+        margin-bottom: 8px;
+        color: var(--text-primary);
+    }
+
+    .newsletter-container p {
+        color: var(--text-secondary);
+        margin-bottom: 24px;
+    }
+
+    .newsletter-form {
+        display: flex;
+        gap: 12px;
+        max-width: 480px;
+        margin: 0 auto;
+    }
+
+    .newsletter-form input {
+        flex: 1;
+        padding: 12px 16px;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        font-size: 1rem;
+        background: var(--card-bg);
+        color: var(--text-primary);
+    }
+
+    .newsletter-form button {
+        padding: 12px 24px;
+        background: #00ff88;
+        color: #000;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.2s;
+    }
+
+    .newsletter-form button:hover {
+        transform: scale(1.05);
+    }
+
+    .newsletter-status {
+        margin-top: 12px;
+        font-size: 0.9rem;
+        min-height: 20px;
+    }
+
+    @media (max-width: 600px) {
+        .newsletter-form {
+            flex-direction: column;
+        }
+    }
+    </style>
+
+    <script>
+    // Google Apps Script Web App URL
+    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzOXCS0eykfHiTq4wRhjHrXHKNCc3Q2n82fDjqGRVV33wkEbHngov9SJWuAgnZuRbNXDA/exec';
+
+    document.getElementById('newsletterForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const email = document.getElementById('emailInput').value;
+        const status = document.getElementById('newsletterStatus');
+        const button = e.target.querySelector('button');
+
+        // Validar que tengas la URL configurada
+        if (GOOGLE_SCRIPT_URL === 'TU_URL_AQUI') {
+            status.style.color = '#ff0055';
+            status.textContent = '⚠️ Newsletter no configurado aún. Contacta al administrador.';
+            return;
+        }
+
+        // Deshabilitar botón
+        button.disabled = true;
+        button.textContent = 'Enviando...';
+        status.textContent = '';
+
+        try {
+            const response = await fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: email,
+                    action: 'subscribe'
+                })
+            });
+
+            // Con no-cors no podemos leer la respuesta, así que asumimos éxito
+            status.style.color = '#00ff88';
+            status.textContent = '✅ ¡Suscrito! Revisa tu email (también spam).';
+            document.getElementById('emailInput').value = '';
+
+        } catch (error) {
+            status.style.color = '#ff0055';
+            status.textContent = '❌ Error. Intenta de nuevo o contacta al admin.';
+            console.error('Error:', error);
+        } finally {
+            button.disabled = false;
+            button.textContent = 'Suscribirme';
+        }
+    });
+    </script>
 </body>
 </html>
 
