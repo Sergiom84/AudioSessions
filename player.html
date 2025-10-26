@@ -640,6 +640,36 @@
                     { time: '70:00', artist: 'Noizu', title: 'Summer 91', label: 'Insomniac Records' }
                 ]
             },
+            'anthony-bird': {
+                title: '50 años. 120 BPM',
+                subtitle: 'Nadie quería House… pero todos acabarán en la pista.',
+                audioUrl: 'https://archive.org/download/anthony-bird/Anthony%20Bird.mp3',
+                downloadUrl: 'https://archive.org/download/anthony-bird/Anthony%20Bird.mp3',
+                duration: '01:20:00',
+                cover: `
+                    <img class="session-cover-svg" src="attached_assets/50 años. 120 BPM.png" alt="Carátula 50 años. 120 BPM" style="width:100%;height:300px;object-fit:cover;display:block;border-radius:var(--radius);box-shadow:var(--shadow-hover);" />
+                `,
+                tracklist: [
+                    { time: '00:00', artist: 'Chris Michael, John Sivris', title: 'Love In The Moonlight (Luyo Love Mix)', label: 'House' },
+                    { time: '04:30', artist: 'COEO', title: 'Like It Is', label: 'House' },
+                    { time: '08:15', artist: 'Chris Isaak', title: 'Wicked Game', label: 'Classic' },
+                    { time: '12:45', artist: 'The Vision feat. Andreya Triana', title: 'Heaven (Danny Krivit Edit)', label: 'Vocal House' },
+                    { time: '17:20', artist: 'Mark Di Meo', title: 'Rock My Soul', label: 'House' },
+                    { time: '21:30', artist: 'Disco Dandies feat. Leon Ware', title: 'Inside Your Love', label: 'Disco House' },
+                    { time: '25:45', artist: 'Daft Punk', title: 'One More Time', label: 'French House' },
+                    { time: '30:30', artist: 'Stardust', title: 'Music Sounds Better With You', label: 'French House' },
+                    { time: '34:20', artist: 'Modjo', title: 'Lady', label: 'French House' },
+                    { time: '38:15', artist: 'Goodfellas', title: 'Soul Heaven', label: 'House' },
+                    { time: '42:00', artist: 'Negrocano', title: 'CADA VEZ', label: 'Latin House' },
+                    { time: '45:30', artist: 'Afro Medusa', title: 'Pasilda', label: 'Afro House' },
+                    { time: '49:10', artist: 'GALA', title: 'Freed from Desire', label: 'Euro House' },
+                    { time: '53:00', artist: 'Armand Van Helden feat. Duane Harden', title: 'You Don\'t Know Me', label: 'House' },
+                    { time: '56:45', artist: 'Fritz Paul Kalkbrenner', title: 'Sky and Sand', label: 'Techno' },
+                    { time: '61:20', artist: 'Room 5 feat. Oliver Cheatham', title: 'Make Luv', label: 'House' },
+                    { time: '65:00', artist: 'Broken English', title: 'Do You Really Want Me Back', label: 'House' },
+                    { time: '68:30', artist: 'Peter Schilling', title: 'TerraTitanic', label: 'Electronic' }
+                ]
+            },
             'sari-bari-2025': {
                 title: 'Sari Bari 2025',
                 subtitle: 'Un verano, una fiesta, una promesa de groove. En la arena de Granada, celebramos el ritmo con alma y un mar de abrazos. Sari Bari es calor, house y corazón.',
@@ -1093,7 +1123,10 @@
         // Initialize player with session data
         function initializePlayer() {
             // Set the correct titles based on session
-            if (sessionId === 'nature-tech-house') {
+            if (sessionId === 'anthony-bird') {
+                document.getElementById('mainSessionTitle').textContent = '50 años. 120 BPM';
+                document.getElementById('sessionSubtitle').textContent = 'Nadie quería House… pero todos acabarán en la pista.';
+            } else if (sessionId === 'nature-tech-house') {
                 document.getElementById('mainSessionTitle').textContent = 'Nature';
                 document.getElementById('sessionSubtitle').textContent = 'Una selección potente de Tech House con beats profundos y grooves hipnóticos';
             } else if (sessionId === 'sari-bari-2025') {
